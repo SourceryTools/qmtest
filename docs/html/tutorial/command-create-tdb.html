@@ -1,0 +1,30 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>4. qmtest create-tdb</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="cli.html" title="Chapter 2. Invoking QMTest"><link rel="prev" href="command-create-target.html" title="3. qmtest create-target"><link rel="next" href="command-gui.html" title="5. qmtest gui"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4. <span class="command"><strong>qmtest create-tdb</strong></span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="command-create-target.html">Prev</a> </td><th width="60%" align="center">Chapter 2. Invoking <span class="application">QMTest</span></th><td width="20%" align="right"> <a accesskey="n" href="command-gui.html">Next</a></td></tr></table><hr></div><div class="section" title="4. qmtest create-tdb"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="command-create-tdb"></a>4. <span class="command"><strong>qmtest create-tdb</strong></span></h2></div></div></div><div class="section" title="4.1. Summary"><div class="titlepage"><div><div><h3 class="title"><a name="id380874"></a>4.1. Summary</h3></div></div></div><p>Create a new test database.</p></div><div class="section" title="4.2. Synopsis"><div class="titlepage"><div><div><h3 class="title"><a name="id380885"></a>4.2. Synopsis</h3></div></div></div><div class="cmdsynopsis"><p><code class="command">qmtest create-tdb</code>  [
+     <em class="replaceable"><code>option</code></em>
+    ...]</p></div></div><div class="section" title="4.3. Description"><div class="titlepage"><div><div><h3 class="title"><a name="id380917"></a>4.3. Description</h3></div></div></div><p>The <span class="command"><strong>qmtest create-tdb</strong></span> command
+   creates a new, empty test database.  A test database is a
+   directory in which <span class="application">QMTest</span> stores configuration files, tests, and
+   other data.  Certain test database classes may also store data
+   elsewhere, such as in an external relational database.</p><p>The test database is created in the directory specified by
+   <code class="option">--tdb</code> (<code class="option">-D</code>) option or by
+   setting the <code class="envar">QMTEST_DB_PATH</code> environment variable.
+   If no database path is specified, <span class="application">QMTest</span> assumes that the
+   current directory is the test database.</p><p>By default, <span class="application">QMTest</span> creates a new test database that uses the
+   standard XML-based implementation.  (See <a class="xref" href="extending-database-classes.html" title="5. Writing Database Classes">Section 5, &#8220;Writing Database Classes&#8221;</a> for information
+   about writing a test database class.)</p><p>The <span class="command"><strong>create-tdb</strong></span> command accepts these
+   options:</p><div class="variablelist"><dl><dt><span class="term"><code class="option">-a</code> <em class="replaceable"><code>name=value</code></em>, </span><span class="term">
+      <code class="option">--attribute</code> 
+      <em class="replaceable"><code>name=value</code></em>
+     </span></dt><dd><p>Set the database attribute
+      <em class="replaceable"><code>name</code></em> to
+      <em class="replaceable"><code>value</code></em>.  The set of attribute names
+      and valid values is dependent on the database class in use.
+      The default database class accepts no attributes.</p></dd><dt><span class="term"><code class="option">-c</code> <em class="replaceable"><code>class</code></em>, </span><span class="term">
+      <code class="option">--class</code> <em class="replaceable"><code>class</code></em>
+     </span></dt><dd><p>Use the test database class given by
+      <em class="replaceable"><code>class</code></em>.  The
+      <em class="replaceable"><code>class</code></em> may have the general form
+      described in <a class="xref" href="command-create.html" title="2. qmtest create">Section 2, &#8220;<span class="command"><strong>qmtest create</strong></span>&#8221;</a>.  Once you create a
+      test database, you cannot change the test database
+      implementation it uses.  If you do not use this option,
+      <span class="application">QMTest</span> will use the default test database implementation,
+      which uses an XML file format to store tests.</p></dd></dl></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="command-create-target.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="cli.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="command-gui.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3. <span class="command"><strong>qmtest create-target</strong></span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 5. <span class="command"><strong>qmtest gui</strong></span></td></tr></table></div></body></html>

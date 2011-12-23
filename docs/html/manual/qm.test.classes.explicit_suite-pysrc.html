@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.classes.explicit_suite</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.classes-module.html">Package&nbsp;classes</a> ::
+        Module&nbsp;explicit_suite
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.classes.explicit_suite-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.test.classes.explicit_suite-module.html">Module qm.test.classes.explicit_suite</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-comment"># File:   suite.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Mark Mitchell</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   1/02/2004</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-comment">#   QMTest ExplicitSuite class</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2004 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"><tt class="py-comment"># For license terms see the file COPYING.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"><tt class="py-comment"># Imports</tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"><tt class="py-keyword">from</tt>   <tt id="link-0" class="py-name" targets="Package qm=qm-module.html"><a title="qm" class="py-name" href="#" onclick="return doclink('link-0', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module qm.fields=qm.fields-module.html"><a title="qm.fields" class="py-name" href="#" onclick="return doclink('link-1', 'fields', 'link-1');">fields</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Class qm.fields.BooleanField=qm.fields.BooleanField-class.html"><a title="qm.fields.BooleanField" class="py-name" href="#" onclick="return doclink('link-2', 'BooleanField', 'link-2');">BooleanField</a></tt><tt class="py-op">,</tt> <tt id="link-3" class="py-name" targets="Class qm.fields.SetField=qm.fields.SetField-class.html"><a title="qm.fields.SetField" class="py-name" href="#" onclick="return doclink('link-3', 'SetField', 'link-3');">SetField</a></tt><tt class="py-op">,</tt> <tt id="link-4" class="py-name" targets="Class qm.fields.TextField=qm.fields.TextField-class.html"><a title="qm.fields.TextField" class="py-name" href="#" onclick="return doclink('link-4', 'TextField', 'link-4');">TextField</a></tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-5" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-5', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.test()=qm.external.DocumentTemplate.DT_Util-module.html#test,Package qm.test=qm.test-module.html,Module qm.test.test=qm.test.test-module.html"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-6', 'test', 'link-6');">test</a></tt><tt class="py-op">.</tt><tt id="link-7" class="py-name" targets="Module qm.test.suite=qm.test.suite-module.html"><a title="qm.test.suite" class="py-name" href="#" onclick="return doclink('link-7', 'suite', 'link-7');">suite</a></tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line"><tt class="py-comment"># Classes</tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line"> </tt>
+<a name="ExplicitSuite"></a><div id="ExplicitSuite-def"><a name="L27"></a><tt class="py-lineno">27</tt> <a class="py-toggle" href="#" id="ExplicitSuite-toggle" onclick="return toggle('ExplicitSuite');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.test.classes.explicit_suite.ExplicitSuite-class.html">ExplicitSuite</a><tt class="py-op">(</tt><tt class="py-base-class">qm</tt><tt class="py-op">.</tt><tt class="py-base-class">test</tt><tt class="py-op">.</tt><tt class="py-base-class">suite</tt><tt class="py-op">.</tt><tt class="py-base-class">Suite</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ExplicitSuite-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="ExplicitSuite-expanded"><a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line">    <tt class="py-docstring">"""An 'ExplicitSuite' stores all of the test and suite ids explicitly."""</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line"> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line">    <tt id="link-8" class="py-name" targets="Variable qm.extension.Extension.arguments=qm.extension.Extension-class.html#arguments,Variable qm.test.classes.command.ExecTest.arguments=qm.test.classes.command.ExecTest-class.html#arguments,Variable qm.test.classes.command.ExecTestBase.arguments=qm.test.classes.command.ExecTestBase-class.html#arguments,Variable qm.test.classes.command.ShellCommandTest.arguments=qm.test.classes.command.ShellCommandTest-class.html#arguments,Variable qm.test.classes.command.ShellScriptTest.arguments=qm.test.classes.command.ShellScriptTest-class.html#arguments,Variable qm.test.classes.dejagnu_stream.DejaGNUReader.arguments=qm.test.classes.dejagnu_stream.DejaGNUReader-class.html#arguments,Variable qm.test.classes.dejagnu_stream.DejaGNUStream.arguments=qm.test.classes.dejagnu_stream.DejaGNUStream-class.html#arguments,Variable qm.test.classes.dejagnu_test.DejaGNUTest.arguments=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#arguments,Variable qm.test.classes.explicit_suite.ExplicitSuite.arguments=qm.test.classes.explicit_suite.ExplicitSuite-class.html#arguments,Variable qm.test.classes.file.FileContentsTest.arguments=qm.test.classes.file.FileContentsTest-class.html#arguments,Variable qm.test.classes.pickle_result_stream.PickleResultStream.arguments=qm.test.classes.pickle_result_stream.PickleResultStream-class.html#arguments,Variable qm.test.classes.process_target.ProcessTarget.arguments=qm.test.classes.process_target.ProcessTarget-class.html#arguments,Variable qm.test.classes.python.BaseExceptionTest.arguments=qm.test.classes.python.BaseExceptionTest-class.html#arguments,Variable qm.test.classes.python.ExceptionTest.arguments=qm.test.classes.python.ExceptionTest-class.html#arguments,Variable qm.test.classes.python.ExecTest.arguments=qm.test.classes.python.ExecTest-class.html#arguments,Variable qm.test.classes.python.StringExceptionTest.arguments=qm.test.classes.python.StringExceptionTest-class.html#arguments,Variable qm.test.classes.rsh_target.RSHTarget.arguments=qm.test.classes.rsh_target.RSHTarget-class.html#arguments,Variable qm.test.classes.sql_result_stream.SQLResultReader.arguments=qm.test.classes.sql_result_stream.SQLResultReader-class.html#arguments,Variable qm.test.classes.sql_result_stream._SQLConnected.arguments=qm.test.classes.sql_result_stream._SQLConnected-class.html#arguments,Variable qm.test.classes.temporary.TempDirectoryResource.arguments=qm.test.classes.temporary.TempDirectoryResource-class.html#arguments,Variable qm.test.classes.text_result_stream.TextResultStream.arguments=qm.test.classes.text_result_stream.TextResultStream-class.html#arguments,Variable qm.test.classes.thread_target.ThreadTarget.arguments=qm.test.classes.thread_target.ThreadTarget-class.html#arguments,Variable qm.test.database.Database.arguments=qm.test.database.Database-class.html#arguments,Variable qm.test.file_database.ExtensionDatabase.arguments=qm.test.file_database.ExtensionDatabase-class.html#arguments,Variable qm.test.file_result_reader.FileResultReader.arguments=qm.test.file_result_reader.FileResultReader-class.html#arguments,Variable qm.test.file_result_stream.FileResultStream.arguments=qm.test.file_result_stream.FileResultStream-class.html#arguments,Variable qm.test.runnable.Runnable.arguments=qm.test.runnable.Runnable-class.html#arguments,Variable qm.test.suite.Suite.arguments=qm.test.suite.Suite-class.html#arguments,Variable qm.test.target.Target.arguments=qm.test.target.Target-class.html#arguments,Variable qm.test.test.Test.arguments=qm.test.test.Test-class.html#arguments"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-8', 'arguments', 'link-8');">arguments</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line">        <tt id="link-9" class="py-name"><a title="qm.fields.SetField" class="py-name" href="#" onclick="return doclink('link-9', 'SetField', 'link-3');">SetField</a></tt><tt class="py-op">(</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line">            <tt id="link-10" class="py-name"><a title="qm.fields.TextField" class="py-name" href="#" onclick="return doclink('link-10', 'TextField', 'link-4');">TextField</a></tt><tt class="py-op">(</tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">                <tt id="link-11" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_If.Else.name=qm.external.DocumentTemplate.DT_If.Else-class.html#name,Variable qm.external.DocumentTemplate.DT_If.If.name=qm.external.DocumentTemplate.DT_If.If-class.html#name,Variable qm.external.DocumentTemplate.DT_If.Unless.name=qm.external.DocumentTemplate.DT_If.Unless-class.html#name,Variable qm.external.DocumentTemplate.DT_In.InFactory.name=qm.external.DocumentTemplate.DT_In.InFactory-class.html#name,Variable qm.external.DocumentTemplate.DT_Let.Let.name=qm.external.DocumentTemplate.DT_Let.Let-class.html#name,Variable qm.external.DocumentTemplate.DT_Raise.Raise.name=qm.external.DocumentTemplate.DT_Raise.Raise-class.html#name,Variable qm.external.DocumentTemplate.DT_Return.ReturnTag.name=qm.external.DocumentTemplate.DT_Return.ReturnTag-class.html#name,Method qm.external.DocumentTemplate.DT_String.String.name()=qm.external.DocumentTemplate.DT_String.String-class.html#name,Variable qm.external.DocumentTemplate.DT_Try.Try.name=qm.external.DocumentTemplate.DT_Try.Try-class.html#name,Variable qm.external.DocumentTemplate.DT_Util.name=qm.external.DocumentTemplate.DT_Util-module.html#name,Variable qm.external.DocumentTemplate.DT_Var.Call.name=qm.external.DocumentTemplate.DT_Var.Call-class.html#name,Variable qm.external.DocumentTemplate.DT_Var.Comment.name=qm.external.DocumentTemplate.DT_Var.Comment-class.html#name,Variable qm.external.DocumentTemplate.DT_Var.Var.name=qm.external.DocumentTemplate.DT_Var.Var-class.html#name,Variable qm.external.DocumentTemplate.DT_With.With.name=qm.external.DocumentTemplate.DT_With.With-class.html#name,Variable qm.external.DocumentTemplate.pDocumentTemplate.name=qm.external.DocumentTemplate.pDocumentTemplate-module.html#name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-11', 'name', 'link-11');">name</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"test_ids"</tt><tt class="py-op">,</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line">                <tt id="link-12" class="py-name" targets="Variable qm.test.web.web.LoadContextPage.title=qm.test.web.web.LoadContextPage-class.html#title,Variable qm.test.web.web.LoadExpectationsPage.title=qm.test.web.web.LoadExpectationsPage-class.html#title,Variable qm.test.web.web.LoadResultsPage.title=qm.test.web.web.LoadResultsPage-class.html#title"><a title="qm.test.web.web.LoadContextPage.title
+qm.test.web.web.LoadExpectationsPage.title
+qm.test.web.web.LoadResultsPage.title" class="py-name" href="#" onclick="return doclink('link-12', 'title', 'link-12');">title</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"Test Names"</tt><tt class="py-op">,</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line">                <tt id="link-13" class="py-name" targets="Variable qm.dist.command.build_extensions.build_extensions.description=qm.dist.command.build_extensions.build_extensions-class.html#description,Variable qm.dist.command.install_extensions.install_extensions.description=qm.dist.command.install_extensions.install_extensions-class.html#description"><a title="qm.dist.command.build_extensions.build_extensions.description
+qm.dist.command.install_extensions.install_extensions.description" class="py-name" href="#" onclick="return doclink('link-13', 'description', 'link-13');">description</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"""The the tests contained in this suite."""</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line">        <tt id="link-14" class="py-name"><a title="qm.fields.SetField" class="py-name" href="#" onclick="return doclink('link-14', 'SetField', 'link-3');">SetField</a></tt><tt class="py-op">(</tt> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">            <tt id="link-15" class="py-name"><a title="qm.fields.TextField" class="py-name" href="#" onclick="return doclink('link-15', 'TextField', 'link-4');">TextField</a></tt><tt class="py-op">(</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line">                <tt id="link-16" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-16', 'name', 'link-11');">name</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"suite_ids"</tt><tt class="py-op">,</tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line">                <tt id="link-17" class="py-name"><a title="qm.test.web.web.LoadContextPage.title
+qm.test.web.web.LoadExpectationsPage.title
+qm.test.web.web.LoadResultsPage.title" class="py-name" href="#" onclick="return doclink('link-17', 'title', 'link-12');">title</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"Suite Names"</tt><tt class="py-op">,</tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">                <tt id="link-18" class="py-name"><a title="qm.dist.command.build_extensions.build_extensions.description
+qm.dist.command.install_extensions.install_extensions.description" class="py-name" href="#" onclick="return doclink('link-18', 'description', 'link-13');">description</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"""The the suites contained in this suite."""</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line">        <tt id="link-19" class="py-name"><a title="qm.fields.BooleanField" class="py-name" href="#" onclick="return doclink('link-19', 'BooleanField', 'link-2');">BooleanField</a></tt><tt class="py-op">(</tt><tt id="link-20" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-20', 'name', 'link-11');">name</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"is_implicit"</tt><tt class="py-op">,</tt> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line">                     <tt id="link-21" class="py-name"><a title="qm.test.web.web.LoadContextPage.title
+qm.test.web.web.LoadExpectationsPage.title
+qm.test.web.web.LoadResultsPage.title" class="py-name" href="#" onclick="return doclink('link-21', 'title', 'link-12');">title</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"Implicit?"</tt><tt class="py-op">,</tt> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line">                     <tt id="link-22" class="py-name"><a title="qm.dist.command.build_extensions.build_extensions.description
+qm.dist.command.install_extensions.install_extensions.description" class="py-name" href="#" onclick="return doclink('link-22', 'description', 'link-13');">description</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"""\</tt> </tt>
+<a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line"><tt class="py-string">                     True if this test is implicitly generated by QMTest."""</tt><tt class="py-op">,</tt> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">                     <tt class="py-name">default_value</tt> <tt class="py-op">=</tt> <tt class="py-string">"false"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line">        <tt class="py-op">]</tt> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line">     </tt>
+<a name="ExplicitSuite.IsImplicit"></a><div id="ExplicitSuite.IsImplicit-def"><a name="L48"></a><tt class="py-lineno">48</tt> <a class="py-toggle" href="#" id="ExplicitSuite.IsImplicit-toggle" onclick="return toggle('ExplicitSuite.IsImplicit');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.explicit_suite.ExplicitSuite-class.html#IsImplicit">IsImplicit</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ExplicitSuite.IsImplicit-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="ExplicitSuite.IsImplicit-expanded"><a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line"> </tt>
+<a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-23" class="py-name" targets="Variable qm.test.classes.explicit_suite.ExplicitSuite.is_implicit=qm.test.classes.explicit_suite.ExplicitSuite-class.html#is_implicit"><a title="qm.test.classes.explicit_suite.ExplicitSuite.is_implicit" class="py-name" href="#" onclick="return doclink('link-23', 'is_implicit', 'link-23');">is_implicit</a></tt> <tt class="py-op">==</tt> <tt class="py-string">"true"</tt> </tt>
+</div><a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line">    </tt>
+<a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line"> </tt>
+<a name="ExplicitSuite.GetTestIds"></a><div id="ExplicitSuite.GetTestIds-def"><a name="L53"></a><tt class="py-lineno">53</tt> <a class="py-toggle" href="#" id="ExplicitSuite.GetTestIds-toggle" onclick="return toggle('ExplicitSuite.GetTestIds');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.explicit_suite.ExplicitSuite-class.html#GetTestIds">GetTestIds</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ExplicitSuite.GetTestIds-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="ExplicitSuite.GetTestIds-expanded"><a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line">       </tt>
+<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-24" class="py-name" targets="Variable qm.test.classes.explicit_suite.ExplicitSuite.test_ids=qm.test.classes.explicit_suite.ExplicitSuite-class.html#test_ids"><a title="qm.test.classes.explicit_suite.ExplicitSuite.test_ids" class="py-name" href="#" onclick="return doclink('link-24', 'test_ids', 'link-24');">test_ids</a></tt> </tt>
+</div><a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line"> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">    </tt>
+<a name="ExplicitSuite.GetSuiteIds"></a><div id="ExplicitSuite.GetSuiteIds-def"><a name="L58"></a><tt class="py-lineno">58</tt> <a class="py-toggle" href="#" id="ExplicitSuite.GetSuiteIds-toggle" onclick="return toggle('ExplicitSuite.GetSuiteIds');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.explicit_suite.ExplicitSuite-class.html#GetSuiteIds">GetSuiteIds</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ExplicitSuite.GetSuiteIds-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="ExplicitSuite.GetSuiteIds-expanded"><a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">       </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-25" class="py-name" targets="Variable qm.test.classes.explicit_suite.ExplicitSuite.suite_ids=qm.test.classes.explicit_suite.ExplicitSuite-class.html#suite_ids"><a title="qm.test.classes.explicit_suite.ExplicitSuite.suite_ids" class="py-name" href="#" onclick="return doclink('link-25', 'suite_ids', 'link-25');">suite_ids</a></tt> </tt>
+</div></div><a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:46 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

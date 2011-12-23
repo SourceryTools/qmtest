@@ -1,0 +1,801 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.classes.text_result_stream.TextResultStream</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.classes-module.html">Package&nbsp;classes</a> ::
+        <a href="qm.test.classes.text_result_stream-module.html">Module&nbsp;text_result_stream</a> ::
+        Class&nbsp;TextResultStream
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.classes.text_result_stream.TextResultStream-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class TextResultStream</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+                 object --+            
+                          |            
+        <a href="qm.extension.Extension-class.html">extension.Extension</a> --+        
+                              |        
+     <a href="qm.test.result_stream.ResultStream-class.html">result_stream.ResultStream</a> --+    
+                                  |    
+<a href="qm.test.file_result_stream.FileResultStream-class.html">file_result_stream.FileResultStream</a> --+
+                                      |
+                                     <strong class="uidshort">TextResultStream</strong>
+</pre>
+
+<hr />
+<p>A 'TextResultStream' displays test results textually.</p>
+  <p>A 'TextResultStream' displays information textually, in human readable
+  form.  This 'ResultStream' is used when QMTest is run without a graphical
+  user interface.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension.Type-class.html">Type</a></code>,
+      <code><a href="qm.extension.Extension.Type-class.html">__metaclass__</a></code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.text_result_stream.TextResultStream-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">arguments</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">**args</span>)</span><br />
+      Construct a 'TextResultStream'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.text_result_stream.TextResultStream-class.html#WriteResult" class="summary-sig-name">WriteResult</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Output a test or resource result.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream.WriteResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.text_result_stream.TextResultStream-class.html#Summarize" class="summary-sig-name">Summarize</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Output summary information about the results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream.Summarize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayStatistics" class="summary-sig-name" onclick="show_private();">_DisplayStatistics</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Write out statistical information about the results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._DisplayStatistics">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_SummarizeTestStats"></a><span class="summary-sig-name">_SummarizeTestStats</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Generate statistics about the overall results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._SummarizeTestStats">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_SummarizeRelativeTestStats"></a><span class="summary-sig-name">_SummarizeRelativeTestStats</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Generate statistics showing results relative to expectations.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._SummarizeRelativeTestStats">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.text_result_stream.TextResultStream-class.html#_FormatStatistics" class="summary-sig-name" onclick="show_private();">_FormatStatistics</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">format</span>)</span><br />
+      Output statistical information.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._FormatStatistics">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.text_result_stream.TextResultStream-class.html#_SummarizeResults" class="summary-sig-name" onclick="show_private();">_SummarizeResults</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">results</span>)</span><br />
+      Summarize each of the results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._SummarizeResults">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayResult" class="summary-sig-name" onclick="show_private();">_DisplayResult</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>,
+        <span class="summary-sig-arg">format</span>)</span><br />
+      Display 'result'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._DisplayResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayAnnotations" class="summary-sig-name" onclick="show_private();">_DisplayAnnotations</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Display the annotations associated with 'result'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._DisplayAnnotations">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.text_result_stream.TextResultStream-class.html#_WriteOutcome" class="summary-sig-name" onclick="show_private();">_WriteOutcome</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">kind</span>,
+        <span class="summary-sig-arg">outcome</span>,
+        <span class="summary-sig-arg">expected_outcome</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Write a line indicating the outcome of a test or resource.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._WriteOutcome">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayHeading" class="summary-sig-name" onclick="show_private();">_DisplayHeading</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">heading</span>)</span><br />
+      Display 'heading'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._DisplayHeading">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.result_stream.ResultStream-class.html">result_stream.ResultStream</a></code></b>:
+      <code><a href="qm.test.result_stream.ResultStream-class.html#WriteAllAnnotations">WriteAllAnnotations</a></code>,
+      <code><a href="qm.test.result_stream.ResultStream-class.html#WriteAnnotation">WriteAnnotation</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.result_stream.ResultStream-class.html">result_stream.ResultStream</a></code></b> (private):
+      <code><a href="qm.test.result_stream.ResultStream-class.html#_GetExpectedOutcome" onclick="show_private();">_GetExpectedOutcome</a></code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension-class.html#GetClassName">GetClassName</a></code>,
+      <code><a href="qm.extension.Extension-class.html#GetExplicitArguments">GetExplicitArguments</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomDocument">MakeDomDocument</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomElement">MakeDomElement</a></code>,
+      <code><a href="qm.extension.Extension-class.html#Write">Write</a></code>,
+      <code><a href="qm.extension.Extension-class.html#__getattr__">__getattr__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.text_result_stream.TextResultStream-class.html#arguments" class="summary-name">arguments</a> = <code title="[qm.fields.EnumerationField(name= &quot;format&quot;, title= &quot;Format&quot;, descripti\
+on= &quot;&quot;&quot;The output format used by this result stream.
+
+            There are three sections to the output:
+
+            (S) Summary statistics.
+
+            (I) Individual test-by-test results.
+...">[qm.fields.EnumerationField(name= &quot;format&quot;, title=<code class="variable-ellipsis">...</code></code><br />
+      A list of the arguments to the extension class.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.file_result_stream.FileResultStream-class.html">file_result_stream.FileResultStream</a></code></b>:
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#file">file</a></code>,
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#filename">filename</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.file_result_stream.FileResultStream-class.html">file_result_stream.FileResultStream</a></code></b> (private):
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#_argument_dictionary" onclick="show_private();">_argument_dictionary</a></code>,
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#_argument_list" onclick="show_private();">_argument_list</a></code>,
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#_is_binary_file" onclick="show_private();">_is_binary_file</a></code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.result_stream.ResultStream-class.html">result_stream.ResultStream</a></code></b>:
+      <code><a href="qm.test.result_stream.ResultStream-class.html#expected_outcomes">expected_outcomes</a></code>,
+      <code><a href="qm.test.result_stream.ResultStream-class.html#kind">kind</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b> (private):
+      <code><a href="qm.extension.Extension-class.html#_allow_arg_names_matching_class_vars" onclick="show_private();">_allow_arg_names_matching_class_vars</a></code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">arguments</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">**args</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a 'TextResultStream'.</p>
+  <p>'args' -- As for 'Extension.__init__'.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="WriteResult"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">WriteResult</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream.WriteResult">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Output a test or resource result.</p>
+  <p>'result' -- A 'Result'.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.result_stream.ResultStream-class.html#WriteResult">result_stream.ResultStream.WriteResult</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="Summarize"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Summarize</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream.Summarize">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Output summary information about the results.</p>
+  <p>When this method is called, the test run is complete.  Summary 
+  information should be displayed for the user, if appropriate. Any 
+  finalization, such as the closing of open files, should also be performed
+  at this point.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.result_stream.ResultStream-class.html#Summarize">result_stream.ResultStream.Summarize</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DisplayStatistics"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DisplayStatistics</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._DisplayStatistics">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Write out statistical information about the results.</p>
+  <p>Write out statistical information about the results.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_FormatStatistics"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_FormatStatistics</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">format</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._FormatStatistics">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Output statistical information.</p>
+  <p>'format' -- A format string with (optional) fill-ins corresponding to 
+  statistical information.</p>
+  <p>The formatted string is written to the result file.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_SummarizeResults"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_SummarizeResults</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">results</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._SummarizeResults">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Summarize each of the results.</p>
+  <p>'results' -- The sequence of 'Result' objects to summarize.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DisplayResult"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DisplayResult</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">result</span>,
+        <span class="sig-arg">format</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._DisplayResult">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Display 'result'.</p>
+  <p>'result' -- The 'Result' of a test or resource execution.</p>
+  <p>'format' -- The format to use when displaying results.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DisplayAnnotations"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DisplayAnnotations</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._DisplayAnnotations">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Display the annotations associated with 'result'.</p>
+  <p>'result' -- The 'Result' to dispay.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_WriteOutcome"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_WriteOutcome</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">name</span>,
+        <span class="sig-arg">kind</span>,
+        <span class="sig-arg">outcome</span>,
+        <span class="sig-arg">expected_outcome</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._WriteOutcome">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Write a line indicating the outcome of a test or resource.</p>
+  <p>'name' -- The name of the test or resource.</p>
+  <p>'kind' -- The kind of result being displayed.</p>
+  <p>'outcome' -- A string giving the outcome.</p>
+  <p>'expected_outcome' -- If not 'None', the expected outcome.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DisplayHeading"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DisplayHeading</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">heading</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.text_result_stream-pysrc.html#TextResultStream._DisplayHeading">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Display 'heading'.</p>
+  <p>'heading' -- The string to use as a heading for the next section of 
+  the report.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="arguments"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">arguments</h3>
+  <p>A list of the arguments to the extension class.</p>
+  <p>Each element of this list should be an instance of 'Field'.  The 
+  'Field' instance describes the argument.</p>
+  <p>Derived classes may redefine this class variable.  However, derived 
+  classes should not explicitly include the arguments from base classes; 
+  QMTest will automatically combine all the arguments found throughout the 
+  class hierarchy.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+[qm.fields.EnumerationField(name= &quot;format&quot;, title= &quot;Format&quot;, descripti<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+on= &quot;&quot;&quot;The output format used by this result stream.
+
+            There are three sections to the output:
+
+            (S) Summary statistics.
+
+            (I) Individual test-by-test results.
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:41 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

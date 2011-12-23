@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.dist.command.install_extensions</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.dist-module.html">Package&nbsp;dist</a> ::
+        <a href="qm.dist.command-module.html">Package&nbsp;command</a> ::
+        Module&nbsp;install_extensions
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.dist.command.install_extensions-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.dist.command.install_extensions-module.html">Module qm.dist.command.install_extensions</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># File:   install_extensions.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Stefan Seefeld</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   2005-11-16</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#   Command to install qmtest extensions.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2005 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># For license terms see the file COPYING.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment"># Imports</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-0" class="py-name" targets="Package qm=qm-module.html"><a title="qm" class="py-name" href="#" onclick="return doclink('link-0', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module qm.xmlutil=qm.xmlutil-module.html"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-1', 'xmlutil', 'link-1');">xmlutil</a></tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">distutils</tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Package qm.dist.command=qm.dist.command-module.html,Module qm.test.classes.command=qm.test.classes.command-module.html,Variable qm.test.classes.command_host.CommandHost.command=qm.test.classes.command_host.CommandHost-class.html#command"><a title="qm.dist.command
+qm.test.classes.command
+qm.test.classes.command_host.CommandHost.command" class="py-name" href="#" onclick="return doclink('link-2', 'command', 'link-2');">command</a></tt><tt class="py-op">.</tt><tt class="py-name">install_lib</tt> <tt class="py-keyword">import</tt> <tt class="py-name">install_lib</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt><tt class="py-op">,</tt> <tt class="py-name">dircache</tt><tt class="py-op">,</tt> <tt class="py-name">xml</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment"># Classes</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"> </tt>
+<a name="_compare_files"></a><div id="_compare_files-def"><a name="L28"></a><tt class="py-lineno"> 28</tt> <a class="py-toggle" href="#" id="_compare_files-toggle" onclick="return toggle('_compare_files');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.dist.command.install_extensions-module.html#_compare_files">_compare_files</a><tt class="py-op">(</tt><tt class="py-param">a</tt><tt class="py-op">,</tt> <tt class="py-param">b</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_compare_files-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_compare_files-expanded"><a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">    <tt class="py-docstring">"""Compare the content of two files.</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-docstring">    'a' -- Filename of first file to be compared.</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"><tt class="py-docstring">    'b' -- Filename of second file to be compared.</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-docstring">    returns -- True if both files have the same content, False otherwise."""</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line">    <tt class="py-name">file_a</tt><tt class="py-op">,</tt> <tt class="py-name">file_b</tt> <tt class="py-op">=</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">a</tt><tt class="py-op">,</tt> <tt class="py-string">'r'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">b</tt><tt class="py-op">,</tt> <tt class="py-string">'r'</tt><tt class="py-op">)</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">line</tt> <tt class="py-keyword">in</tt> <tt class="py-name">file_a</tt><tt class="py-op">:</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">line</tt> <tt class="py-op">!=</tt> <tt class="py-name">file_b</tt><tt class="py-op">.</tt><tt class="py-name">readline</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">file_b</tt><tt class="py-op">.</tt><tt class="py-name">readline</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">True</tt> </tt>
+</div><a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"> </tt>
+<a name="install_extensions"></a><div id="install_extensions-def"><a name="L46"></a><tt class="py-lineno"> 46</tt> <a class="py-toggle" href="#" id="install_extensions-toggle" onclick="return toggle('install_extensions');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.dist.command.install_extensions.install_extensions-class.html">install_extensions</a><tt class="py-op">(</tt><tt class="py-base-class">install_lib</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="install_extensions-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="install_extensions-expanded"><a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">    <tt class="py-docstring">"""Install extension files."""</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">    <tt id="link-3" class="py-name" targets="Variable qm.dist.command.build_extensions.build_extensions.description=qm.dist.command.build_extensions.build_extensions-class.html#description,Variable qm.dist.command.install_extensions.install_extensions.description=qm.dist.command.install_extensions.install_extensions-class.html#description"><a title="qm.dist.command.build_extensions.build_extensions.description
+qm.dist.command.install_extensions.install_extensions.description" class="py-name" href="#" onclick="return doclink('link-3', 'description', 'link-3');">description</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"install qmtest extension classes."</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"> </tt>
+<a name="install_extensions.finalize_options"></a><div id="install_extensions.finalize_options-def"><a name="L52"></a><tt class="py-lineno"> 52</tt> <a class="py-toggle" href="#" id="install_extensions.finalize_options-toggle" onclick="return toggle('install_extensions.finalize_options');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.dist.command.install_extensions.install_extensions-class.html#finalize_options">finalize_options</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="install_extensions.finalize_options-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="install_extensions.finalize_options-expanded"><a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">:</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">            <tt class="py-name">i</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Module qm.dist.distribution=qm.dist.distribution-module.html"><a title="qm.dist.distribution" class="py-name" href="#" onclick="return doclink('link-4', 'distribution', 'link-4');">distribution</a></tt><tt class="py-op">.</tt><tt class="py-name">get_command_obj</tt><tt class="py-op">(</tt><tt class="py-string">'install'</tt><tt class="py-op">)</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">            <tt class="py-name">i</tt><tt class="py-op">.</tt><tt class="py-name">ensure_finalized</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">            <tt id="link-5" class="py-name" targets="Variable qm.prefix=qm-module.html#prefix,Variable qm.trace.Tracer.prefix=qm.trace.Tracer-class.html#prefix"><a title="qm.prefix
+qm.trace.Tracer.prefix" class="py-name" href="#" onclick="return doclink('link-5', 'prefix', 'link-5');">prefix</a></tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt><tt class="py-op">.</tt><tt class="py-name">root</tt> <tt class="py-keyword">or</tt> <tt class="py-name">i</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name"><a title="qm.prefix
+qm.trace.Tracer.prefix" class="py-name" href="#" onclick="return doclink('link-6', 'prefix', 'link-5');">prefix</a></tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt id="link-7" class="py-name"><a title="qm.prefix
+qm.trace.Tracer.prefix" class="py-name" href="#" onclick="return doclink('link-7', 'prefix', 'link-5');">prefix</a></tt><tt class="py-op">,</tt> <tt id="link-8" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-8', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Variable qm.config.extension_path=qm.config-module.html#extension_path"><a title="qm.config.extension_path" class="py-name" href="#" onclick="return doclink('link-9', 'extension_path', 'link-9');">extension_path</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line">        <tt class="py-name">install_lib</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Method qm.dist.command.build_extensions.build_extensions.finalize_options()=qm.dist.command.build_extensions.build_extensions-class.html#finalize_options,Method qm.dist.command.install_extensions.install_extensions.finalize_options()=qm.dist.command.install_extensions.install_extensions-class.html#finalize_options"><a title="qm.dist.command.build_extensions.build_extensions.finalize_options
+qm.dist.command.install_extensions.install_extensions.finalize_options" class="py-name" href="#" onclick="return doclink('link-10', 'finalize_options', 'link-10');">finalize_options</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line">        <tt class="py-name">b</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name"><a title="qm.dist.distribution" class="py-name" href="#" onclick="return doclink('link-11', 'distribution', 'link-4');">distribution</a></tt><tt class="py-op">.</tt><tt class="py-name">get_command_obj</tt><tt class="py-op">(</tt><tt class="py-string">'build_extensions'</tt><tt class="py-op">)</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">        <tt class="py-name">b</tt><tt class="py-op">.</tt><tt class="py-name">ensure_finalized</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">build_dir</tt> <tt class="py-op">=</tt> <tt class="py-name">b</tt><tt class="py-op">.</tt><tt class="py-name">build_dir</tt> </tt>
+</div><a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"> </tt>
+<a name="install_extensions.run"></a><div id="install_extensions.run-def"><a name="L66"></a><tt class="py-lineno"> 66</tt> <a class="py-toggle" href="#" id="install_extensions.run-toggle" onclick="return toggle('install_extensions.run');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.dist.command.install_extensions.install_extensions-class.html#run">run</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="install_extensions.run-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="install_extensions.run-expanded"><a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">        <tt class="py-comment"># Make sure we have built everything we need first</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">run_command</tt><tt class="py-op">(</tt><tt class="py-string">'build_extensions'</tt><tt class="py-op">)</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">isdir</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">mkpath</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">)</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">,</tt> <tt class="py-string">'classes.qmc'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">            <tt class="py-comment"># This is the first time extensions are installed there.</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">copy_tree</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">build_dir</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">)</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">            <tt class="py-comment"># Test that to-be-copied modules don't overwrite existing ones:</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">            <tt class="py-name">old_files</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">f</tt> <tt class="py-keyword">for</tt> <tt class="py-name">f</tt> <tt class="py-keyword">in</tt> <tt class="py-name">dircache</tt><tt class="py-op">.</tt><tt class="py-name">listdir</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">)</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">                         <tt class="py-keyword">if</tt> <tt class="py-name">f</tt><tt class="py-op">.</tt><tt class="py-name">endswith</tt><tt class="py-op">(</tt><tt class="py-string">'.py'</tt><tt class="py-op">)</tt><tt class="py-op">]</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">            <tt class="py-name">new_files</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">f</tt> <tt class="py-keyword">for</tt> <tt class="py-name">f</tt> <tt class="py-keyword">in</tt> <tt class="py-name">dircache</tt><tt class="py-op">.</tt><tt class="py-name">listdir</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">build_dir</tt><tt class="py-op">)</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">                         <tt class="py-keyword">if</tt> <tt class="py-name">f</tt><tt class="py-op">.</tt><tt class="py-name">endswith</tt><tt class="py-op">(</tt><tt class="py-string">'.py'</tt><tt class="py-op">)</tt> <tt class="py-keyword">and</tt> <tt class="py-name">f</tt> <tt class="py-op">!=</tt> <tt class="py-string">'__init__.py'</tt><tt class="py-op">]</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">            <tt class="py-name">overlap</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">f</tt> <tt class="py-keyword">in</tt> <tt class="py-name">new_files</tt><tt class="py-op">:</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">f</tt> <tt class="py-keyword">in</tt> <tt class="py-name">old_files</tt><tt class="py-op">:</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">                    <tt class="py-comment"># Don't complain if both files are identical.</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">                    <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt id="link-12" class="py-name" targets="Function qm.dist.command.install_extensions._compare_files()=qm.dist.command.install_extensions-module.html#_compare_files"><a title="qm.dist.command.install_extensions._compare_files" class="py-name" href="#" onclick="return doclink('link-12', '_compare_files', 'link-12');">_compare_files</a></tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">build_dir</tt><tt class="py-op">,</tt> <tt class="py-name">f</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">                                          <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">,</tt> <tt class="py-name">f</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">                        <tt class="py-name">overlap</tt><tt class="py-op">.</tt><tt id="link-13" class="py-name" targets="Method qm.user.Group.append()=qm.user.Group-class.html#append"><a title="qm.user.Group.append" class="py-name" href="#" onclick="return doclink('link-13', 'append', 'link-13');">append</a></tt><tt class="py-op">(</tt><tt class="py-name">f</tt><tt class="py-op">)</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">overlap</tt><tt class="py-op">:</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">                <tt class="py-keyword">print</tt> <tt class="py-string">"Error: The following extension files already exist:"</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">o</tt> <tt class="py-keyword">in</tt> <tt class="py-name">overlap</tt><tt class="py-op">:</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">                    <tt class="py-keyword">print</tt> <tt class="py-string">"       %s"</tt><tt class="py-op">%</tt><tt class="py-name">o</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">            <tt class="py-comment"># Copy all modules to the install directory.</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">f</tt> <tt class="py-keyword">in</tt> <tt class="py-name">new_files</tt><tt class="py-op">:</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">copy_file</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">build_dir</tt><tt class="py-op">,</tt> <tt class="py-name">f</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">                               <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">,</tt> <tt class="py-name">f</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">                               <tt class="py-name">preserve_mode</tt><tt class="py-op">=</tt><tt class="py-number">0</tt><tt class="py-op">)</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">             </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">            <tt class="py-comment"># Carefully merge the new extensions into an existing repository.</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">            <tt class="py-name">old_qmc</tt> <tt class="py-op">=</tt> <tt id="link-14" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-14', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-15" class="py-name"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-15', 'xmlutil', 'link-1');">xmlutil</a></tt><tt class="py-op">.</tt><tt class="py-name">load_xml_file</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">,</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">                                                            <tt class="py-string">'classes.qmc'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">            <tt class="py-name">old_root</tt> <tt class="py-op">=</tt> <tt class="py-name">old_qmc</tt><tt class="py-op">.</tt><tt class="py-name">documentElement</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">            <tt class="py-name">new_qmc</tt> <tt class="py-op">=</tt> <tt id="link-16" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-16', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-17" class="py-name"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-17', 'xmlutil', 'link-1');">xmlutil</a></tt><tt class="py-op">.</tt><tt class="py-name">load_xml_file</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">build_dir</tt><tt class="py-op">,</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">                                                            <tt class="py-string">'classes.qmc'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">            <tt class="py-name">new_root</tt> <tt class="py-op">=</tt> <tt class="py-name">new_qmc</tt><tt class="py-op">.</tt><tt class="py-name">documentElement</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line"> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">ext</tt> <tt class="py-keyword">in</tt> <tt class="py-name">new_root</tt><tt class="py-op">.</tt><tt class="py-name">getElementsByTagName</tt><tt class="py-op">(</tt><tt class="py-string">"class"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">                <tt class="py-comment"># If this entry already exists in the repository, skip it.</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">                <tt id="link-18" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_If.Else.name=qm.external.DocumentTemplate.DT_If.Else-class.html#name,Variable qm.external.DocumentTemplate.DT_If.If.name=qm.external.DocumentTemplate.DT_If.If-class.html#name,Variable qm.external.DocumentTemplate.DT_If.Unless.name=qm.external.DocumentTemplate.DT_If.Unless-class.html#name,Variable qm.external.DocumentTemplate.DT_In.InFactory.name=qm.external.DocumentTemplate.DT_In.InFactory-class.html#name,Variable qm.external.DocumentTemplate.DT_Let.Let.name=qm.external.DocumentTemplate.DT_Let.Let-class.html#name,Variable qm.external.DocumentTemplate.DT_Raise.Raise.name=qm.external.DocumentTemplate.DT_Raise.Raise-class.html#name,Variable qm.external.DocumentTemplate.DT_Return.ReturnTag.name=qm.external.DocumentTemplate.DT_Return.ReturnTag-class.html#name,Method qm.external.DocumentTemplate.DT_String.String.name()=qm.external.DocumentTemplate.DT_String.String-class.html#name,Variable qm.external.DocumentTemplate.DT_Try.Try.name=qm.external.DocumentTemplate.DT_Try.Try-class.html#name,Variable qm.external.DocumentTemplate.DT_Util.name=qm.external.DocumentTemplate.DT_Util-module.html#name,Variable qm.external.DocumentTemplate.DT_Var.Call.name=qm.external.DocumentTemplate.DT_Var.Call-class.html#name,Variable qm.external.DocumentTemplate.DT_Var.Comment.name=qm.external.DocumentTemplate.DT_Var.Comment-class.html#name,Variable qm.external.DocumentTemplate.DT_Var.Var.name=qm.external.DocumentTemplate.DT_Var.Var-class.html#name,Variable qm.external.DocumentTemplate.DT_With.With.name=qm.external.DocumentTemplate.DT_With.With-class.html#name,Variable qm.external.DocumentTemplate.pDocumentTemplate.name=qm.external.DocumentTemplate.pDocumentTemplate-module.html#name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-18', 'name', 'link-18');">name</a></tt> <tt class="py-op">=</tt> <tt class="py-name">ext</tt><tt class="py-op">.</tt><tt class="py-name">getAttribute</tt><tt class="py-op">(</tt><tt class="py-string">"name"</tt><tt class="py-op">)</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">                <tt class="py-name">entries</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">c</tt> <tt class="py-keyword">for</tt> <tt class="py-name">c</tt> <tt class="py-keyword">in</tt> <tt class="py-name">old_root</tt><tt class="py-op">.</tt><tt class="py-name">childNodes</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">                           <tt class="py-keyword">if</tt> <tt class="py-name">c</tt><tt class="py-op">.</tt><tt class="py-name">nodeType</tt> <tt class="py-op">==</tt> <tt class="py-name">xml</tt><tt class="py-op">.</tt><tt class="py-name">dom</tt><tt class="py-op">.</tt><tt class="py-name">Node</tt><tt class="py-op">.</tt><tt class="py-name">ELEMENT_NODE</tt> <tt class="py-keyword">and</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">                           <tt class="py-name">c</tt><tt class="py-op">.</tt><tt class="py-name">tagName</tt> <tt class="py-op">==</tt> <tt class="py-string">"class"</tt> <tt class="py-keyword">and</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">                           <tt class="py-name">c</tt><tt class="py-op">.</tt><tt class="py-name">getAttribute</tt><tt class="py-op">(</tt><tt class="py-string">"name"</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt id="link-19" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-19', 'name', 'link-18');">name</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">entries</tt><tt class="py-op">:</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">                    <tt class="py-name">old_root</tt><tt class="py-op">.</tt><tt class="py-name">appendChild</tt><tt class="py-op">(</tt><tt class="py-name">ext</tt><tt class="py-op">)</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">                    <tt class="py-name">old_root</tt><tt class="py-op">.</tt><tt class="py-name">appendChild</tt><tt class="py-op">(</tt><tt class="py-name">old_qmc</tt><tt class="py-op">.</tt><tt class="py-name">createTextNode</tt><tt class="py-op">(</tt><tt class="py-string">'\n'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">            <tt class="py-comment"># Write new repository file.</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">            <tt class="py-name">old_qmc</tt><tt class="py-op">.</tt><tt class="py-name">writexml</tt><tt class="py-op">(</tt><tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">,</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">                                               <tt class="py-string">'tmp-classes.qmc'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-string">'w'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">            <tt class="py-comment"># If that worked, update the original one.</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">            <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">rename</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">,</tt> <tt class="py-string">'tmp-classes.qmc'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">                      <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">install_dir</tt><tt class="py-op">,</tt> <tt class="py-string">'classes.qmc'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:47 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

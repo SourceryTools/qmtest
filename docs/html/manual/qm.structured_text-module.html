@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.structured_text</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        Module&nbsp;structured_text
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.structured_text-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module structured_text</h1><p class="nomargin-top"><span class="codelink"><a href="qm.structured_text-pysrc.html">source&nbsp;code</a></span></p>
+<p>Functions for parsing, processing, and formatting Python structured 
+  text.</p>
+  <p>See &quot;Structured Text Formatting 
+  Rules&quot;:http://www.python.org/sigs/doc-sig/stext.html for more 
+  information.</p>
+
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.structured_text.Formatter-class.html" class="summary-name">Formatter</a><br />
+      Interface for output formatters for the 'StructuredTextProcessor'.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.structured_text.TextFormatter-class.html" class="summary-name">TextFormatter</a><br />
+      Formatter for generating plain text from structured text.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.structured_text.HtmlFormatter-class.html" class="summary-name">HtmlFormatter</a><br />
+      Formatter for generating HTML from structured text.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.structured_text.StructuredTextProcessor-class.html" class="summary-name">StructuredTextProcessor</a><br />
+      Parser and formatter for Python structured text.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="escape_html_entities"></a><span class="summary-sig-name">escape_html_entities</span>(<span class="summary-sig-arg">text</span>)</span><br />
+      Return 'text' with special characters converted to HTML entities.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.structured_text-pysrc.html#escape_html_entities">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__format"></a><span class="summary-sig-name">__format</span>(<span class="summary-sig-arg">text</span>,
+        <span class="summary-sig-arg">formatter</span>)</span><br />
+      Process structured text 'text' with 'formatter'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.structured_text-pysrc.html#__format">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="to_html"></a><span class="summary-sig-name">to_html</span>(<span class="summary-sig-arg">structured_text</span>)</span><br />
+      Return 'structured_text' formatted as HTML.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.structured_text-pysrc.html#to_html">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.structured_text-module.html#to_text" class="summary-sig-name">to_text</a>(<span class="summary-sig-arg">structured_text</span>,
+        <span class="summary-sig-arg">width</span>=<span class="summary-sig-default">78</span>,
+        <span class="summary-sig-arg">indent</span>=<span class="summary-sig-default">0</span>)</span><br />
+      Return 'structured_text' formatted as plain text.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.structured_text-pysrc.html#to_text">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.structured_text-module.html#get_first" class="summary-sig-name">get_first</a>(<span class="summary-sig-arg">structured_text</span>)</span><br />
+      Return the first line of 'structured_text'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.structured_text-pysrc.html#get_first">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_rest"></a><span class="summary-sig-name">get_rest</span>(<span class="summary-sig-arg">structured_text</span>)</span><br />
+      Return the contents of 'structured_text' minus the first line.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.structured_text-pysrc.html#get_rest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.structured_text-module.html#get_paragraphs" class="summary-sig-name">get_paragraphs</a>(<span class="summary-sig-arg">structured_text</span>)</span><br />
+      Split 'structured_text' into paragraphs.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.structured_text-pysrc.html#get_paragraphs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.structured_text-module.html#get_first_paragraph" class="summary-sig-name">get_first_paragraph</a>(<span class="summary-sig-arg">structured_text</span>)</span><br />
+      Return the first paragraph of 'structured_text'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.structured_text-pysrc.html#get_first_paragraph">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__entity_char_replacement"></a><span class="summary-sig-name">__entity_char_replacement</span>(<span class="summary-sig-arg">match</span>,
+        <span class="summary-sig-arg">replacement_map</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">&quot;</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">&amp;quot;</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">&amp;</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">&amp;amp;</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">&lt;</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">&amp;lt;</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">&gt;</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">&amp;gt;</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">\xa0</code><code class="variable-quote">'</code><code class="variable-ellipsis">...</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.structured_text-pysrc.html#__entity_char_replacement">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.structured_text-module.html#html_help_text" class="summary-name">html_help_text</a> = <code title="'''
+&lt;h4&gt;Structured Text&lt;/h4&gt;
+
+&lt;p&gt;Structured text is a simple set of conventions for formatting
+ordinary text.  Usually, you can simply type ordinary text where QM
+expects structured text; the resulting output will be line-wrapped, wi\
+th
+paragraph breaks indicated by blank lines.&lt;/p&gt;
+..."><code class="variable-quote">'</code><code class="variable-string">\n&lt;h4&gt;Structured Text&lt;/h4&gt;\n\n&lt;p&gt;Structured </code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.structured_text-module.html#__entity_char_regex" class="summary-name" onclick="show_private();">__entity_char_regex</a> = <code title="re.compile(r'[\xe5&gt;\xa5\xf2\xd1\xdd\xc3\xe6\xe4\xc2\xf5&lt;\xce\xc9\xd3\x\
+f8\xb4\xfa\xb8\xa8\xac\xc6\xbf\xab\xcc\xae\xb5\xad\xa0\xc4\xa6\xd5\xdf\
+\xe0\xd4\xe8\xa1\xbd\xaa\xbc\xdc\xf1\xd8\xde\xff\xea\xc5\xbe\xd9\xc0\x\
+b9\xf0\xef\xc8\xf7\xd6\xec\xd0\xb1\xb2\xb3\xc1\xa2\xcd\xca\xeb\xb6\xfc\
+\xee\xa9\xcf\xe7\xdb\xf4\xb0\xa3\xa4\xfb\xf9\xd7\xe3\xed\xcb\xbb&quot;\xda\\
+xe9\xfd\xe2\xaf\xc7\xba\xe1\xb7&amp;\xfe\xf6\xd2\xa7\xf3]')">re.compile(r'<code class="re-group">[</code>\xe5&gt;\xa5\xf2\xd1\xdd\xc3\<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__paragraph_regexp"></a><span class="summary-name">__paragraph_regexp</span> = <code title="re.compile(r'(?:\n *)+\n')">re.compile(r'<code class="re-group">(?:</code>\n <code class="re-op">*</code><code class="re-group">)</code><code class="re-op">+</code>\n')</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.structured_text-module.html#_verbatim_regexp" class="summary-name" onclick="show_private();">_verbatim_regexp</a> = <code title="re.compile(r'(?s)(\'\'\'.*\'\'\')(?:(?:\n *)+\n|\n?$)')">re.compile(r'<code class="re-flags">(?s)</code><code class="re-group">(</code>\'\'\'.<code class="re-op">*</code>\'\'\'<code class="re-group">)</code><code class="re-group">(?:</code><code class="re-group">(?:</code>\n <code class="re-op">*</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'qm'"><code class="variable-quote">'</code><code class="variable-string">qm</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="character"></a><span class="summary-name">character</span> = <code title="'\xf3'"><code class="variable-quote">'</code><code class="variable-string">\xf3</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="entity"></a><span class="summary-name">entity</span> = <code title="'oacute'"><code class="variable-quote">'</code><code class="variable-string">oacute</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="to_text"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">to_text</span>(<span class="sig-arg">structured_text</span>,
+        <span class="sig-arg">width</span>=<span class="sig-default">78</span>,
+        <span class="sig-arg">indent</span>=<span class="sig-default">0</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.structured_text-pysrc.html#to_text">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return 'structured_text' formatted as plain text.</p>
+  <p>'width' -- The width of the text (including the indentation).</p>
+  <p>'indent' -- The width of the block indentation of the formatted 
+  output.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_first"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_first</span>(<span class="sig-arg">structured_text</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.structured_text-pysrc.html#get_first">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the first line of 'structured_text'.</p>
+  <p>By convention, the first line of a structured text description is a 
+  short summary.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_paragraphs"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_paragraphs</span>(<span class="sig-arg">structured_text</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.structured_text-pysrc.html#get_paragraphs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Split 'structured_text' into paragraphs.</p>
+  <p>'structured_text' -- A string consisting of structured text.</p>
+  <p>returns -- A sequence of pagraphs of structured text.  Each element in
+  the sequence corresponds to a successive pagraph in the 
+  'structured_text'.  If 'structured_text' is the empty string, the 
+  sequence returned will consist of a single paragraph, itself empty.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_first_paragraph"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_first_paragraph</span>(<span class="sig-arg">structured_text</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.structured_text-pysrc.html#get_first_paragraph">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the first paragraph of 'structured_text'.</p>
+  <p>'structured_text' -- A string consisting of structured text.</p>
+  <p>returns -- A string of structured text that is the first paragraph of 
+  the 'structured_text'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="html_help_text"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">html_help_text</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-quote">'''</code><code class="variable-string"></code>
+<code class="variable-string">&lt;h4&gt;Structured Text&lt;/h4&gt;</code>
+<code class="variable-string"></code>
+<code class="variable-string">&lt;p&gt;Structured text is a simple set of conventions for formatting</code>
+<code class="variable-string">ordinary text.  Usually, you can simply type ordinary text where QM</code>
+<code class="variable-string">expects structured text; the resulting output will be line-wrapped, wi</code><span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+<code class="variable-string">th</code>
+<code class="variable-string">paragraph breaks indicated by blank lines.&lt;/p&gt;</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__entity_char_regex"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">__entity_char_regex</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'<code class="re-group">[</code>\xe5&gt;\xa5\xf2\xd1\xdd\xc3\xe6\xe4\xc2\xf5&lt;\xce\xc9\xd3\x<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+f8\xb4\xfa\xb8\xa8\xac\xc6\xbf\xab\xcc\xae\xb5\xad\xa0\xc4\xa6\xd5\xdf<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+\xe0\xd4\xe8\xa1\xbd\xaa\xbc\xdc\xf1\xd8\xde\xff\xea\xc5\xbe\xd9\xc0\x<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+b9\xf0\xef\xc8\xf7\xd6\xec\xd0\xb1\xb2\xb3\xc1\xa2\xcd\xca\xeb\xb6\xfc<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+\xee\xa9\xcf\xe7\xdb\xf4\xb0\xa3\xa4\xfb\xf9\xd7\xe3\xed\xcb\xbb&quot;\xda\<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+xe9\xfd\xe2\xaf\xc7\xba\xe1\xb7&amp;\xfe\xf6\xd2\xa7\xf3<code class="re-group">]</code>')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_verbatim_regexp"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">_verbatim_regexp</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r'<code class="re-flags">(?s)</code><code class="re-group">(</code>\'\'\'.<code class="re-op">*</code>\'\'\'<code class="re-group">)</code><code class="re-group">(?:</code><code class="re-group">(?:</code>\n <code class="re-op">*</code><code class="re-group">)</code><code class="re-op">+</code>\n<code class="re-op">|</code>\n<code class="re-op">?</code>$<code class="re-group">)</code>')
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

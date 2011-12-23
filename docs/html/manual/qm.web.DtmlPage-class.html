@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.web.DtmlPage</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.web-module.html">Module&nbsp;web</a> ::
+        Class&nbsp;DtmlPage
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.web.DtmlPage-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class DtmlPage</h1><p class="nomargin-top"><span class="codelink"><a href="qm.web-pysrc.html#DtmlPage">source&nbsp;code</a></span></p>
+<dl><dt>Known Subclasses:</dt>
+<dd>
+      <ul class="subclass-list">
+<li><a href="qm.fields.UploadAttachmentPage-class.html">fields.UploadAttachmentPage</a></li>  </ul>
+</dd></dl>
+
+<hr />
+<p>Base class for classes to generate web pages from DTML.</p>
+  <p>The 'DtmlPage' object is used as the variable context when generating 
+  HTML from DTML.  Attributes and methods are available as variables in 
+  DTML expressions.</p>
+  <p>This base class contains common variables and functions that are 
+  available when generating all DTML files.</p>
+  <p>To generate HTML from a DTML template, instantiate a 'DtmlPage' 
+  object, passing the name of the DTML template file to the initializer 
+  function (or create a subclass which does this automatically).  
+  Additional named attributes specified in the initializer functions are 
+  set as attributes of the 'DtmlPage' object, and thus available as 
+  variables in DTML Python expressions.</p>
+  <p>To generate HTML from the template, use the '__call__' method, passing
+  a 'WebRequest' object representing the request in response to which the 
+  HTML page is being generated.  The request set as the 'request' attribute
+  of the 'DtmlPage' object.  The 'WebRequest' object may be omitted, if the
+  generated HTML page is generic and requires no information specific to 
+  the request or web session; in this case, an empty request object is 
+  used.</p>
+  <p>This class also has an attribute, 'default_class', which is the 
+  default 'DtmlPage' subclass to use when generating HTML.  By default, it 
+  is initialized to 'DtmlPage' itself, but applications may derive a 
+  'DtmlPage' subclass and point 'default_class' to it to obtain customized 
+  versions of standard pages.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.DtmlPage-class.html" class="summary-name">default_class</a><br />
+      Base class for classes to generate web pages from DTML.
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.DtmlPage-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">dtml_template</span>,
+        <span class="summary-sig-arg">**attributes</span>)</span><br />
+      Create a new page.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.DtmlPage-class.html#__call__" class="summary-sig-name">__call__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Generate an HTML page from the DTML template.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.__call__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetProgramName"></a><span class="summary-sig-name">GetProgramName</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the name of this application program.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GetProgramName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetMainPageUrl"></a><span class="summary-sig-name">GetMainPageUrl</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the URL for the main page.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GetMainPageUrl">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.DtmlPage-class.html#WebRequest" class="summary-sig-name">WebRequest</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">script_url</span>,
+        <span class="summary-sig-arg">**fields</span>)</span><br />
+      Convenience constructor for 'WebRequest' objects.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.WebRequest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GenerateXMLHeader"></a><span class="summary-sig-name">GenerateXMLHeader</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the XML header for the document.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GenerateXMLHeader">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.DtmlPage-class.html#GenerateHtmlHeader" class="summary-sig-name">GenerateHtmlHeader</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">description</span>,
+        <span class="summary-sig-arg">headers</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span><br />
+      Return the header for an HTML document.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GenerateHtmlHeader">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GenerateStartBody"></a><span class="summary-sig-name">GenerateStartBody</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">decorations</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Return markup to start the body of the HTML document.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GenerateStartBody">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GenerateEndBody"></a><span class="summary-sig-name">GenerateEndBody</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">decorations</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Return markup to end the body of the HTML document.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GenerateEndBody">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.DtmlPage-class.html#GenerateStartScript" class="summary-sig-name">GenerateStartScript</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">uri</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Return the HTML for beginning a script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GenerateStartScript">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.DtmlPage-class.html#GenerateEndScript" class="summary-sig-name">GenerateEndScript</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the HTML for ending  an embedded script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GenerateEndScript">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="MakeLoginForm"></a><span class="summary-sig-name">MakeLoginForm</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">redirect_request</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">default_user_id</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.MakeLoginForm">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.DtmlPage-class.html#MakeButton" class="summary-sig-name">MakeButton</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">title</span>,
+        <span class="summary-sig-arg">script_url</span>,
+        <span class="summary-sig-arg">css_class</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">**fields</span>)</span><br />
+      Generate HTML for a button to load a URL.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.MakeButton">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="MakeImageUrl"></a><span class="summary-sig-name">MakeImageUrl</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">image</span>)</span><br />
+      Generate a URL for an image.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.MakeImageUrl">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.DtmlPage-class.html#MakeSpacer" class="summary-sig-name">MakeSpacer</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">width</span>=<span class="summary-sig-default">1</span>,
+        <span class="summary-sig-arg">height</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Generate a spacer.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.MakeSpacer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="MakeRule"></a><span class="summary-sig-name">MakeRule</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">color</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">black</code><code class="variable-quote">'</code></span>)</span><br />
+      Generate a plain horizontal rule.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.MakeRule">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.DtmlPage-class.html#UserIsInGroup" class="summary-sig-name">UserIsInGroup</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">group_id</span>)</span><br />
+      Return true if the user is a member of group 'group_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.UserIsInGroup">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="html_stylesheet"></a><span class="summary-name">html_stylesheet</span> = <code title="'/stylesheets/qm.css'"><code class="variable-quote">'</code><code class="variable-string">/stylesheets/qm.css</code><code class="variable-quote">'</code></code><br />
+      The URL for the cascading stylesheet to use with generated pages.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="common_javascript"></a><span class="summary-name">common_javascript</span> = <code title="'/common.js'"><code class="variable-quote">'</code><code class="variable-string">/common.js</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="qm_bug_system_url"></a><span class="summary-name">qm_bug_system_url</span> = <code title="'mailto:qmtest@codesourcery.com'"><code class="variable-quote">'</code><code class="variable-string">mailto:qmtest@codesourcery.com</code><code class="variable-quote">'</code></code><br />
+      The public URL for the bug tracking system for the QM tools.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web-module.html" class="summary-name">web</a><br />
+      Common code for implementing web user interfaces.
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">dtml_template</span>,
+        <span class="sig-arg">**attributes</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create a new page.</p>
+  <p>'dtml_template' -- The file name of the DTML template from which the 
+  page is generated.  The file is assumed to reside in the 'dtml' 
+  subdirectory of the configured share directory.</p>
+  <p>'**attributes' -- Additional attributes to include in the variable 
+  context.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__call__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__call__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Call operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.__call__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate an HTML page from the DTML template.</p>
+  <p>'request' -- A 'WebRequest' object containing a page request in 
+  response to which an HTML page is being generated.  Session information 
+  from the request may be used when generating the page.  The request may 
+  be 'None', if none is available.</p>
+  <p>returns -- The generated HTML text.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="WebRequest"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">WebRequest</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">script_url</span>,
+        <span class="sig-arg">**fields</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.WebRequest">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Convenience constructor for 'WebRequest' objects.</p>
+  <p>Constructs a 'WebRequest' using the specified 'script_url' and 
+  'fields', using the request associated with this object as the base 
+  request.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GenerateHtmlHeader"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GenerateHtmlHeader</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">description</span>,
+        <span class="sig-arg">headers</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GenerateHtmlHeader">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the header for an HTML document.</p>
+  <p>'description' -- A string describing this page.</p>
+  <p>'headers' -- Any additional HTML headers to place in the 
+  '&lt;head&gt;' section of the HTML document.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GenerateStartScript"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GenerateStartScript</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">uri</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GenerateStartScript">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the HTML for beginning a script.</p>
+  <p>'uri' -- If not None, a string giving the URI of the script.</p>
+  <p>returns -- A string consisting of HTML for beginning an embedded 
+  script.</p>
+  <p>'GenerateEndScript' must be called later to terminate the script.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GenerateEndScript"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GenerateEndScript</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.GenerateEndScript">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the HTML for ending  an embedded script.</p>
+  <p>returns -- A string consisting of HTML for ending an embedded 
+  script.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="MakeButton"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MakeButton</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">title</span>,
+        <span class="sig-arg">script_url</span>,
+        <span class="sig-arg">css_class</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">**fields</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.MakeButton">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate HTML for a button to load a URL.</p>
+  <p>'title' -- The button title.</p>
+  <p>'script_url' -- The URL of the script.</p>
+  <p>'fields' -- Additional fields to add to the script request.</p>
+  <p>'css_class' -- The CSS class to use for the button, or 'None'.</p>
+  <p>The resulting HTML must be included in a form.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="MakeSpacer"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MakeSpacer</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">width</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">height</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.MakeSpacer">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate a spacer.</p>
+  <p>'width' -- The width of the spacer, in pixels.</p>
+  <p>'height' -- The height of the spacer, in pixels.</p>
+  <p>returns -- A transparent image of the requested size.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="UserIsInGroup"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">UserIsInGroup</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">group_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#DtmlPage.UserIsInGroup">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return true if the user is a member of group 'group_id'.</p>
+  <p>Checks the group membership of the user associated with the current 
+  session.</p>
+  <p>If there is no group named 'group_id' in the user database, returns a 
+  false result.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="web"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">web</h3>
+  <p>Common code for implementing web user interfaces.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><a href="qm.web-module.html">qm.web</a></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:42 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

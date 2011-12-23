@@ -1,0 +1,61 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>2. Test Results</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="concepts.html" title="Chapter 1. QMTest Concepts"><link rel="prev" href="concepts.html" title="Chapter 1. QMTest Concepts"><link rel="next" href="concepts-test-suite.html" title="3. Test Suites"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2. Test Results</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="concepts.html">Prev</a> </td><th width="60%" align="center">Chapter 1. <span class="application">QMTest</span> Concepts</th><td width="20%" align="right"> <a accesskey="n" href="concepts-test-suite.html">Next</a></td></tr></table><hr></div><div class="section" title="2. Test Results"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="concepts-test-results"></a>2. Test Results</h2></div></div></div><p>A <em class="firstterm"><a name="def-result"></a>result</em> is an <em class="firstterm"><a name="def-outcome"></a>outcome</em> together with some
+    <em class="firstterm">annotations</em>. The outcome indicates whether the test
+    passed or failed. The annotations give additional information about the
+    result, such as the manner in which the test failed, the output the test
+    produced, or the amount of time it took to run the test.</p><div class="section" title="2.1. Outcomes"><div class="titlepage"><div><div><h3 class="title"><a name="concepts-outcomes"></a>2.1. Outcomes</h3></div></div></div><p>The outcome of a test indicates whether it passed or failed, or
+      whether some exceptional event occurred. There are four test outcomes:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p><span class="symbol">PASS</span>: The test succeeded.</p></li><li class="listitem"><p><span class="symbol">FAIL</span>: The test failed.</p></li><li class="listitem"><p><span class="symbol">ERROR</span>: A problem occurred in the test
+          execution environment, rather than in the tested system. For
+          example, this outcome is used when the test class attempted to run
+          an executable in order to test it, but could not because the
+          system call to create a new process failed.</p><p>This outcome may also indicate a defect in
+          <span class="application">QMTest</span> or in the test class.</p></li><li class="listitem"><p><span class="symbol">UNTESTED</span>: <span class="application">QMTest</span>
+          did not attempt to execute the test. For example, this outcome is
+          used when <span class="application">QMTest</span> determines that a
+          prerequisite test failed.</p></li></ul></div><p>Thus, running <span class="application">QMTest</span> with the two
+      previously defined tests will result in the following output:</p><pre class="screen">
+<code class="prompt">&gt; </code><strong class="userinput"><code>qmtest run</code></strong>
+...
+--- TEST RESULTS -------------------------------------------------------------
+
+  python_fail                                   : FAIL
+    Expression evaluates to false.
+
+  python_pass                                   : PASS
+
+...
+--- STATISTICS ---------------------------------------------------------------
+
+       2        tests total
+       1 ( 50%) tests FAIL
+       1 ( 50%) tests PASS
+      </pre><p> In addition, the results are stored in a results file 
+        (<code class="filename">results.qmr</code> by default).</p></div><div class="section" title="2.2. Annotations"><div class="titlepage"><div><div><h3 class="title"><a name="concepts-annotations"></a>2.2. Annotations</h3></div></div></div><p>An annotation is a key/value pair. Both the keys and values are
+      strings. The value is HTML. When a test (or resource) runs it may add
+      annotations to the result. These annotations are displayed by
+      <span class="application">QMTest</span> and preserved in the results file. If
+      you write your own test class, you can use annotations to store
+      information that will make your test class more informative.</p></div><div class="section" title="2.3. Expected Outcomes"><div class="titlepage"><div><div><h3 class="title"><a name="concepts-expected-outcomes"></a>2.3. Expected Outcomes</h3></div></div></div><p>The easiest way to create expectations is to tell
+      <span class="application">QMTest</span> that you expect future results to be
+      the same as the results you just obtained. Thus, <span class="application">QMTest</span>
+      accepts result files obtained from prior test runs as expectations.</p><p>Thus, rerunning <span class="application">QMTest</span>, but using
+      <code class="filename">results.qmr</code> as expectations, the test results are 
+      displayed differently:</p><pre class="screen"><code class="prompt">&gt; </code><strong class="userinput"><code>qmtest run -O results.qmr</code></strong>
+...
+--- TEST RESULTS -------------------------------------------------------------
+
+  python_fail                                   : XFAIL
+    Expression evaluates to false.
+
+  python_pass                                   : PASS
+
+...
+--- TESTS WITH UNEXPECTED OUTCOMES -------------------------------------------
+
+  None.
+
+
+--- STATISTICS ---------------------------------------------------------------
+
+       2 (100%) tests as expected
+
+    </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="concepts.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="concepts.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="concepts-test-suite.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 1. <span class="application">QMTest</span> Concepts </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3. Test Suites</td></tr></table></div></body></html>

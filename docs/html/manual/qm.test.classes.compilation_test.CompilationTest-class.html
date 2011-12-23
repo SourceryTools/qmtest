@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.classes.compilation_test.CompilationTest</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.classes-module.html">Package&nbsp;classes</a> ::
+        <a href="qm.test.classes.compilation_test-module.html">Module&nbsp;compilation_test</a> ::
+        Class&nbsp;CompilationTest
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.classes.compilation_test.CompilationTest-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class CompilationTest</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+         object --+                
+                  |                
+<a href="qm.extension.Extension-class.html">extension.Extension</a> --+            
+                      |            
+      <a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a> --+        
+                          |        
+                  test.Test --+    
+                              |    
+ compiler_test.CompilerBase --+    
+                              |    
+     compiler_test.CompilerTest --+
+                                  |
+                                 <strong class="uidshort">CompilationTest</strong>
+</pre>
+
+<hr />
+<p>A CompilationTest compiles and optionally runs an executable. 
+  CompilationTest allows simple cross-testing. To run the executable on 
+  anything other than localhost, specify a Host descriptor by means of the 
+  context variable 'CompilationTest.target'.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>test.Test</code></b>:
+      <code><a href="qm.test.test.Test.OutcomeField-class.html">OutcomeField</a></code>,
+      <code><a href="qm.test.test.Test.TestField-class.html">TestField</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b>:
+      <code><a href="qm.test.runnable.Runnable.ResourceField-class.html">ResourceField</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension.Type-class.html">Type</a></code>,
+      <code><a href="qm.extension.Extension.Type-class.html">__metaclass__</a></code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.compilation_test.CompilationTest-class.html#Run" class="summary-sig-name">Run</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">context</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Run the test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest.Run">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.compilation_test.CompilationTest-class.html#_GetCompiler" class="summary-sig-name" onclick="show_private();">_GetCompiler</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      The name of the compiler executable is taken from the context 
+      variable 'CompilationTest.compiler_path'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest._GetCompiler">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.compilation_test.CompilationTest-class.html#_GetCompilationSteps" class="summary-sig-name" onclick="show_private();">_GetCompilationSteps</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Return the compilation steps for this test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest._GetCompilationSteps">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.compilation_test.CompilationTest-class.html#_IsExecutionRequired" class="summary-sig-name" onclick="show_private();">_IsExecutionRequired</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns true if the generated executable should be run.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest._IsExecutionRequired">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.compilation_test.CompilationTest-class.html#_GetTarget" class="summary-sig-name" onclick="show_private();">_GetTarget</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Returns a target for the executable to be run on.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest._GetTarget">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.compilation_test.CompilationTest-class.html#_CheckOutput" class="summary-sig-name" onclick="show_private();">_CheckOutput</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">context</span>,
+        <span class="summary-sig-arg">result</span>,
+        <span class="summary-sig-arg">prefix</span>,
+        <span class="summary-sig-arg">output</span>,
+        <span class="summary-sig-arg">diagnostics</span>)</span><br />
+      Check that the 'output' contains appropriate diagnostics.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest._CheckOutput">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>compiler_test.CompilerTest</code></b> (private):
+      <code>_CheckExecutableOutput</code>,
+      <code>_DiagnosticsToString</code>,
+      <code>_GetAnnotationPrefix</code>,
+      <code>_GetEnvironment</code>,
+      <code>_GetExecutableArguments</code>,
+      <code>_GetLibraryDirectories</code>,
+      <code>_IsDiagnosticExpected</code>,
+      <code>_MustExecutableExitSuccessfully</code>,
+      <code>_RunExecutable</code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>test.Test</code></b>:
+      <code>GetTargetGroup</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b>:
+      <code><a href="qm.test.runnable.Runnable-class.html#GetAttachments">GetAttachments</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#GetDatabase">GetDatabase</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#GetId">GetId</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#__init__">__init__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension-class.html#GetClassName">GetClassName</a></code>,
+      <code><a href="qm.extension.Extension-class.html#GetExplicitArguments">GetExplicitArguments</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomDocument">MakeDomDocument</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomElement">MakeDomElement</a></code>,
+      <code><a href="qm.extension.Extension-class.html#Write">Write</a></code>,
+      <code><a href="qm.extension.Extension-class.html#__getattr__">__getattr__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>compiler_test.CompilerBase</code></b> (private):
+      <code>_GetDirectory</code>,
+      <code>_GetObjectFileName</code>,
+      <code>_MakeDirectory</code>,
+      <code>_RemoveDirectory</code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.compilation_test.CompilationTest-class.html#options" class="summary-name">options</a> = <code title="SetField(TextField(description= &quot;&quot;&quot;Test-specific options to pass to th\
+e compiler.&quot;&quot;&quot;))">SetField(TextField(description= &quot;&quot;&quot;Test-specific opt<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.compilation_test.CompilationTest-class.html#ldflags" class="summary-name">ldflags</a> = <code title="SetField(TextField(description= &quot;&quot;&quot;Test-specific link flags to pass to\
+ the compiler.&quot;&quot;&quot;))">SetField(TextField(description= &quot;&quot;&quot;Test-specific lin<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.compilation_test.CompilationTest-class.html#source_files" class="summary-name">source_files</a> = <code title="SetField(TextField(description= &quot;Source files to be compiled.&quot;))">SetField(TextField(description= &quot;Source files t<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.compilation_test.CompilationTest-class.html#executable" class="summary-name">executable</a> = <code title="TextField(description= &quot;The name of the executable to be compiled.&quot;)">TextField(description= &quot;The name of the executabl<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.compilation_test.CompilationTest-class.html#execute" class="summary-name">execute</a> = <code title="BooleanField(default_value= True, description= &quot;Whether or not to run \
+the compiled executable.&quot;)">BooleanField(default_value= True, description= &quot;Whet<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>compiler_test.CompilerTest</code></b> (private):
+      <code>_ignored_diagnostic_regexps</code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>test.Test</code></b>:
+      <code>PREREQUISITES_FIELD_ID</code>,
+      <code>arguments</code>,
+      <code>kind</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b>:
+      <code><a href="qm.test.runnable.Runnable-class.html#EXTRA_DATABASE">EXTRA_DATABASE</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#EXTRA_ID">EXTRA_ID</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#RESOURCE_FIELD_ID">RESOURCE_FIELD_ID</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#resources">resources</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b> (private):
+      <code><a href="qm.test.runnable.Runnable-class.html#_argument_dictionary" onclick="show_private();">_argument_dictionary</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#_argument_list" onclick="show_private();">_argument_list</a></code>
+      </p></div>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b> (private):
+      <code><a href="qm.extension.Extension-class.html#_allow_arg_names_matching_class_vars" onclick="show_private();">_allow_arg_names_matching_class_vars</a></code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="Run"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Run</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">context</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest.Run">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run the test.</p>
+  <p>'context' -- A 'Context' giving run-time parameters to the test.</p>
+  <p>'result' -- A 'Result' object.  The outcome will be 'Result.PASS' when
+  this method is called.  The 'result' may be modified by this method to 
+  indicate outcomes other than 'Result.PASS' or to add annotations.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.test.Test-class.html#Run">test.Test.Run</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_GetCompiler"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_GetCompiler</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest._GetCompiler">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>The name of the compiler executable is taken from the context variable
+  'CompilationTest.compiler_path'.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.classes.compiler_test.CompilerTest-class.html#_GetCompiler">compiler_test.CompilerTest._GetCompiler</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_GetCompilationSteps"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_GetCompilationSteps</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest._GetCompilationSteps">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the compilation steps for this test.</p>
+  <p>'context' -- The 'Context' in which this test is being executed.</p>
+  <p>returns -- A sequence of 'CompilationStep' objects.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.classes.compiler_test.CompilerTest-class.html#_GetCompilationSteps">compiler_test.CompilerTest._GetCompilationSteps</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_IsExecutionRequired"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_IsExecutionRequired</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest._IsExecutionRequired">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns true if the generated executable should be run.</p>
+  <p>returns -- True if the generated executable should be run.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.classes.compiler_test.CompilerTest-class.html#_IsExecutionRequired">compiler_test.CompilerTest._IsExecutionRequired</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_GetTarget"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_GetTarget</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest._GetTarget">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns a target for the executable to be run on.</p>
+  <p>'context' -- The Context in which this test is being executed.</p>
+  <p>returns -- A Host to run the executable on.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.classes.compiler_test.CompilerTest-class.html#_GetTarget">compiler_test.CompilerTest._GetTarget</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_CheckOutput"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_CheckOutput</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">context</span>,
+        <span class="sig-arg">result</span>,
+        <span class="sig-arg">prefix</span>,
+        <span class="sig-arg">output</span>,
+        <span class="sig-arg">diagnostics</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.compilation_test-pysrc.html#CompilationTest._CheckOutput">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Check that the 'output' contains appropriate diagnostics.</p>
+  <p>'context' -- The 'Context' for the test that is being executed.</p>
+  <p>'result' -- The 'Result' of the test.</p>
+  <p>'prefix' -- A string giving the prefix for any annotations to be added
+  to the 'result'.</p>
+  <p>'output' -- A string giving the output of the compiler.</p>
+  <p>'diagnostics' -- The diagnostics that are expected for the 
+  compilation.</p>
+  <p>returns -- True if there were no errors so severe as to prevent 
+  execution of the test.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.classes.compiler_test.CompilerTest-class.html#_CheckOutput">compiler_test.CompilerTest._CheckOutput</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="options"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">options</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+SetField(TextField(description= &quot;&quot;&quot;Test-specific options to pass to th<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+e compiler.&quot;&quot;&quot;))
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ldflags"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ldflags</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+SetField(TextField(description= &quot;&quot;&quot;Test-specific link flags to pass to<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ the compiler.&quot;&quot;&quot;))
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="source_files"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">source_files</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+SetField(TextField(description= &quot;Source files to be compiled.&quot;))
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="executable"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">executable</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+TextField(description= &quot;The name of the executable to be compiled.&quot;)
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="execute"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">execute</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+BooleanField(default_value= True, description= &quot;Whether or not to run <span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+the compiled executable.&quot;)
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

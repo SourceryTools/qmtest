@@ -1,0 +1,1291 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.external.DocumentTemplate.DT_Util</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.external-module.html">Package&nbsp;external</a> ::
+        <a href="qm.external.DocumentTemplate-module.html">Package&nbsp;DocumentTemplate</a> ::
+        Module&nbsp;DT_Util
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.external.DocumentTemplate.DT_Util-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.external.DocumentTemplate.DT_Util-module.html">Module qm.external.DocumentTemplate.DT_Util</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">##############################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2002 Zope Corporation and Contributors. All Rights Reserved.</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"># This software is subject to the provisions of the Zope Public License,</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment"># Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment"># THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment"># WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment"># WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment"># FOR A PARTICULAR PURPOSE</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment">##############################################################################</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-docstring">"""DTML Utilities</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-docstring">$Id: DT_Util.py 1069 2008-11-13 21:55:43Z stefan $"""</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">re</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-0" class="py-name" targets="Module qm.external.DocumentTemplate.VSEval=qm.external.DocumentTemplate.VSEval-module.html"><a title="qm.external.DocumentTemplate.VSEval" class="py-name" href="#" onclick="return doclink('link-0', 'VSEval', 'link-0');">VSEval</a></tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt id="link-1" class="py-name" targets="Class str=str-class.html"><a title="str" class="py-name" href="#" onclick="return doclink('link-1', 'str', 'link-1');">str</a></tt><tt class="py-op">=</tt><tt class="py-name">__builtins__</tt><tt class="py-op">[</tt><tt class="py-string">'str'</tt><tt class="py-op">]</tt> <tt class="py-comment"># Waaaaa, waaaaaaaa needed for pickling waaaaa</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt id="link-2" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_Util.ParseError=qm.external.DocumentTemplate.DT_Util-module.html#ParseError,Variable qm.external.DocumentTemplate.DocumentTemplate.ParseError=qm.external.DocumentTemplate.DocumentTemplate-module.html#ParseError,Variable qm.external.DocumentTemplate.gparse.ParseError=qm.external.DocumentTemplate.gparse-module.html#ParseError"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-2', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">=</tt><tt class="py-string">'Document Template Parse Error'</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt id="link-3" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_Util.ValidationError=qm.external.DocumentTemplate.DT_Util-module.html#ValidationError"><a title="qm.external.DocumentTemplate.DT_Util.ValidationError" class="py-name" href="#" onclick="return doclink('link-3', 'ValidationError', 'link-3');">ValidationError</a></tt><tt class="py-op">=</tt><tt class="py-string">'Unauthorized'</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"> </tt>
+<a name="html_quote"></a><div id="html_quote-def"><a name="L26"></a><tt class="py-lineno"> 26</tt> <a class="py-toggle" href="#" id="html_quote-toggle" onclick="return toggle('html_quote');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#html_quote">html_quote</a><tt class="py-op">(</tt><tt class="py-param">v</tt><tt class="py-op">,</tt> <tt class="py-param">name</tt><tt class="py-op">=</tt><tt class="py-string">'(Unknown name)'</tt><tt class="py-op">,</tt> <tt class="py-param">md</tt><tt class="py-op">=</tt><tt class="py-op">{</tt><tt class="py-op">}</tt><tt class="py-op">,</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line">               <tt class="py-param">character_entities</tt><tt class="py-op">=</tt><tt class="py-op">(</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line">                       <tt class="py-op">(</tt><tt class="py-op">(</tt><tt class="py-string">'&amp;'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt>    <tt class="py-string">'&amp;amp;'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">                       <tt class="py-op">(</tt><tt class="py-op">(</tt><tt class="py-string">'&lt;'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt>    <tt class="py-string">'&amp;lt;'</tt> <tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line">                       <tt class="py-op">(</tt><tt class="py-op">(</tt><tt class="py-string">'&gt;'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt>    <tt class="py-string">'&amp;gt;'</tt> <tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line">                       <tt class="py-op">(</tt><tt class="py-op">(</tt><tt class="py-string">'"'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt>    <tt class="py-string">'&amp;quot;'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-comment">#"</tt> </tt>
+</div><a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line">        <tt class="py-name">text</tt><tt class="py-op">=</tt><tt id="link-4" class="py-name"><a title="str" class="py-name" href="#" onclick="return doclink('link-4', 'str', 'link-1');">str</a></tt><tt class="py-op">(</tt><tt class="py-name">v</tt><tt class="py-op">)</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">re</tt><tt class="py-op">,</tt><tt id="link-5" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_If.Else.name=qm.external.DocumentTemplate.DT_If.Else-class.html#name,Variable qm.external.DocumentTemplate.DT_If.If.name=qm.external.DocumentTemplate.DT_If.If-class.html#name,Variable qm.external.DocumentTemplate.DT_If.Unless.name=qm.external.DocumentTemplate.DT_If.Unless-class.html#name,Variable qm.external.DocumentTemplate.DT_In.InFactory.name=qm.external.DocumentTemplate.DT_In.InFactory-class.html#name,Variable qm.external.DocumentTemplate.DT_Let.Let.name=qm.external.DocumentTemplate.DT_Let.Let-class.html#name,Variable qm.external.DocumentTemplate.DT_Raise.Raise.name=qm.external.DocumentTemplate.DT_Raise.Raise-class.html#name,Variable qm.external.DocumentTemplate.DT_Return.ReturnTag.name=qm.external.DocumentTemplate.DT_Return.ReturnTag-class.html#name,Method qm.external.DocumentTemplate.DT_String.String.name()=qm.external.DocumentTemplate.DT_String.String-class.html#name,Variable qm.external.DocumentTemplate.DT_Try.Try.name=qm.external.DocumentTemplate.DT_Try.Try-class.html#name,Variable qm.external.DocumentTemplate.DT_Util.name=qm.external.DocumentTemplate.DT_Util-module.html#name,Variable qm.external.DocumentTemplate.DT_Var.Call.name=qm.external.DocumentTemplate.DT_Var.Call-class.html#name,Variable qm.external.DocumentTemplate.DT_Var.Comment.name=qm.external.DocumentTemplate.DT_Var.Comment-class.html#name,Variable qm.external.DocumentTemplate.DT_Var.Var.name=qm.external.DocumentTemplate.DT_Var.Var-class.html#name,Variable qm.external.DocumentTemplate.DT_With.With.name=qm.external.DocumentTemplate.DT_With.With-class.html#name,Variable qm.external.DocumentTemplate.pDocumentTemplate.name=qm.external.DocumentTemplate.pDocumentTemplate-module.html#name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-5', 'name', 'link-5');">name</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">character_entities</tt><tt class="py-op">:</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">text</tt><tt class="py-op">.</tt><tt class="py-name">find</tt><tt class="py-op">(</tt><tt class="py-name">re</tt><tt class="py-op">)</tt> <tt class="py-op">&gt;=</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> <tt class="py-name">text</tt><tt class="py-op">=</tt><tt class="py-name">text</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-name">re</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt id="link-6" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-6', 'name', 'link-5');">name</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">text</tt> </tt>
+</div><a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"> </tt>
+<a name="int_param"></a><div id="int_param-def"><a name="L37"></a><tt class="py-lineno"> 37</tt> <a class="py-toggle" href="#" id="int_param-toggle" onclick="return toggle('int_param');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#int_param">int_param</a><tt class="py-op">(</tt><tt class="py-param">params</tt><tt class="py-op">,</tt><tt class="py-param">md</tt><tt class="py-op">,</tt><tt class="py-param">name</tt><tt class="py-op">,</tt><tt class="py-param">default</tt><tt class="py-op">=</tt><tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-param">st</tt><tt class="py-op">=</tt><tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-string">''</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="int_param-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="int_param-expanded"><a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line">    <tt class="py-name">v</tt> <tt class="py-op">=</tt> <tt class="py-name">params</tt><tt class="py-op">.</tt><tt id="link-7" class="py-name" targets="Method qm.test.context.Context.get()=qm.test.context.Context-class.html#get,Method qm.test.result.Result.get()=qm.test.result.Result-class.html#get,Method qm.user.DefaultDatabase.get()=qm.user.DefaultDatabase-class.html#get,Method qm.user.XmlDatabase.get()=qm.user.XmlDatabase-class.html#get,Method qm.web.WebRequest.get()=qm.web.WebRequest-class.html#get"><a title="qm.test.context.Context.get
+qm.test.result.Result.get
+qm.user.DefaultDatabase.get
+qm.user.XmlDatabase.get
+qm.web.WebRequest.get" class="py-name" href="#" onclick="return doclink('link-7', 'get', 'link-7');">get</a></tt><tt class="py-op">(</tt><tt id="link-8" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-8', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt id="link-9" class="py-name" targets="Method qm.external.DocumentTemplate.DT_String.String.default()=qm.external.DocumentTemplate.DT_String.String-class.html#default"><a title="qm.external.DocumentTemplate.DT_String.String.default" class="py-name" href="#" onclick="return doclink('link-9', 'default', 'link-9');">default</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">v</tt><tt class="py-op">:</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">            <tt class="py-name">v</tt> <tt class="py-op">=</tt> <tt id="link-10" class="py-name" targets="Class int=int-class.html"><a title="int" class="py-name" href="#" onclick="return doclink('link-10', 'int', 'link-10');">int</a></tt><tt class="py-op">(</tt><tt class="py-name">v</tt><tt class="py-op">)</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line">            <tt class="py-name">v</tt> <tt class="py-op">=</tt> <tt class="py-name">md</tt><tt class="py-op">[</tt><tt class="py-name">v</tt><tt class="py-op">]</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">isinstance</tt><tt class="py-op">(</tt><tt class="py-name">v</tt><tt class="py-op">,</tt> <tt id="link-11" class="py-name"><a title="str" class="py-name" href="#" onclick="return doclink('link-11', 'str', 'link-1');">str</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line">                <tt class="py-name">v</tt> <tt class="py-op">=</tt> <tt id="link-12" class="py-name"><a title="int" class="py-name" href="#" onclick="return doclink('link-12', 'int', 'link-10');">int</a></tt><tt class="py-op">(</tt><tt class="py-name">v</tt><tt class="py-op">)</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">v</tt> <tt class="py-keyword">or</tt> <tt class="py-number">0</tt> </tt>
+</div><a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt id="link-13" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_String._marker=qm.external.DocumentTemplate.DT_String-module.html#_marker,Variable qm.external.DocumentTemplate.DT_Util._marker=qm.external.DocumentTemplate.DT_Util-module.html#_marker"><a title="qm.external.DocumentTemplate.DT_String._marker
+qm.external.DocumentTemplate.DT_Util._marker" class="py-name" href="#" onclick="return doclink('link-13', '_marker', 'link-13');">_marker</a></tt><tt class="py-op">=</tt><tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"> </tt>
+<a name="careful_getattr"></a><div id="careful_getattr-def"><a name="L50"></a><tt class="py-lineno"> 50</tt> <a class="py-toggle" href="#" id="careful_getattr-toggle" onclick="return toggle('careful_getattr');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#careful_getattr">careful_getattr</a><tt class="py-op">(</tt><tt class="py-param">md</tt><tt class="py-op">,</tt> <tt class="py-param">inst</tt><tt class="py-op">,</tt> <tt class="py-param">name</tt><tt class="py-op">,</tt> <tt class="py-param">default</tt><tt class="py-op">=</tt><tt id="link-14" class="py-name"><a title="qm.external.DocumentTemplate.DT_String._marker
+qm.external.DocumentTemplate.DT_Util._marker" class="py-name" href="#" onclick="return doclink('link-14', '_marker', 'link-13');">_marker</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="careful_getattr-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="careful_getattr-expanded"><a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">     </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt id="link-15" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-15', 'name', 'link-5');">name</a></tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">!=</tt><tt class="py-string">'_'</tt><tt class="py-op">:</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line">        <tt class="py-comment"># Try to get the attribute normally so that we don't</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">        <tt class="py-comment"># accidentally acquire when we shouldn't.</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> <tt class="py-name">v</tt><tt class="py-op">=</tt><tt class="py-name">getattr</tt><tt class="py-op">(</tt><tt class="py-name">inst</tt><tt class="py-op">,</tt> <tt id="link-16" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-16', 'name', 'link-5');">name</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-17" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.default" class="py-name" href="#" onclick="return doclink('link-17', 'default', 'link-9');">default</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt id="link-18" class="py-name"><a title="qm.external.DocumentTemplate.DT_String._marker
+qm.external.DocumentTemplate.DT_Util._marker" class="py-name" href="#" onclick="return doclink('link-18', '_marker', 'link-13');">_marker</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt id="link-19" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.default" class="py-name" href="#" onclick="return doclink('link-19', 'default', 'link-9');">default</a></tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">        <tt id="link-20" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_String.String.validate=qm.external.DocumentTemplate.DT_String.String-class.html#validate,Variable qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate=qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict-class.html#validate"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-20', 'validate', 'link-20');">validate</a></tt><tt class="py-op">=</tt><tt class="py-name">md</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-21', 'validate', 'link-20');">validate</a></tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-22" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-22', 'validate', 'link-20');">validate</a></tt> <tt class="py-keyword">is</tt> <tt id="link-23" class="py-name" targets="Variable qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#None"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-23', 'None', 'link-23');">None</a></tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-name">v</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">inst</tt><tt class="py-op">,</tt><tt class="py-string">'aq_acquire'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">inst</tt><tt class="py-op">.</tt><tt class="py-name">aq_acquire</tt><tt class="py-op">(</tt><tt id="link-24" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-24', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt id="link-25" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-25', 'validate', 'link-20');">validate</a></tt><tt class="py-op">,</tt> <tt class="py-name">md</tt><tt class="py-op">)</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-26" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-26', 'validate', 'link-20');">validate</a></tt><tt class="py-op">(</tt><tt class="py-name">inst</tt><tt class="py-op">,</tt><tt class="py-name">inst</tt><tt class="py-op">,</tt><tt id="link-27" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-27', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt><tt class="py-name">v</tt><tt class="py-op">,</tt><tt class="py-name">md</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-name">v</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">    <tt class="py-keyword">raise</tt> <tt id="link-28" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ValidationError" class="py-name" href="#" onclick="return doclink('link-28', 'ValidationError', 'link-3');">ValidationError</a></tt><tt class="py-op">,</tt> <tt id="link-29" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-29', 'name', 'link-5');">name</a></tt> </tt>
+</div><a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"> </tt>
+<a name="careful_hasattr"></a><div id="careful_hasattr-def"><a name="L73"></a><tt class="py-lineno"> 73</tt> <a class="py-toggle" href="#" id="careful_hasattr-toggle" onclick="return toggle('careful_hasattr');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#careful_hasattr">careful_hasattr</a><tt class="py-op">(</tt><tt class="py-param">md</tt><tt class="py-op">,</tt> <tt class="py-param">inst</tt><tt class="py-op">,</tt> <tt class="py-param">name</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="careful_hasattr-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="careful_hasattr-expanded"><a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">    <tt class="py-name">v</tt><tt class="py-op">=</tt><tt class="py-name">getattr</tt><tt class="py-op">(</tt><tt class="py-name">inst</tt><tt class="py-op">,</tt> <tt id="link-30" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-30', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt id="link-31" class="py-name"><a title="qm.external.DocumentTemplate.DT_String._marker
+qm.external.DocumentTemplate.DT_Util._marker" class="py-name" href="#" onclick="return doclink('link-31', '_marker', 'link-13');">_marker</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">v</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt id="link-32" class="py-name"><a title="qm.external.DocumentTemplate.DT_String._marker
+qm.external.DocumentTemplate.DT_Util._marker" class="py-name" href="#" onclick="return doclink('link-32', '_marker', 'link-13');">_marker</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt>  </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-33" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-33', 'name', 'link-5');">name</a></tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">!=</tt><tt class="py-string">'_'</tt><tt class="py-op">:</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">                <tt id="link-34" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-34', 'validate', 'link-20');">validate</a></tt><tt class="py-op">=</tt><tt class="py-name">md</tt><tt class="py-op">.</tt><tt id="link-35" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-35', 'validate', 'link-20');">validate</a></tt>                 </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt id="link-36" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-36', 'validate', 'link-20');">validate</a></tt> <tt class="py-keyword">is</tt> <tt id="link-37" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-37', 'None', 'link-23');">None</a></tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-number">1</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">     </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">inst</tt><tt class="py-op">,</tt><tt class="py-string">'aq_acquire'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">                    <tt class="py-name">inst</tt><tt class="py-op">.</tt><tt class="py-name">aq_acquire</tt><tt class="py-op">(</tt><tt id="link-38" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-38', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt id="link-39" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-39', 'validate', 'link-20');">validate</a></tt><tt class="py-op">,</tt> <tt class="py-name">md</tt><tt class="py-op">)</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">                    <tt class="py-keyword">return</tt> <tt class="py-number">1</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">     </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt id="link-40" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-40', 'validate', 'link-20');">validate</a></tt><tt class="py-op">(</tt><tt class="py-name">inst</tt><tt class="py-op">,</tt><tt class="py-name">inst</tt><tt class="py-op">,</tt><tt id="link-41" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-41', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt><tt class="py-name">v</tt><tt class="py-op">,</tt><tt class="py-name">md</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-number">1</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> <tt class="py-keyword">pass</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-number">0</tt> </tt>
+</div><a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"> </tt>
+<a name="careful_getitem"></a><div id="careful_getitem-def"><a name="L89"></a><tt class="py-lineno"> 89</tt> <a class="py-toggle" href="#" id="careful_getitem-toggle" onclick="return toggle('careful_getitem');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#careful_getitem">careful_getitem</a><tt class="py-op">(</tt><tt class="py-param">md</tt><tt class="py-op">,</tt> <tt class="py-param">mapping</tt><tt class="py-op">,</tt> <tt class="py-param">key</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="careful_getitem-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="careful_getitem-expanded"><a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">    <tt class="py-name">v</tt><tt class="py-op">=</tt><tt id="link-42" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_In.InClass.mapping=qm.external.DocumentTemplate.DT_In.InClass-class.html#mapping,Variable qm.external.DocumentTemplate.DT_With.With.mapping=qm.external.DocumentTemplate.DT_With.With-class.html#mapping"><a title="qm.external.DocumentTemplate.DT_In.InClass.mapping
+qm.external.DocumentTemplate.DT_With.With.mapping" class="py-name" href="#" onclick="return doclink('link-42', 'mapping', 'link-42');">mapping</a></tt><tt class="py-op">[</tt><tt id="link-43" class="py-name" targets="Method qm.external.DocumentTemplate.DT_InSV.sequence_variables.key()=qm.external.DocumentTemplate.DT_InSV.sequence_variables-class.html#key"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.key" class="py-name" href="#" onclick="return doclink('link-43', 'key', 'link-43');">key</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">v</tt><tt class="py-op">)</tt> <tt class="py-keyword">is</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-string">''</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-name">v</tt> <tt class="py-comment"># Short-circuit common case</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">    <tt id="link-44" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-44', 'validate', 'link-20');">validate</a></tt><tt class="py-op">=</tt><tt class="py-name">md</tt><tt class="py-op">.</tt><tt id="link-45" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-45', 'validate', 'link-20');">validate</a></tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt id="link-46" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-46', 'validate', 'link-20');">validate</a></tt> <tt class="py-keyword">is</tt> <tt id="link-47" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-47', 'None', 'link-23');">None</a></tt> <tt class="py-keyword">or</tt> <tt id="link-48" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-48', 'validate', 'link-20');">validate</a></tt><tt class="py-op">(</tt><tt id="link-49" class="py-name"><a title="qm.external.DocumentTemplate.DT_In.InClass.mapping
+qm.external.DocumentTemplate.DT_With.With.mapping" class="py-name" href="#" onclick="return doclink('link-49', 'mapping', 'link-42');">mapping</a></tt><tt class="py-op">,</tt><tt id="link-50" class="py-name"><a title="qm.external.DocumentTemplate.DT_In.InClass.mapping
+qm.external.DocumentTemplate.DT_With.With.mapping" class="py-name" href="#" onclick="return doclink('link-50', 'mapping', 'link-42');">mapping</a></tt><tt class="py-op">,</tt><tt id="link-51" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-51', 'None', 'link-23');">None</a></tt><tt class="py-op">,</tt><tt class="py-name">v</tt><tt class="py-op">,</tt><tt class="py-name">md</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-name">v</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">    <tt class="py-keyword">raise</tt> <tt id="link-52" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ValidationError" class="py-name" href="#" onclick="return doclink('link-52', 'ValidationError', 'link-3');">ValidationError</a></tt><tt class="py-op">,</tt> <tt id="link-53" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.key" class="py-name" href="#" onclick="return doclink('link-53', 'key', 'link-43');">key</a></tt> </tt>
+</div><a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"> </tt>
+<a name="careful_getslice"></a><div id="careful_getslice-def"><a name="L98"></a><tt class="py-lineno"> 98</tt> <a class="py-toggle" href="#" id="careful_getslice-toggle" onclick="return toggle('careful_getslice');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#careful_getslice">careful_getslice</a><tt class="py-op">(</tt><tt class="py-param">md</tt><tt class="py-op">,</tt> <tt class="py-param">seq</tt><tt class="py-op">,</tt> <tt class="py-op">*</tt><tt class="py-param">indexes</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="careful_getslice-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="careful_getslice-expanded"><a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">    <tt class="py-name">v</tt><tt class="py-op">=</tt><tt id="link-54" class="py-name" targets="Method qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len()=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#len"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-54', 'len', 'link-54');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">indexes</tt><tt class="py-op">)</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">v</tt><tt class="py-op">==</tt><tt class="py-number">2</tt><tt class="py-op">:</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">        <tt class="py-name">v</tt><tt class="py-op">=</tt><tt class="py-name">seq</tt><tt class="py-op">[</tt><tt class="py-name">indexes</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">:</tt><tt class="py-name">indexes</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">]</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">    <tt class="py-keyword">elif</tt> <tt class="py-name">v</tt><tt class="py-op">==</tt><tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">        <tt class="py-name">v</tt><tt class="py-op">=</tt><tt class="py-name">seq</tt><tt class="py-op">[</tt><tt class="py-name">indexes</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">:</tt><tt class="py-op">]</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">    <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt class="py-name">v</tt><tt class="py-op">=</tt><tt class="py-name">seq</tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-op">]</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">seq</tt><tt class="py-op">)</tt> <tt class="py-keyword">is</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-string">''</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt class="py-name">v</tt> <tt class="py-comment"># Short-circuit common case</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line"> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">    <tt id="link-55" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-55', 'validate', 'link-20');">validate</a></tt><tt class="py-op">=</tt><tt class="py-name">md</tt><tt class="py-op">.</tt><tt id="link-56" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-56', 'validate', 'link-20');">validate</a></tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt id="link-57" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-57', 'validate', 'link-20');">validate</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt id="link-58" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-58', 'None', 'link-23');">None</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt id="link-59" class="py-name" targets="Variable math.e=math-module.html#e"><a title="math.e" class="py-name" href="#" onclick="return doclink('link-59', 'e', 'link-59');">e</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">v</tt><tt class="py-op">:</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt id="link-60" class="py-name"><a title="qm.external.DocumentTemplate.DT_String.String.validate
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.validate" class="py-name" href="#" onclick="return doclink('link-60', 'validate', 'link-20');">validate</a></tt><tt class="py-op">(</tt><tt class="py-name">seq</tt><tt class="py-op">,</tt><tt class="py-name">seq</tt><tt class="py-op">,</tt><tt id="link-61" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-61', 'None', 'link-23');">None</a></tt><tt class="py-op">,</tt><tt id="link-62" class="py-name"><a title="math.e" class="py-name" href="#" onclick="return doclink('link-62', 'e', 'link-59');">e</a></tt><tt class="py-op">,</tt><tt class="py-name">md</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">                <tt class="py-keyword">raise</tt> <tt id="link-63" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ValidationError" class="py-name" href="#" onclick="return doclink('link-63', 'ValidationError', 'link-3');">ValidationError</a></tt><tt class="py-op">,</tt> <tt class="py-string">'unauthorized access to slice member'</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">v</tt> </tt>
+</div><a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line"> </tt>
+<a name="careful_range"></a><div id="careful_range-def"><a name="L116"></a><tt class="py-lineno">116</tt> <a class="py-toggle" href="#" id="careful_range-toggle" onclick="return toggle('careful_range');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#careful_range">careful_range</a><tt class="py-op">(</tt><tt class="py-param">md</tt><tt class="py-op">,</tt> <tt class="py-param">iFirst</tt><tt class="py-op">,</tt> <tt class="py-op">*</tt><tt class="py-param">args</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="careful_range-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="careful_range-expanded"><a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">    <tt class="py-comment"># limited range function from Martijn Pieters</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">    <tt class="py-name">RANGELIMIT</tt> <tt class="py-op">=</tt> <tt class="py-number">1000</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt id="link-64" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-64', 'len', 'link-54');">len</a></tt><tt class="py-op">(</tt><tt id="link-65" class="py-name" targets="Variable qm.test.classes.compilation_test.ExecutableTest.args=qm.test.classes.compilation_test.ExecutableTest-class.html#args"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-65', 'args', 'link-65');">args</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">        <tt class="py-name">iStart</tt><tt class="py-op">,</tt> <tt class="py-name">iEnd</tt><tt class="py-op">,</tt> <tt class="py-name">iStep</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-name">iFirst</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">    <tt class="py-keyword">elif</tt> <tt id="link-66" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-66', 'len', 'link-54');">len</a></tt><tt class="py-op">(</tt><tt id="link-67" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-67', 'args', 'link-65');">args</a></tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">        <tt class="py-name">iStart</tt><tt class="py-op">,</tt> <tt class="py-name">iEnd</tt><tt class="py-op">,</tt> <tt class="py-name">iStep</tt> <tt class="py-op">=</tt> <tt class="py-name">iFirst</tt><tt class="py-op">,</tt> <tt id="link-68" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-68', 'args', 'link-65');">args</a></tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">    <tt class="py-keyword">elif</tt> <tt id="link-69" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-69', 'len', 'link-54');">len</a></tt><tt class="py-op">(</tt><tt id="link-70" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-70', 'args', 'link-65');">args</a></tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">2</tt><tt class="py-op">:</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">        <tt class="py-name">iStart</tt><tt class="py-op">,</tt> <tt class="py-name">iEnd</tt><tt class="py-op">,</tt> <tt class="py-name">iStep</tt> <tt class="py-op">=</tt> <tt class="py-name">iFirst</tt><tt class="py-op">,</tt> <tt id="link-71" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-71', 'args', 'link-65');">args</a></tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt id="link-72" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-72', 'args', 'link-65');">args</a></tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">    <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">AttributeError</tt><tt class="py-op">,</tt> <tt class="py-string">'range() requires 1-3 int arguments'</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">iStep</tt> <tt class="py-op">==</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">,</tt> <tt class="py-string">'zero step for range()'</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">    <tt class="py-name">iLen</tt> <tt class="py-op">=</tt> <tt id="link-73" class="py-name"><a title="int" class="py-name" href="#" onclick="return doclink('link-73', 'int', 'link-10');">int</a></tt><tt class="py-op">(</tt><tt class="py-op">(</tt><tt class="py-name">iEnd</tt> <tt class="py-op">-</tt> <tt class="py-name">iStart</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">iStep</tt><tt class="py-op">)</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">iLen</tt> <tt class="py-op">&lt;</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> <tt class="py-name">iLen</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">iLen</tt> <tt class="py-op">&gt;=</tt> <tt class="py-name">RANGELIMIT</tt><tt class="py-op">:</tt> <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">,</tt> <tt class="py-string">'range() too large'</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-name">iStart</tt><tt class="py-op">,</tt> <tt class="py-name">iEnd</tt><tt class="py-op">,</tt> <tt class="py-name">iStep</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line"> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-74" class="py-name" targets="Module string=string-module.html"><a title="string" class="py-name" href="#" onclick="return doclink('link-74', 'string', 'link-74');">string</a></tt><tt class="py-op">,</tt> <tt id="link-75" class="py-name" targets="Module math=math-module.html"><a title="math" class="py-name" href="#" onclick="return doclink('link-75', 'math', 'link-75');">math</a></tt><tt class="py-op">,</tt> <tt id="link-76" class="py-name" targets="Module random=random-module.html"><a title="random" class="py-name" href="#" onclick="return doclink('link-76', 'random', 'link-76');">random</a></tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line"> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line"><tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">    <tt class="py-keyword">import</tt> <tt class="py-name">ExtensionClass</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">    <tt class="py-keyword">from</tt> <tt class="py-name">cDocumentTemplate</tt> <tt class="py-keyword">import</tt> <tt id="link-77" class="py-name" targets="Class qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict=qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict-class.html"><a title="qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict" class="py-name" href="#" onclick="return doclink('link-77', 'InstanceDict', 'link-77');">InstanceDict</a></tt><tt class="py-op">,</tt> <tt id="link-78" class="py-name" targets="Class qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict" class="py-name" href="#" onclick="return doclink('link-78', 'TemplateDict', 'link-78');">TemplateDict</a></tt><tt class="py-op">,</tt> <tt id="link-79" class="py-name" targets="Function qm.external.DocumentTemplate.pDocumentTemplate.render_blocks()=qm.external.DocumentTemplate.pDocumentTemplate-module.html#render_blocks"><a title="qm.external.DocumentTemplate.pDocumentTemplate.render_blocks" class="py-name" href="#" onclick="return doclink('link-79', 'render_blocks', 'link-79');">render_blocks</a></tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line"><tt class="py-keyword">except</tt><tt class="py-op">:</tt> <tt class="py-keyword">from</tt> <tt id="link-80" class="py-name" targets="Module qm.external.DocumentTemplate.pDocumentTemplate=qm.external.DocumentTemplate.pDocumentTemplate-module.html"><a title="qm.external.DocumentTemplate.pDocumentTemplate" class="py-name" href="#" onclick="return doclink('link-80', 'pDocumentTemplate', 'link-80');">pDocumentTemplate</a></tt> <tt class="py-keyword">import</tt> <tt id="link-81" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict" class="py-name" href="#" onclick="return doclink('link-81', 'InstanceDict', 'link-77');">InstanceDict</a></tt><tt class="py-op">,</tt> <tt id="link-82" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict" class="py-name" href="#" onclick="return doclink('link-82', 'TemplateDict', 'link-78');">TemplateDict</a></tt><tt class="py-op">,</tt> <tt id="link-83" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.render_blocks" class="py-name" href="#" onclick="return doclink('link-83', 'render_blocks', 'link-79');">render_blocks</a></tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line"> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line"><tt id="link-84" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_Util.d=qm.external.DocumentTemplate.DT_Util-module.html#d"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-84', 'd', 'link-84');">d</a></tt><tt class="py-op">=</tt><tt id="link-85" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict" class="py-name" href="#" onclick="return doclink('link-85', 'TemplateDict', 'link-78');">TemplateDict</a></tt><tt class="py-op">.</tt><tt class="py-name">__dict__</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line"><tt class="py-keyword">for</tt> <tt id="link-86" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-86', 'name', 'link-5');">name</a></tt> <tt class="py-keyword">in</tt> <tt class="py-op">(</tt><tt class="py-string">'None'</tt><tt class="py-op">,</tt> <tt class="py-string">'abs'</tt><tt class="py-op">,</tt> <tt class="py-string">'chr'</tt><tt class="py-op">,</tt> <tt class="py-string">'divmod'</tt><tt class="py-op">,</tt> <tt class="py-string">'float'</tt><tt class="py-op">,</tt> <tt class="py-string">'hash'</tt><tt class="py-op">,</tt> <tt class="py-string">'hex'</tt><tt class="py-op">,</tt> <tt class="py-string">'int'</tt><tt class="py-op">,</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">             <tt class="py-string">'len'</tt><tt class="py-op">,</tt> <tt class="py-string">'max'</tt><tt class="py-op">,</tt> <tt class="py-string">'min'</tt><tt class="py-op">,</tt> <tt class="py-string">'oct'</tt><tt class="py-op">,</tt> <tt class="py-string">'ord'</tt><tt class="py-op">,</tt> <tt class="py-string">'round'</tt><tt class="py-op">,</tt> <tt class="py-string">'str'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">    <tt id="link-87" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-87', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt id="link-88" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-88', 'name', 'link-5');">name</a></tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">__builtins__</tt><tt class="py-op">[</tt><tt id="link-89" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-89', 'name', 'link-5');">name</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"><tt id="link-90" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-90', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'string'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-91" class="py-name"><a title="string" class="py-name" href="#" onclick="return doclink('link-91', 'string', 'link-74');">string</a></tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line"><tt id="link-92" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-92', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'math'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-93" class="py-name"><a title="math" class="py-name" href="#" onclick="return doclink('link-93', 'math', 'link-75');">math</a></tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line"><tt id="link-94" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-94', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'random'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-95" class="py-name"><a title="random" class="py-name" href="#" onclick="return doclink('link-95', 'random', 'link-76');">random</a></tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line"> </tt>
+<a name="careful_pow"></a><div id="careful_pow-def"><a name="L149"></a><tt class="py-lineno">149</tt> <a class="py-toggle" href="#" id="careful_pow-toggle" onclick="return toggle('careful_pow');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#careful_pow">careful_pow</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">x</tt><tt class="py-op">,</tt> <tt class="py-param">y</tt><tt class="py-op">,</tt> <tt class="py-param">z</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="careful_pow-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="careful_pow-expanded"><a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">z</tt><tt class="py-op">:</tt> <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">,</tt> <tt class="py-string">'pow(x, y, z) with z==0'</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">pow</tt><tt class="py-op">(</tt><tt class="py-name">x</tt><tt class="py-op">,</tt><tt class="py-name">y</tt><tt class="py-op">,</tt><tt class="py-name">z</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line"> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line"><tt id="link-96" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-96', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'pow'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-97" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.careful_pow()=qm.external.DocumentTemplate.DT_Util-module.html#careful_pow"><a title="qm.external.DocumentTemplate.DT_Util.careful_pow" class="py-name" href="#" onclick="return doclink('link-97', 'careful_pow', 'link-97');">careful_pow</a></tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line"> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line"><tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">    <tt class="py-keyword">import</tt> <tt id="link-98" class="py-name"><a title="random" class="py-name" href="#" onclick="return doclink('link-98', 'random', 'link-76');">random</a></tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">    <tt id="link-99" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-99', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'random'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-100" class="py-name"><a title="random" class="py-name" href="#" onclick="return doclink('link-100', 'random', 'link-76');">random</a></tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line"><tt class="py-keyword">except</tt><tt class="py-op">:</tt> <tt class="py-keyword">pass</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line"> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line"><tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">    <tt class="py-keyword">import</tt> <tt class="py-name">DateTime</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">    <tt id="link-101" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-101', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'DateTime'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">DateTime</tt><tt class="py-op">.</tt><tt class="py-name">DateTime</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line"><tt class="py-keyword">except</tt><tt class="py-op">:</tt> <tt class="py-keyword">pass</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line"> </tt>
+<a name="test"></a><div id="test-def"><a name="L165"></a><tt class="py-lineno">165</tt> <a class="py-toggle" href="#" id="test-toggle" onclick="return toggle('test');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#test">test</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-op">*</tt><tt class="py-param">args</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="test-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="test-expanded"><a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">    <tt class="py-name">l</tt><tt class="py-op">=</tt><tt id="link-102" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-102', 'len', 'link-54');">len</a></tt><tt class="py-op">(</tt><tt id="link-103" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-103', 'args', 'link-65');">args</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">,</tt> <tt class="py-name">l</tt><tt class="py-op">,</tt> <tt class="py-number">2</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-104" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-104', 'args', 'link-65');">args</a></tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt id="link-105" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-105', 'args', 'link-65');">args</a></tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line"> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">l</tt><tt class="py-op">%</tt><tt class="py-number">2</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt id="link-106" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-106', 'args', 'link-65');">args</a></tt><tt class="py-op">[</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line"> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line"><tt id="link-107" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-107', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'test'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-108" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.test()=qm.external.DocumentTemplate.DT_Util-module.html#test,Package qm.test=qm.test-module.html,Module qm.test.test=qm.test.test-module.html"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-108', 'test', 'link-108');">test</a></tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line"> </tt>
+<a name="obsolete_attr"></a><div id="obsolete_attr-def"><a name="L174"></a><tt class="py-lineno">174</tt> <a class="py-toggle" href="#" id="obsolete_attr-toggle" onclick="return toggle('obsolete_attr');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#obsolete_attr">obsolete_attr</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">inst</tt><tt class="py-op">,</tt> <tt class="py-param">name</tt><tt class="py-op">,</tt> <tt class="py-param">md</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="obsolete_attr-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="obsolete_attr-expanded"><a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt id="link-109" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.careful_getattr()=qm.external.DocumentTemplate.DT_Util-module.html#careful_getattr"><a title="qm.external.DocumentTemplate.DT_Util.careful_getattr" class="py-name" href="#" onclick="return doclink('link-109', 'careful_getattr', 'link-109');">careful_getattr</a></tt><tt class="py-op">(</tt><tt class="py-name">md</tt><tt class="py-op">,</tt> <tt class="py-name">inst</tt><tt class="py-op">,</tt> <tt id="link-110" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-110', 'name', 'link-5');">name</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line"> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line"><tt id="link-111" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-111', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'attr'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-112" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.obsolete_attr()=qm.external.DocumentTemplate.DT_Util-module.html#obsolete_attr"><a title="qm.external.DocumentTemplate.DT_Util.obsolete_attr" class="py-name" href="#" onclick="return doclink('link-112', 'obsolete_attr', 'link-112');">obsolete_attr</a></tt> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line"><tt id="link-113" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-113', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'getattr'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-114" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.careful_getattr" class="py-name" href="#" onclick="return doclink('link-114', 'careful_getattr', 'link-109');">careful_getattr</a></tt> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line"><tt id="link-115" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-115', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'hasattr'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-116" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.careful_hasattr()=qm.external.DocumentTemplate.DT_Util-module.html#careful_hasattr"><a title="qm.external.DocumentTemplate.DT_Util.careful_hasattr" class="py-name" href="#" onclick="return doclink('link-116', 'careful_hasattr', 'link-116');">careful_hasattr</a></tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line"><tt id="link-117" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-117', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'range'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-118" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.careful_range()=qm.external.DocumentTemplate.DT_Util-module.html#careful_range"><a title="qm.external.DocumentTemplate.DT_Util.careful_range" class="py-name" href="#" onclick="return doclink('link-118', 'careful_range', 'link-118');">careful_range</a></tt> </tt>
+<a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line"> </tt>
+<a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line"><tt class="py-comment">#class namespace_:</tt> </tt>
+<a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line"><tt class="py-comment">#    __allow_access_to_unprotected_subobjects__=1</tt> </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line"> </tt>
+<a name="namespace"></a><div id="namespace-def"><a name="L185"></a><tt class="py-lineno">185</tt> <a class="py-toggle" href="#" id="namespace-toggle" onclick="return toggle('namespace');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#namespace">namespace</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">kw</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="namespace-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="namespace-expanded"><a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line">    <tt class="py-docstring">"""Create a tuple consisting of a single instance whose attributes are</tt> </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line"><tt class="py-docstring">    provided as keyword arguments."""</tt> </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">getattr</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-string">'__class__'</tt><tt class="py-op">,</tt> <tt id="link-119" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-119', 'None', 'link-23');">None</a></tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt id="link-120" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict" class="py-name" href="#" onclick="return doclink('link-120', 'TemplateDict', 'link-78');">TemplateDict</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">TypeError</tt><tt class="py-op">,</tt><tt class="py-string">'''A call was made to DT_Util.namespace() with an</tt> </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line"><tt class="py-string">        incorrect "self" argument.  It could be caused by a product which</tt> </tt>
+<a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line"><tt class="py-string">        is not yet compatible with this version of Zope.  The traceback</tt> </tt>
+<a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line"><tt class="py-string">        information may contain more details.)'''</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">apply</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">kw</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line"> </tt>
+<a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line"><tt id="link-121" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-121', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'namespace'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-122" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.namespace()=qm.external.DocumentTemplate.DT_Util-module.html#namespace"><a title="qm.external.DocumentTemplate.DT_Util.namespace" class="py-name" href="#" onclick="return doclink('link-122', 'namespace', 'link-122');">namespace</a></tt> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line"> </tt>
+<a name="render"></a><div id="render-def"><a name="L197"></a><tt class="py-lineno">197</tt> <a class="py-toggle" href="#" id="render-toggle" onclick="return toggle('render');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#render">render</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">v</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="render-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="render-expanded"><a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line">    <tt class="py-docstring">"Render an object in the way done by the 'name' attribute"</tt> </tt>
+<a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">v</tt><tt class="py-op">,</tt> <tt class="py-string">'__render_with_namespace__'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line">        <tt class="py-name">v</tt> <tt class="py-op">=</tt> <tt class="py-name">v</tt><tt class="py-op">.</tt><tt class="py-name">__render_with_namespace__</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line">    <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line">        <tt class="py-name">vbase</tt> <tt class="py-op">=</tt> <tt class="py-name">getattr</tt><tt class="py-op">(</tt><tt class="py-name">v</tt><tt class="py-op">,</tt> <tt class="py-string">'aq_base'</tt><tt class="py-op">,</tt> <tt class="py-name">v</tt><tt class="py-op">)</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">callable</tt><tt class="py-op">(</tt><tt class="py-name">vbase</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">getattr</tt><tt class="py-op">(</tt><tt class="py-name">vbase</tt><tt class="py-op">,</tt> <tt class="py-string">'isDocTemp'</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line">                <tt class="py-name">v</tt> <tt class="py-op">=</tt> <tt class="py-name">v</tt><tt class="py-op">(</tt><tt id="link-123" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-123', 'None', 'link-23');">None</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line">                <tt class="py-name">v</tt> <tt class="py-op">=</tt> <tt class="py-name">v</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">v</tt> </tt>
+</div><a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line"> </tt>
+<a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line"><tt id="link-124" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-124', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'render'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-125" class="py-name" targets="Method qm.external.DocumentTemplate.DT_Let.Let.render()=qm.external.DocumentTemplate.DT_Let.Let-class.html#render,Method qm.external.DocumentTemplate.DT_Raise.Raise.render()=qm.external.DocumentTemplate.DT_Raise.Raise-class.html#render,Method qm.external.DocumentTemplate.DT_Return.ReturnTag.render()=qm.external.DocumentTemplate.DT_Return.ReturnTag-class.html#render,Method qm.external.DocumentTemplate.DT_Try.Try.render()=qm.external.DocumentTemplate.DT_Try.Try-class.html#render,Function qm.external.DocumentTemplate.DT_Util.render()=qm.external.DocumentTemplate.DT_Util-module.html#render,Method qm.external.DocumentTemplate.DT_Var.Comment.render()=qm.external.DocumentTemplate.DT_Var.Comment-class.html#render,Method qm.external.DocumentTemplate.DT_Var.Var.render()=qm.external.DocumentTemplate.DT_Var.Var-class.html#render,Method qm.external.DocumentTemplate.DT_With.With.render()=qm.external.DocumentTemplate.DT_With.With-class.html#render"><a title="qm.external.DocumentTemplate.DT_Let.Let.render
+qm.external.DocumentTemplate.DT_Raise.Raise.render
+qm.external.DocumentTemplate.DT_Return.ReturnTag.render
+qm.external.DocumentTemplate.DT_Try.Try.render
+qm.external.DocumentTemplate.DT_Util.render
+qm.external.DocumentTemplate.DT_Var.Comment.render
+qm.external.DocumentTemplate.DT_Var.Var.render
+qm.external.DocumentTemplate.DT_With.With.render" class="py-name" href="#" onclick="return doclink('link-125', 'render', 'link-125');">render</a></tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line"> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line"><tt id="link-126" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_Util.expr_globals=qm.external.DocumentTemplate.DT_Util-module.html#expr_globals"><a title="qm.external.DocumentTemplate.DT_Util.expr_globals" class="py-name" href="#" onclick="return doclink('link-126', 'expr_globals', 'link-126');">expr_globals</a></tt><tt class="py-op">=</tt><tt class="py-op">{</tt> </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line">    <tt class="py-string">'__builtins__'</tt><tt class="py-op">:</tt><tt class="py-op">{</tt><tt class="py-op">}</tt><tt class="py-op">,</tt> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line">    <tt class="py-string">'__guarded_mul__'</tt><tt class="py-op">:</tt>      <tt id="link-127" class="py-name"><a title="qm.external.DocumentTemplate.VSEval" class="py-name" href="#" onclick="return doclink('link-127', 'VSEval', 'link-0');">VSEval</a></tt><tt class="py-op">.</tt><tt id="link-128" class="py-name" targets="Function qm.external.DocumentTemplate.VSEval.careful_mul()=qm.external.DocumentTemplate.VSEval-module.html#careful_mul"><a title="qm.external.DocumentTemplate.VSEval.careful_mul" class="py-name" href="#" onclick="return doclink('link-128', 'careful_mul', 'link-128');">careful_mul</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line">    <tt class="py-string">'__guarded_getattr__'</tt><tt class="py-op">:</tt>  <tt id="link-129" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.careful_getattr" class="py-name" href="#" onclick="return doclink('link-129', 'careful_getattr', 'link-109');">careful_getattr</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line">    <tt class="py-string">'__guarded_getitem__'</tt><tt class="py-op">:</tt>  <tt id="link-130" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.careful_getitem()=qm.external.DocumentTemplate.DT_Util-module.html#careful_getitem"><a title="qm.external.DocumentTemplate.DT_Util.careful_getitem" class="py-name" href="#" onclick="return doclink('link-130', 'careful_getitem', 'link-130');">careful_getitem</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line">    <tt class="py-string">'__guarded_getslice__'</tt><tt class="py-op">:</tt> <tt id="link-131" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.careful_getslice()=qm.external.DocumentTemplate.DT_Util-module.html#careful_getslice"><a title="qm.external.DocumentTemplate.DT_Util.careful_getslice" class="py-name" href="#" onclick="return doclink('link-131', 'careful_getslice', 'link-131');">careful_getslice</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line">    <tt class="py-op">}</tt> </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line"> </tt>
+<a name="Eval"></a><div id="Eval-def"><a name="L220"></a><tt class="py-lineno">220</tt> <a class="py-toggle" href="#" id="Eval-toggle" onclick="return toggle('Eval');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util.Eval-class.html">Eval</a><tt class="py-op">(</tt><tt class="py-base-class">VSEval</tt><tt class="py-op">.</tt><tt class="py-base-class">Eval</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Eval-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Eval-expanded"><a name="L221"></a><tt class="py-lineno">221</tt>  <tt class="py-line">     </tt>
+<a name="Eval.eval"></a><div id="Eval.eval-def"><a name="L222"></a><tt class="py-lineno">222</tt> <a class="py-toggle" href="#" id="Eval.eval-toggle" onclick="return toggle('Eval.eval');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util.Eval-class.html#eval">eval</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">mapping</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Eval.eval-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Eval.eval-expanded"><a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line">        <tt id="link-132" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-132', 'd', 'link-84');">d</a></tt><tt class="py-op">=</tt><tt class="py-op">{</tt><tt class="py-string">'_vars'</tt><tt class="py-op">:</tt> <tt id="link-133" class="py-name"><a title="qm.external.DocumentTemplate.DT_In.InClass.mapping
+qm.external.DocumentTemplate.DT_With.With.mapping" class="py-name" href="#" onclick="return doclink('link-133', 'mapping', 'link-42');">mapping</a></tt><tt class="py-op">,</tt> <tt class="py-string">'_'</tt><tt class="py-op">:</tt> <tt id="link-134" class="py-name"><a title="qm.external.DocumentTemplate.DT_In.InClass.mapping
+qm.external.DocumentTemplate.DT_With.With.mapping" class="py-name" href="#" onclick="return doclink('link-134', 'mapping', 'link-42');">mapping</a></tt><tt class="py-op">}</tt> </tt>
+<a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line">        <tt class="py-name">code</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">code</tt> </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line">        <tt class="py-name">globals</tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">globals</tt> </tt>
+<a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt id="link-135" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-135', 'name', 'link-5');">name</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">used</tt><tt class="py-op">:</tt> </tt>
+<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line">            <tt class="py-name">__traceback_info__</tt> <tt class="py-op">=</tt> <tt id="link-136" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-136', 'name', 'link-5');">name</a></tt> </tt>
+<a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line">            <tt class="py-keyword">try</tt><tt class="py-op">:</tt> <tt id="link-137" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-137', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt id="link-138" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-138', 'name', 'link-5');">name</a></tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-139" class="py-name"><a title="qm.external.DocumentTemplate.DT_In.InClass.mapping
+qm.external.DocumentTemplate.DT_With.With.mapping" class="py-name" href="#" onclick="return doclink('link-139', 'mapping', 'link-42');">mapping</a></tt><tt class="py-op">.</tt><tt class="py-name">getitem</tt><tt class="py-op">(</tt><tt id="link-140" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-140', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt><tt class="py-number">0</tt><tt class="py-op">)</tt> </tt>
+<a name="L229"></a><tt class="py-lineno">229</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt> <tt class="py-name">KeyError</tt><tt class="py-op">:</tt> </tt>
+<a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt id="link-141" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-141', 'name', 'link-5');">name</a></tt><tt class="py-op">==</tt><tt class="py-string">'_getattr'</tt><tt class="py-op">:</tt> </tt>
+<a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line">                    <tt id="link-142" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-142', 'd', 'link-84');">d</a></tt><tt class="py-op">[</tt><tt class="py-string">'__builtins__'</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">globals</tt> </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line">                    <tt class="py-keyword">exec</tt> <tt id="link-143" class="py-name" targets="Variable qm.external.DocumentTemplate.VSEval.compiled_getattr=qm.external.DocumentTemplate.VSEval-module.html#compiled_getattr"><a title="qm.external.DocumentTemplate.VSEval.compiled_getattr" class="py-name" href="#" onclick="return doclink('link-143', 'compiled_getattr', 'link-143');">compiled_getattr</a></tt> <tt class="py-keyword">in</tt> <tt id="link-144" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-144', 'd', 'link-84');">d</a></tt> </tt>
+<a name="L233"></a><tt class="py-lineno">233</tt>  <tt class="py-line"> </tt>
+<a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-145" class="py-name" targets="Method qm.external.DocumentTemplate.DT_Util.Eval.eval()=qm.external.DocumentTemplate.DT_Util.Eval-class.html#eval,Method qm.external.DocumentTemplate.VSEval.Eval.eval()=qm.external.DocumentTemplate.VSEval.Eval-class.html#eval"><a title="qm.external.DocumentTemplate.DT_Util.Eval.eval
+qm.external.DocumentTemplate.VSEval.Eval.eval" class="py-name" href="#" onclick="return doclink('link-145', 'eval', 'link-145');">eval</a></tt><tt class="py-op">(</tt><tt class="py-name">code</tt><tt class="py-op">,</tt><tt class="py-name">globals</tt><tt class="py-op">,</tt><tt id="link-146" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.d" class="py-name" href="#" onclick="return doclink('link-146', 'd', 'link-84');">d</a></tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line"> </tt>
+<a name="L236"></a><tt class="py-lineno">236</tt>  <tt class="py-line"> </tt>
+<a name="name_param"></a><div id="name_param-def"><a name="L237"></a><tt class="py-lineno">237</tt> <a class="py-toggle" href="#" id="name_param-toggle" onclick="return toggle('name_param');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#name_param">name_param</a><tt class="py-op">(</tt><tt class="py-param">params</tt><tt class="py-op">,</tt><tt class="py-param">tag</tt><tt class="py-op">=</tt><tt class="py-string">''</tt><tt class="py-op">,</tt><tt class="py-param">expr</tt><tt class="py-op">=</tt><tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-param">attr</tt><tt class="py-op">=</tt><tt class="py-string">'name'</tt><tt class="py-op">,</tt> <tt class="py-param">default_unnamed</tt><tt class="py-op">=</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="name_param-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="name_param-expanded"><a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line">    <tt class="py-name">used</tt><tt class="py-op">=</tt><tt class="py-name">params</tt><tt class="py-op">.</tt><tt id="link-147" class="py-name" targets="Method qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.has_key()=qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict-class.html#has_key,Method qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.has_key()=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#has_key,Method qm.test.context.Context.has_key()=qm.test.context.Context-class.html#has_key,Method qm.test.result.Result.has_key()=qm.test.result.Result-class.html#has_key,Method qm.web.CGIWebRequest.has_key()=qm.web.CGIWebRequest-class.html#has_key,Method qm.web.WebRequest.has_key()=qm.web.WebRequest-class.html#has_key"><a title="qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.has_key
+qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.has_key
+qm.test.context.Context.has_key
+qm.test.result.Result.has_key
+qm.web.CGIWebRequest.has_key
+qm.web.WebRequest.has_key" class="py-name" href="#" onclick="return doclink('link-147', 'has_key', 'link-147');">has_key</a></tt> </tt>
+<a name="L239"></a><tt class="py-lineno">239</tt>  <tt class="py-line">    <tt class="py-name">__traceback_info__</tt><tt class="py-op">=</tt><tt class="py-name">params</tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">,</tt> <tt id="link-148" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_If.If.expr=qm.external.DocumentTemplate.DT_If.If-class.html#expr,Variable qm.external.DocumentTemplate.DT_In.InClass.expr=qm.external.DocumentTemplate.DT_In.InClass-class.html#expr,Variable qm.external.DocumentTemplate.DT_Raise.Raise.expr=qm.external.DocumentTemplate.DT_Raise.Raise-class.html#expr,Variable qm.external.DocumentTemplate.DT_Return.ReturnTag.expr=qm.external.DocumentTemplate.DT_Return.ReturnTag-class.html#expr,Variable qm.external.DocumentTemplate.DT_Var.Call.expr=qm.external.DocumentTemplate.DT_Var.Call-class.html#expr,Variable qm.external.DocumentTemplate.DT_Var.Var.expr=qm.external.DocumentTemplate.DT_Var.Var-class.html#expr"><a title="qm.external.DocumentTemplate.DT_If.If.expr
+qm.external.DocumentTemplate.DT_In.InClass.expr
+qm.external.DocumentTemplate.DT_Raise.Raise.expr
+qm.external.DocumentTemplate.DT_Return.ReturnTag.expr
+qm.external.DocumentTemplate.DT_Var.Call.expr
+qm.external.DocumentTemplate.DT_Var.Var.expr" class="py-name" href="#" onclick="return doclink('link-148', 'expr', 'link-148');">expr</a></tt><tt class="py-op">,</tt> <tt class="py-name">attr</tt> </tt>
+<a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line"> </tt>
+<a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line">    <tt class="py-comment">#if expr and used('expr') and used('') and not used(params['']):</tt> </tt>
+<a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line">    <tt class="py-comment">#   # Fix up something like: &lt;!--#in expr="whatever" mapping--&gt;</tt> </tt>
+<a name="L243"></a><tt class="py-lineno">243</tt>  <tt class="py-line">    <tt class="py-comment">#   params[params['']]=default_unnamed</tt> </tt>
+<a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line">    <tt class="py-comment">#   del params['']</tt> </tt>
+<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line">         </tt>
+<a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">used</tt><tt class="py-op">(</tt><tt class="py-string">''</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L247"></a><tt class="py-lineno">247</tt>  <tt class="py-line">        <tt class="py-name">v</tt><tt class="py-op">=</tt><tt class="py-name">params</tt><tt class="py-op">[</tt><tt class="py-string">''</tt><tt class="py-op">]</tt> </tt>
+<a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line"> </tt>
+<a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">v</tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">==</tt><tt class="py-string">'"'</tt> <tt class="py-keyword">and</tt> <tt class="py-name">v</tt><tt class="py-op">[</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">:</tt><tt class="py-op">]</tt><tt class="py-op">==</tt><tt class="py-string">'"'</tt> <tt class="py-keyword">and</tt> <tt id="link-149" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-149', 'len', 'link-54');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">v</tt><tt class="py-op">)</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> <tt class="py-comment"># expr shorthand</tt> </tt>
+<a name="L250"></a><tt class="py-lineno">250</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">used</tt><tt class="py-op">(</tt><tt class="py-name">attr</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L251"></a><tt class="py-lineno">251</tt>  <tt class="py-line">                <tt class="py-keyword">raise</tt> <tt id="link-150" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-150', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt><tt class="py-string">'%s and expr given'</tt> <tt class="py-op">%</tt> <tt class="py-name">attr</tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L252"></a><tt class="py-lineno">252</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-151" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.If.expr
+qm.external.DocumentTemplate.DT_In.InClass.expr
+qm.external.DocumentTemplate.DT_Raise.Raise.expr
+qm.external.DocumentTemplate.DT_Return.ReturnTag.expr
+qm.external.DocumentTemplate.DT_Var.Call.expr
+qm.external.DocumentTemplate.DT_Var.Var.expr" class="py-name" href="#" onclick="return doclink('link-151', 'expr', 'link-148');">expr</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L253"></a><tt class="py-lineno">253</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">used</tt><tt class="py-op">(</tt><tt class="py-string">'expr'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L254"></a><tt class="py-lineno">254</tt>  <tt class="py-line">                    <tt class="py-keyword">raise</tt> <tt id="link-152" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-152', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt><tt class="py-string">'two exprs given'</tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L255"></a><tt class="py-lineno">255</tt>  <tt class="py-line">                <tt class="py-name">v</tt><tt class="py-op">=</tt><tt class="py-name">v</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">:</tt><tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> </tt>
+<a name="L256"></a><tt class="py-lineno">256</tt>  <tt class="py-line">                <tt class="py-keyword">try</tt><tt class="py-op">:</tt> <tt id="link-153" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.If.expr
+qm.external.DocumentTemplate.DT_In.InClass.expr
+qm.external.DocumentTemplate.DT_Raise.Raise.expr
+qm.external.DocumentTemplate.DT_Return.ReturnTag.expr
+qm.external.DocumentTemplate.DT_Var.Call.expr
+qm.external.DocumentTemplate.DT_Var.Var.expr" class="py-name" href="#" onclick="return doclink('link-153', 'expr', 'link-148');">expr</a></tt><tt class="py-op">=</tt><tt id="link-154" class="py-name" targets="Class qm.external.DocumentTemplate.DT_Util.Eval=qm.external.DocumentTemplate.DT_Util.Eval-class.html,Class qm.external.DocumentTemplate.VSEval.Eval=qm.external.DocumentTemplate.VSEval.Eval-class.html"><a title="qm.external.DocumentTemplate.DT_Util.Eval
+qm.external.DocumentTemplate.VSEval.Eval" class="py-name" href="#" onclick="return doclink('link-154', 'Eval', 'link-154');">Eval</a></tt><tt class="py-op">(</tt><tt class="py-name">v</tt><tt class="py-op">,</tt> <tt id="link-155" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.expr_globals" class="py-name" href="#" onclick="return doclink('link-155', 'expr_globals', 'link-126');">expr_globals</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L257"></a><tt class="py-lineno">257</tt>  <tt class="py-line">                <tt class="py-keyword">except</tt> <tt class="py-name">SyntaxError</tt><tt class="py-op">,</tt> <tt class="py-name">v</tt><tt class="py-op">:</tt> </tt>
+<a name="L258"></a><tt class="py-lineno">258</tt>  <tt class="py-line">                    <tt class="py-keyword">raise</tt> <tt id="link-156" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-156', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt> </tt>
+<a name="L259"></a><tt class="py-lineno">259</tt>  <tt class="py-line">                        <tt class="py-string">'&lt;strong&gt;Expression (Python) Syntax error&lt;/strong&gt;:'</tt> </tt>
+<a name="L260"></a><tt class="py-lineno">260</tt>  <tt class="py-line">                        <tt class="py-string">'\n&lt;pre&gt;\n%s\n&lt;/pre&gt;\n'</tt> <tt class="py-op">%</tt> <tt class="py-name">v</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L261"></a><tt class="py-lineno">261</tt>  <tt class="py-line">                        <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L262"></a><tt class="py-lineno">262</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">v</tt><tt class="py-op">,</tt> <tt id="link-157" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.If.expr
+qm.external.DocumentTemplate.DT_In.InClass.expr
+qm.external.DocumentTemplate.DT_Raise.Raise.expr
+qm.external.DocumentTemplate.DT_Return.ReturnTag.expr
+qm.external.DocumentTemplate.DT_Var.Call.expr
+qm.external.DocumentTemplate.DT_Var.Var.expr" class="py-name" href="#" onclick="return doclink('link-157', 'expr', 'link-148');">expr</a></tt> </tt>
+<a name="L263"></a><tt class="py-lineno">263</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt class="py-keyword">raise</tt> <tt id="link-158" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-158', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt> </tt>
+<a name="L264"></a><tt class="py-lineno">264</tt>  <tt class="py-line">                <tt class="py-string">'The "..." shorthand for expr was used in a tag '</tt> </tt>
+<a name="L265"></a><tt class="py-lineno">265</tt>  <tt class="py-line">                <tt class="py-string">'that doesn\'t support expr attributes.'</tt><tt class="py-op">,</tt> </tt>
+<a name="L266"></a><tt class="py-lineno">266</tt>  <tt class="py-line">                <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L267"></a><tt class="py-lineno">267</tt>  <tt class="py-line"> </tt>
+<a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt class="py-comment"># name shorthand            </tt> </tt>
+<a name="L269"></a><tt class="py-lineno">269</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">used</tt><tt class="py-op">(</tt><tt class="py-name">attr</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line">                <tt class="py-keyword">raise</tt> <tt id="link-159" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-159', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt><tt class="py-string">'Two %s values were given'</tt> <tt class="py-op">%</tt> <tt class="py-name">attr</tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L271"></a><tt class="py-lineno">271</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-160" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.If.expr
+qm.external.DocumentTemplate.DT_In.InClass.expr
+qm.external.DocumentTemplate.DT_Raise.Raise.expr
+qm.external.DocumentTemplate.DT_Return.ReturnTag.expr
+qm.external.DocumentTemplate.DT_Var.Call.expr
+qm.external.DocumentTemplate.DT_Var.Var.expr" class="py-name" href="#" onclick="return doclink('link-160', 'expr', 'link-148');">expr</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L272"></a><tt class="py-lineno">272</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">used</tt><tt class="py-op">(</tt><tt class="py-string">'expr'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">                    <tt class="py-comment"># raise 'Waaaaaa', 'waaa'</tt> </tt>
+<a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line">                    <tt class="py-keyword">raise</tt> <tt id="link-161" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-161', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt><tt class="py-string">'%s and expr given'</tt> <tt class="py-op">%</tt> <tt class="py-name">attr</tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L275"></a><tt class="py-lineno">275</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">params</tt><tt class="py-op">[</tt><tt class="py-string">''</tt><tt class="py-op">]</tt><tt class="py-op">,</tt><tt id="link-162" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-162', 'None', 'link-23');">None</a></tt> </tt>
+<a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">params</tt><tt class="py-op">[</tt><tt class="py-string">''</tt><tt class="py-op">]</tt> </tt>
+<a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line"> </tt>
+<a name="L278"></a><tt class="py-lineno">278</tt>  <tt class="py-line">    <tt class="py-keyword">elif</tt> <tt class="py-name">used</tt><tt class="py-op">(</tt><tt class="py-name">attr</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-163" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.If.expr
+qm.external.DocumentTemplate.DT_In.InClass.expr
+qm.external.DocumentTemplate.DT_Raise.Raise.expr
+qm.external.DocumentTemplate.DT_Return.ReturnTag.expr
+qm.external.DocumentTemplate.DT_Var.Call.expr
+qm.external.DocumentTemplate.DT_Var.Var.expr" class="py-name" href="#" onclick="return doclink('link-163', 'expr', 'link-148');">expr</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L280"></a><tt class="py-lineno">280</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">used</tt><tt class="py-op">(</tt><tt class="py-string">'expr'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line">                <tt class="py-keyword">raise</tt> <tt id="link-164" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-164', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt><tt class="py-string">'%s and expr given'</tt> <tt class="py-op">%</tt> <tt class="py-name">attr</tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L282"></a><tt class="py-lineno">282</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">params</tt><tt class="py-op">[</tt><tt class="py-name">attr</tt><tt class="py-op">]</tt><tt class="py-op">,</tt><tt id="link-165" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-165', 'None', 'link-23');">None</a></tt> </tt>
+<a name="L283"></a><tt class="py-lineno">283</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">params</tt><tt class="py-op">[</tt><tt class="py-name">attr</tt><tt class="py-op">]</tt> </tt>
+<a name="L284"></a><tt class="py-lineno">284</tt>  <tt class="py-line">    <tt class="py-keyword">elif</tt> <tt id="link-166" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.If.expr
+qm.external.DocumentTemplate.DT_In.InClass.expr
+qm.external.DocumentTemplate.DT_Raise.Raise.expr
+qm.external.DocumentTemplate.DT_Return.ReturnTag.expr
+qm.external.DocumentTemplate.DT_Var.Call.expr
+qm.external.DocumentTemplate.DT_Var.Var.expr" class="py-name" href="#" onclick="return doclink('link-166', 'expr', 'link-148');">expr</a></tt> <tt class="py-keyword">and</tt> <tt class="py-name">used</tt><tt class="py-op">(</tt><tt class="py-string">'expr'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L285"></a><tt class="py-lineno">285</tt>  <tt class="py-line">        <tt id="link-167" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-167', 'name', 'link-5');">name</a></tt><tt class="py-op">=</tt><tt class="py-name">params</tt><tt class="py-op">[</tt><tt class="py-string">'expr'</tt><tt class="py-op">]</tt> </tt>
+<a name="L286"></a><tt class="py-lineno">286</tt>  <tt class="py-line">        <tt id="link-168" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.If.expr
+qm.external.DocumentTemplate.DT_In.InClass.expr
+qm.external.DocumentTemplate.DT_Raise.Raise.expr
+qm.external.DocumentTemplate.DT_Return.ReturnTag.expr
+qm.external.DocumentTemplate.DT_Var.Call.expr
+qm.external.DocumentTemplate.DT_Var.Var.expr" class="py-name" href="#" onclick="return doclink('link-168', 'expr', 'link-148');">expr</a></tt><tt class="py-op">=</tt><tt id="link-169" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.Eval
+qm.external.DocumentTemplate.VSEval.Eval" class="py-name" href="#" onclick="return doclink('link-169', 'Eval', 'link-154');">Eval</a></tt><tt class="py-op">(</tt><tt id="link-170" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-170', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt id="link-171" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.expr_globals" class="py-name" href="#" onclick="return doclink('link-171', 'expr_globals', 'link-126');">expr_globals</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L287"></a><tt class="py-lineno">287</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-172" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-172', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt id="link-173" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.If.expr
+qm.external.DocumentTemplate.DT_In.InClass.expr
+qm.external.DocumentTemplate.DT_Raise.Raise.expr
+qm.external.DocumentTemplate.DT_Return.ReturnTag.expr
+qm.external.DocumentTemplate.DT_Var.Call.expr
+qm.external.DocumentTemplate.DT_Var.Var.expr" class="py-name" href="#" onclick="return doclink('link-173', 'expr', 'link-148');">expr</a></tt> </tt>
+<a name="L288"></a><tt class="py-lineno">288</tt>  <tt class="py-line">         </tt>
+<a name="L289"></a><tt class="py-lineno">289</tt>  <tt class="py-line">    <tt class="py-keyword">raise</tt> <tt id="link-174" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-174', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt><tt class="py-string">'No %s given'</tt> <tt class="py-op">%</tt> <tt class="py-name">attr</tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L290"></a><tt class="py-lineno">290</tt>  <tt class="py-line"> </tt>
+<a name="L291"></a><tt class="py-lineno">291</tt>  <tt class="py-line"><tt id="link-175" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_Util.Expr_doc=qm.external.DocumentTemplate.DT_Util-module.html#Expr_doc"><a title="qm.external.DocumentTemplate.DT_Util.Expr_doc" class="py-name" href="#" onclick="return doclink('link-175', 'Expr_doc', 'link-175');">Expr_doc</a></tt><tt class="py-op">=</tt><tt class="py-string">"""</tt> </tt>
+<a name="L292"></a><tt class="py-lineno">292</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L293"></a><tt class="py-lineno">293</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L294"></a><tt class="py-lineno">294</tt>  <tt class="py-line"><tt class="py-string">Python expression support</tt> </tt>
+<a name="L295"></a><tt class="py-lineno">295</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L296"></a><tt class="py-lineno">296</tt>  <tt class="py-line"><tt class="py-string">  Several document template tags, including 'var', 'in', 'if', 'else',</tt> </tt>
+<a name="L297"></a><tt class="py-lineno">297</tt>  <tt class="py-line"><tt class="py-string">  and 'elif' provide support for using Python expressions via an</tt> </tt>
+<a name="L298"></a><tt class="py-lineno">298</tt>  <tt class="py-line"><tt class="py-string">  'expr' tag attribute.</tt> </tt>
+<a name="L299"></a><tt class="py-lineno">299</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L300"></a><tt class="py-lineno">300</tt>  <tt class="py-line"><tt class="py-string">  Expressions may be used where a simple variable value is</tt> </tt>
+<a name="L301"></a><tt class="py-lineno">301</tt>  <tt class="py-line"><tt class="py-string">  inadequate.  For example, an expression might be used to test</tt> </tt>
+<a name="L302"></a><tt class="py-lineno">302</tt>  <tt class="py-line"><tt class="py-string">  whether a variable is greater than some amount::</tt> </tt>
+<a name="L303"></a><tt class="py-lineno">303</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L304"></a><tt class="py-lineno">304</tt>  <tt class="py-line"><tt class="py-string">     &lt;!--#if expr="age &gt; 18"--&gt;</tt> </tt>
+<a name="L305"></a><tt class="py-lineno">305</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L306"></a><tt class="py-lineno">306</tt>  <tt class="py-line"><tt class="py-string">  or to transform some basic data::</tt> </tt>
+<a name="L307"></a><tt class="py-lineno">307</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L308"></a><tt class="py-lineno">308</tt>  <tt class="py-line"><tt class="py-string">     &lt;!--#var expr="phone[:3]"--&gt;</tt> </tt>
+<a name="L309"></a><tt class="py-lineno">309</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L310"></a><tt class="py-lineno">310</tt>  <tt class="py-line"><tt class="py-string">  Objects available in the document templates namespace may be used.</tt> </tt>
+<a name="L311"></a><tt class="py-lineno">311</tt>  <tt class="py-line"><tt class="py-string">  Subobjects of these objects may be used as well, although subobject</tt> </tt>
+<a name="L312"></a><tt class="py-lineno">312</tt>  <tt class="py-line"><tt class="py-string">  access is restricted by the optional validation method.</tt> </tt>
+<a name="L313"></a><tt class="py-lineno">313</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L314"></a><tt class="py-lineno">314</tt>  <tt class="py-line"><tt class="py-string">  In addition, a special additional name, '_', is available.  The '_'</tt> </tt>
+<a name="L315"></a><tt class="py-lineno">315</tt>  <tt class="py-line"><tt class="py-string">  variable provides access to the document template namespace as a</tt> </tt>
+<a name="L316"></a><tt class="py-lineno">316</tt>  <tt class="py-line"><tt class="py-string">  mapping object.  This variable can be useful for accessing objects</tt> </tt>
+<a name="L317"></a><tt class="py-lineno">317</tt>  <tt class="py-line"><tt class="py-string">  in a document template namespace that have names that are not legal</tt> </tt>
+<a name="L318"></a><tt class="py-lineno">318</tt>  <tt class="py-line"><tt class="py-string">  Python variable names::</tt> </tt>
+<a name="L319"></a><tt class="py-lineno">319</tt>  <tt class="py-line"><tt class="py-string">  </tt> </tt>
+<a name="L320"></a><tt class="py-lineno">320</tt>  <tt class="py-line"><tt class="py-string">     &lt;!--#var expr="_['sequence-number']*5"--&gt;</tt> </tt>
+<a name="L321"></a><tt class="py-lineno">321</tt>  <tt class="py-line"><tt class="py-string">  </tt> </tt>
+<a name="L322"></a><tt class="py-lineno">322</tt>  <tt class="py-line"><tt class="py-string">  This variable also has attributes that provide access to standard</tt> </tt>
+<a name="L323"></a><tt class="py-lineno">323</tt>  <tt class="py-line"><tt class="py-string">  utility objects.  These attributes include:</tt> </tt>
+<a name="L324"></a><tt class="py-lineno">324</tt>  <tt class="py-line"><tt class="py-string">  </tt> </tt>
+<a name="L325"></a><tt class="py-lineno">325</tt>  <tt class="py-line"><tt class="py-string">  - The objects: 'None', 'abs', 'chr', 'divmod', 'float', 'hash',</tt> </tt>
+<a name="L326"></a><tt class="py-lineno">326</tt>  <tt class="py-line"><tt class="py-string">       'hex', 'int', 'len', 'max', 'min', 'oct', 'ord', 'pow',</tt> </tt>
+<a name="L327"></a><tt class="py-lineno">327</tt>  <tt class="py-line"><tt class="py-string">       'round', and 'str' from the standard Python builtin module.</tt> </tt>
+<a name="L328"></a><tt class="py-lineno">328</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L329"></a><tt class="py-lineno">329</tt>  <tt class="py-line"><tt class="py-string">  - Special security-aware versions of 'getattr' and 'hasattr',</tt> </tt>
+<a name="L330"></a><tt class="py-lineno">330</tt>  <tt class="py-line"><tt class="py-string">  </tt> </tt>
+<a name="L331"></a><tt class="py-lineno">331</tt>  <tt class="py-line"><tt class="py-string">  - The Python 'string', 'math', and 'random' modules, and</tt> </tt>
+<a name="L332"></a><tt class="py-lineno">332</tt>  <tt class="py-line"><tt class="py-string">  </tt> </tt>
+<a name="L333"></a><tt class="py-lineno">333</tt>  <tt class="py-line"><tt class="py-string">  - A special function, 'test', that supports if-then expressions.</tt> </tt>
+<a name="L334"></a><tt class="py-lineno">334</tt>  <tt class="py-line"><tt class="py-string">    The 'test' function accepts any number of arguments.  If the</tt> </tt>
+<a name="L335"></a><tt class="py-lineno">335</tt>  <tt class="py-line"><tt class="py-string">    first argument is true, then the second argument is returned,</tt> </tt>
+<a name="L336"></a><tt class="py-lineno">336</tt>  <tt class="py-line"><tt class="py-string">    otherwise if the third argument is true, then the fourth</tt> </tt>
+<a name="L337"></a><tt class="py-lineno">337</tt>  <tt class="py-line"><tt class="py-string">    argument is returned, and so on.  If there is an odd number of</tt> </tt>
+<a name="L338"></a><tt class="py-lineno">338</tt>  <tt class="py-line"><tt class="py-string">    arguments, then the last argument is returned in the case that</tt> </tt>
+<a name="L339"></a><tt class="py-lineno">339</tt>  <tt class="py-line"><tt class="py-string">    none of the tested arguments is true, otherwise None is</tt> </tt>
+<a name="L340"></a><tt class="py-lineno">340</tt>  <tt class="py-line"><tt class="py-string">    returned. </tt> </tt>
+<a name="L341"></a><tt class="py-lineno">341</tt>  <tt class="py-line"><tt class="py-string">  </tt> </tt>
+<a name="L342"></a><tt class="py-lineno">342</tt>  <tt class="py-line"><tt class="py-string">  For example, to convert a value to lower case::</tt> </tt>
+<a name="L343"></a><tt class="py-lineno">343</tt>  <tt class="py-line"><tt class="py-string">  </tt> </tt>
+<a name="L344"></a><tt class="py-lineno">344</tt>  <tt class="py-line"><tt class="py-string">    &lt;!--#var expr="_.string.lower(title)"--&gt;</tt> </tt>
+<a name="L345"></a><tt class="py-lineno">345</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L346"></a><tt class="py-lineno">346</tt>  <tt class="py-line"><tt class="py-string">"""</tt> </tt>
+<a name="L347"></a><tt class="py-lineno">347</tt>  <tt class="py-line"> </tt>
+<a name="L348"></a><tt class="py-lineno">348</tt>  <tt class="py-line"><tt class="py-name">ListType</tt><tt class="py-op">=</tt><tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="parse_params"></a><div id="parse_params-def"><a name="L349"></a><tt class="py-lineno">349</tt> <a class="py-toggle" href="#" id="parse_params-toggle" onclick="return toggle('parse_params');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.external.DocumentTemplate.DT_Util-module.html#parse_params">parse_params</a><tt class="py-op">(</tt><tt class="py-param">text</tt><tt class="py-op">,</tt> </tt>
+<a name="L350"></a><tt class="py-lineno">350</tt>  <tt class="py-line">                 <tt class="py-param">result</tt><tt class="py-op">=</tt><tt id="link-176" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-176', 'None', 'link-23');">None</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L351"></a><tt class="py-lineno">351</tt>  <tt class="py-line">                 <tt class="py-param">tag</tt><tt class="py-op">=</tt><tt class="py-string">''</tt><tt class="py-op">,</tt> </tt>
+<a name="L352"></a><tt class="py-lineno">352</tt>  <tt class="py-line">                 <tt class="py-param">unparmre</tt><tt class="py-op">=</tt><tt class="py-name">re</tt><tt class="py-op">.</tt><tt id="link-177" class="py-name" targets="Function qm.external.DocumentTemplate.gparse.compile()=qm.external.DocumentTemplate.gparse-module.html#compile"><a title="qm.external.DocumentTemplate.gparse.compile" class="py-name" href="#" onclick="return doclink('link-177', 'compile', 'link-177');">compile</a></tt><tt class="py-op">(</tt><tt class="py-string">'([\000- ]*([^\000- ="]+))'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L353"></a><tt class="py-lineno">353</tt>  <tt class="py-line">                 <tt class="py-param">qunparmre</tt><tt class="py-op">=</tt><tt class="py-name">re</tt><tt class="py-op">.</tt><tt id="link-178" class="py-name"><a title="qm.external.DocumentTemplate.gparse.compile" class="py-name" href="#" onclick="return doclink('link-178', 'compile', 'link-177');">compile</a></tt><tt class="py-op">(</tt><tt class="py-string">'([\000- ]*("[^"]*"))'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L354"></a><tt class="py-lineno">354</tt>  <tt class="py-line">                 <tt class="py-param">parmre</tt><tt class="py-op">=</tt><tt class="py-name">re</tt><tt class="py-op">.</tt><tt id="link-179" class="py-name"><a title="qm.external.DocumentTemplate.gparse.compile" class="py-name" href="#" onclick="return doclink('link-179', 'compile', 'link-177');">compile</a></tt><tt class="py-op">(</tt><tt class="py-string">'([\000- ]*([^\000- ="]+)=([^\000- ="]+))'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L355"></a><tt class="py-lineno">355</tt>  <tt class="py-line">                 <tt class="py-param">qparmre</tt><tt class="py-op">=</tt><tt class="py-name">re</tt><tt class="py-op">.</tt><tt id="link-180" class="py-name"><a title="qm.external.DocumentTemplate.gparse.compile" class="py-name" href="#" onclick="return doclink('link-180', 'compile', 'link-177');">compile</a></tt><tt class="py-op">(</tt><tt class="py-string">'([\000- ]*([^\000- ="]+)="([^"]*)")'</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L356"></a><tt class="py-lineno">356</tt>  <tt class="py-line">                 <tt class="py-op">**</tt><tt class="py-param">parms</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="parse_params-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="parse_params-expanded"><a name="L357"></a><tt class="py-lineno">357</tt>  <tt class="py-line"> </tt>
+<a name="L358"></a><tt class="py-lineno">358</tt>  <tt class="py-line">    <tt class="py-docstring">"""Parse tag parameters</tt> </tt>
+<a name="L359"></a><tt class="py-lineno">359</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L360"></a><tt class="py-lineno">360</tt>  <tt class="py-line"><tt class="py-docstring">    The format of tag parameters consists of 1 or more parameter</tt> </tt>
+<a name="L361"></a><tt class="py-lineno">361</tt>  <tt class="py-line"><tt class="py-docstring">    specifications separated by whitespace.  Each specification</tt> </tt>
+<a name="L362"></a><tt class="py-lineno">362</tt>  <tt class="py-line"><tt class="py-docstring">    consists of an unnamed and unquoted value, a valueless name, or a</tt> </tt>
+<a name="L363"></a><tt class="py-lineno">363</tt>  <tt class="py-line"><tt class="py-docstring">    name-value pair.  A name-value pair consists of a name and a</tt> </tt>
+<a name="L364"></a><tt class="py-lineno">364</tt>  <tt class="py-line"><tt class="py-docstring">    quoted or unquoted value separated by an '='.</tt> </tt>
+<a name="L365"></a><tt class="py-lineno">365</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L366"></a><tt class="py-lineno">366</tt>  <tt class="py-line"><tt class="py-docstring">    The input parameter, text, gives the text to be parsed.  The</tt> </tt>
+<a name="L367"></a><tt class="py-lineno">367</tt>  <tt class="py-line"><tt class="py-docstring">    keyword parameters give valid parameter names and default values.</tt> </tt>
+<a name="L368"></a><tt class="py-lineno">368</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L369"></a><tt class="py-lineno">369</tt>  <tt class="py-line"><tt class="py-docstring">    If a specification is not a name-value pair and it is not the</tt> </tt>
+<a name="L370"></a><tt class="py-lineno">370</tt>  <tt class="py-line"><tt class="py-docstring">    first specification and it is a</tt> </tt>
+<a name="L371"></a><tt class="py-lineno">371</tt>  <tt class="py-line"><tt class="py-docstring">    valid parameter name, then it is treated as a name-value pair with</tt> </tt>
+<a name="L372"></a><tt class="py-lineno">372</tt>  <tt class="py-line"><tt class="py-docstring">    a value as given in the keyword argument.  Otherwise, if it is not</tt> </tt>
+<a name="L373"></a><tt class="py-lineno">373</tt>  <tt class="py-line"><tt class="py-docstring">    a name-value pair, it is treated as an unnamed value.</tt> </tt>
+<a name="L374"></a><tt class="py-lineno">374</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L375"></a><tt class="py-lineno">375</tt>  <tt class="py-line"><tt class="py-docstring">    The data are parsed into a dictionary mapping names to values.</tt> </tt>
+<a name="L376"></a><tt class="py-lineno">376</tt>  <tt class="py-line"><tt class="py-docstring">    Unnamed values are mapped from the name '""'.  Only one value may</tt> </tt>
+<a name="L377"></a><tt class="py-lineno">377</tt>  <tt class="py-line"><tt class="py-docstring">    be given for a name and there may be only one unnamed value. """</tt> </tt>
+<a name="L378"></a><tt class="py-lineno">378</tt>  <tt class="py-line"> </tt>
+<a name="L379"></a><tt class="py-lineno">379</tt>  <tt class="py-line">    <tt id="link-181" class="py-name" targets="Module qm.test.result=qm.test.result-module.html"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-181', 'result', 'link-181');">result</a></tt><tt class="py-op">=</tt><tt id="link-182" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-182', 'result', 'link-181');">result</a></tt> <tt class="py-keyword">or</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L380"></a><tt class="py-lineno">380</tt>  <tt class="py-line"> </tt>
+<a name="L381"></a><tt class="py-lineno">381</tt>  <tt class="py-line">    <tt class="py-comment"># HACK - we precalculate all matches. Maybe we don't need them</tt> </tt>
+<a name="L382"></a><tt class="py-lineno">382</tt>  <tt class="py-line">    <tt class="py-comment"># all. This should be fixed for performance issues</tt> </tt>
+<a name="L383"></a><tt class="py-lineno">383</tt>  <tt class="py-line"> </tt>
+<a name="L384"></a><tt class="py-lineno">384</tt>  <tt class="py-line">    <tt class="py-name">mo_p</tt> <tt class="py-op">=</tt> <tt class="py-name">parmre</tt><tt class="py-op">.</tt><tt class="py-name">match</tt><tt class="py-op">(</tt><tt class="py-name">text</tt><tt class="py-op">)</tt> </tt>
+<a name="L385"></a><tt class="py-lineno">385</tt>  <tt class="py-line">    <tt class="py-name">mo_q</tt> <tt class="py-op">=</tt> <tt class="py-name">qparmre</tt><tt class="py-op">.</tt><tt class="py-name">match</tt><tt class="py-op">(</tt><tt class="py-name">text</tt><tt class="py-op">)</tt> </tt>
+<a name="L386"></a><tt class="py-lineno">386</tt>  <tt class="py-line">    <tt class="py-name">mo_unp</tt> <tt class="py-op">=</tt> <tt class="py-name">unparmre</tt><tt class="py-op">.</tt><tt class="py-name">match</tt><tt class="py-op">(</tt><tt class="py-name">text</tt><tt class="py-op">)</tt> </tt>
+<a name="L387"></a><tt class="py-lineno">387</tt>  <tt class="py-line">    <tt class="py-name">mo_unq</tt> <tt class="py-op">=</tt> <tt class="py-name">qunparmre</tt><tt class="py-op">.</tt><tt class="py-name">match</tt><tt class="py-op">(</tt><tt class="py-name">text</tt><tt class="py-op">)</tt> </tt>
+<a name="L388"></a><tt class="py-lineno">388</tt>  <tt class="py-line"> </tt>
+<a name="L389"></a><tt class="py-lineno">389</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">mo_p</tt><tt class="py-op">:</tt> </tt>
+<a name="L390"></a><tt class="py-lineno">390</tt>  <tt class="py-line">        <tt id="link-183" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-183', 'name', 'link-5');">name</a></tt><tt class="py-op">=</tt><tt class="py-name">mo_p</tt><tt class="py-op">.</tt><tt id="link-184" class="py-name" targets="Method qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group()=qm.external.DocumentTemplate.DT_HTML.dtml_re_class-class.html#group"><a title="qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group" class="py-name" href="#" onclick="return doclink('link-184', 'group', 'link-184');">group</a></tt><tt class="py-op">(</tt><tt class="py-number">2</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">lower</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L391"></a><tt class="py-lineno">391</tt>  <tt class="py-line">        <tt id="link-185" class="py-name" targets="Method qm.external.DocumentTemplate.DT_InSV.sequence_variables.value()=qm.external.DocumentTemplate.DT_InSV.sequence_variables-class.html#value"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.value" class="py-name" href="#" onclick="return doclink('link-185', 'value', 'link-185');">value</a></tt><tt class="py-op">=</tt><tt class="py-name">mo_p</tt><tt class="py-op">.</tt><tt id="link-186" class="py-name"><a title="qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group" class="py-name" href="#" onclick="return doclink('link-186', 'group', 'link-184');">group</a></tt><tt class="py-op">(</tt><tt class="py-number">3</tt><tt class="py-op">)</tt> </tt>
+<a name="L392"></a><tt class="py-lineno">392</tt>  <tt class="py-line">        <tt class="py-name">l</tt><tt class="py-op">=</tt><tt id="link-187" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-187', 'len', 'link-54');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">mo_p</tt><tt class="py-op">.</tt><tt id="link-188" class="py-name"><a title="qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group" class="py-name" href="#" onclick="return doclink('link-188', 'group', 'link-184');">group</a></tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L393"></a><tt class="py-lineno">393</tt>  <tt class="py-line">    <tt class="py-keyword">elif</tt> <tt class="py-name">mo_q</tt><tt class="py-op">:</tt> </tt>
+<a name="L394"></a><tt class="py-lineno">394</tt>  <tt class="py-line">        <tt id="link-189" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-189', 'name', 'link-5');">name</a></tt><tt class="py-op">=</tt><tt class="py-name">mo_q</tt><tt class="py-op">.</tt><tt id="link-190" class="py-name"><a title="qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group" class="py-name" href="#" onclick="return doclink('link-190', 'group', 'link-184');">group</a></tt><tt class="py-op">(</tt><tt class="py-number">2</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">lower</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L395"></a><tt class="py-lineno">395</tt>  <tt class="py-line">        <tt id="link-191" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.value" class="py-name" href="#" onclick="return doclink('link-191', 'value', 'link-185');">value</a></tt><tt class="py-op">=</tt><tt class="py-name">mo_q</tt><tt class="py-op">.</tt><tt id="link-192" class="py-name"><a title="qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group" class="py-name" href="#" onclick="return doclink('link-192', 'group', 'link-184');">group</a></tt><tt class="py-op">(</tt><tt class="py-number">3</tt><tt class="py-op">)</tt> </tt>
+<a name="L396"></a><tt class="py-lineno">396</tt>  <tt class="py-line">        <tt class="py-name">l</tt><tt class="py-op">=</tt><tt id="link-193" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-193', 'len', 'link-54');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">mo_q</tt><tt class="py-op">.</tt><tt id="link-194" class="py-name"><a title="qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group" class="py-name" href="#" onclick="return doclink('link-194', 'group', 'link-184');">group</a></tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L397"></a><tt class="py-lineno">397</tt>  <tt class="py-line">    <tt class="py-keyword">elif</tt> <tt class="py-name">mo_unp</tt><tt class="py-op">:</tt> </tt>
+<a name="L398"></a><tt class="py-lineno">398</tt>  <tt class="py-line">        <tt id="link-195" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-195', 'name', 'link-5');">name</a></tt><tt class="py-op">=</tt><tt class="py-name">mo_unp</tt><tt class="py-op">.</tt><tt id="link-196" class="py-name"><a title="qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group" class="py-name" href="#" onclick="return doclink('link-196', 'group', 'link-184');">group</a></tt><tt class="py-op">(</tt><tt class="py-number">2</tt><tt class="py-op">)</tt> </tt>
+<a name="L399"></a><tt class="py-lineno">399</tt>  <tt class="py-line">        <tt class="py-name">l</tt><tt class="py-op">=</tt><tt id="link-197" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-197', 'len', 'link-54');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">mo_unp</tt><tt class="py-op">.</tt><tt id="link-198" class="py-name"><a title="qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group" class="py-name" href="#" onclick="return doclink('link-198', 'group', 'link-184');">group</a></tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L400"></a><tt class="py-lineno">400</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-199" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-199', 'result', 'link-181');">result</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L401"></a><tt class="py-lineno">401</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">parms</tt><tt class="py-op">.</tt><tt id="link-200" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.has_key
+qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.has_key
+qm.test.context.Context.has_key
+qm.test.result.Result.has_key
+qm.web.CGIWebRequest.has_key
+qm.web.WebRequest.has_key" class="py-name" href="#" onclick="return doclink('link-200', 'has_key', 'link-147');">has_key</a></tt><tt class="py-op">(</tt><tt id="link-201" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-201', 'name', 'link-5');">name</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L402"></a><tt class="py-lineno">402</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">parms</tt><tt class="py-op">[</tt><tt id="link-202" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-202', 'name', 'link-5');">name</a></tt><tt class="py-op">]</tt> <tt class="py-keyword">is</tt> <tt id="link-203" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-203', 'None', 'link-23');">None</a></tt><tt class="py-op">:</tt> <tt class="py-keyword">raise</tt> <tt id="link-204" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-204', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt> </tt>
+<a name="L403"></a><tt class="py-lineno">403</tt>  <tt class="py-line">                    <tt class="py-string">'Attribute %s requires a value'</tt> <tt class="py-op">%</tt> <tt id="link-205" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-205', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L404"></a><tt class="py-lineno">404</tt>  <tt class="py-line"> </tt>
+<a name="L405"></a><tt class="py-lineno">405</tt>  <tt class="py-line">                <tt id="link-206" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-206', 'result', 'link-181');">result</a></tt><tt class="py-op">[</tt><tt id="link-207" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-207', 'name', 'link-5');">name</a></tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt class="py-name">parms</tt><tt class="py-op">[</tt><tt id="link-208" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-208', 'name', 'link-5');">name</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L406"></a><tt class="py-lineno">406</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt class="py-keyword">raise</tt> <tt id="link-209" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-209', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt> </tt>
+<a name="L407"></a><tt class="py-lineno">407</tt>  <tt class="py-line">                <tt class="py-string">'Invalid attribute name, "%s"'</tt> <tt class="py-op">%</tt> <tt id="link-210" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-210', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L408"></a><tt class="py-lineno">408</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L409"></a><tt class="py-lineno">409</tt>  <tt class="py-line">            <tt id="link-211" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-211', 'result', 'link-181');">result</a></tt><tt class="py-op">[</tt><tt class="py-string">''</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-212" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-212', 'name', 'link-5');">name</a></tt> </tt>
+<a name="L410"></a><tt class="py-lineno">410</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-213" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.parse_params()=qm.external.DocumentTemplate.DT_Util-module.html#parse_params"><a title="qm.external.DocumentTemplate.DT_Util.parse_params" class="py-name" href="#" onclick="return doclink('link-213', 'parse_params', 'link-213');">parse_params</a></tt><tt class="py-op">(</tt><tt class="py-name">text</tt><tt class="py-op">[</tt><tt class="py-name">l</tt><tt class="py-op">:</tt><tt class="py-op">]</tt><tt class="py-op">,</tt><tt id="link-214" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-214', 'result', 'link-181');">result</a></tt><tt class="py-op">,</tt><tt class="py-op">**</tt><tt class="py-name">parms</tt><tt class="py-op">)</tt> </tt>
+<a name="L411"></a><tt class="py-lineno">411</tt>  <tt class="py-line">    <tt class="py-keyword">elif</tt> <tt class="py-name">mo_unq</tt><tt class="py-op">:</tt> </tt>
+<a name="L412"></a><tt class="py-lineno">412</tt>  <tt class="py-line">        <tt id="link-215" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-215', 'name', 'link-5');">name</a></tt><tt class="py-op">=</tt><tt class="py-name">mo_unq</tt><tt class="py-op">.</tt><tt id="link-216" class="py-name"><a title="qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group" class="py-name" href="#" onclick="return doclink('link-216', 'group', 'link-184');">group</a></tt><tt class="py-op">(</tt><tt class="py-number">2</tt><tt class="py-op">)</tt> </tt>
+<a name="L413"></a><tt class="py-lineno">413</tt>  <tt class="py-line">        <tt class="py-name">l</tt><tt class="py-op">=</tt><tt id="link-217" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-217', 'len', 'link-54');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">mo_unq</tt><tt class="py-op">.</tt><tt id="link-218" class="py-name"><a title="qm.external.DocumentTemplate.DT_HTML.dtml_re_class.group" class="py-name" href="#" onclick="return doclink('link-218', 'group', 'link-184');">group</a></tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L414"></a><tt class="py-lineno">414</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-219" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-219', 'result', 'link-181');">result</a></tt><tt class="py-op">:</tt> <tt class="py-keyword">raise</tt> <tt id="link-220" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-220', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt> </tt>
+<a name="L415"></a><tt class="py-lineno">415</tt>  <tt class="py-line">            <tt class="py-string">'Invalid attribute name, "%s"'</tt> <tt class="py-op">%</tt> <tt id="link-221" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-221', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L416"></a><tt class="py-lineno">416</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt id="link-222" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-222', 'result', 'link-181');">result</a></tt><tt class="py-op">[</tt><tt class="py-string">''</tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-223" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-223', 'name', 'link-5');">name</a></tt> </tt>
+<a name="L417"></a><tt class="py-lineno">417</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-224" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.parse_params" class="py-name" href="#" onclick="return doclink('link-224', 'parse_params', 'link-213');">parse_params</a></tt><tt class="py-op">(</tt><tt class="py-name">text</tt><tt class="py-op">[</tt><tt class="py-name">l</tt><tt class="py-op">:</tt><tt class="py-op">]</tt><tt class="py-op">,</tt><tt id="link-225" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-225', 'result', 'link-181');">result</a></tt><tt class="py-op">,</tt><tt class="py-op">**</tt><tt class="py-name">parms</tt><tt class="py-op">)</tt> </tt>
+<a name="L418"></a><tt class="py-lineno">418</tt>  <tt class="py-line">    <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L419"></a><tt class="py-lineno">419</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">text</tt> <tt class="py-keyword">or</tt> <tt class="py-keyword">not</tt> <tt class="py-name">text</tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt id="link-226" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-226', 'result', 'link-181');">result</a></tt> </tt>
+<a name="L420"></a><tt class="py-lineno">420</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt id="link-227" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-227', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt><tt class="py-string">'invalid parameter: "%s"'</tt> <tt class="py-op">%</tt> <tt class="py-name">text</tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L421"></a><tt class="py-lineno">421</tt>  <tt class="py-line"> </tt>
+<a name="L422"></a><tt class="py-lineno">422</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">parms</tt><tt class="py-op">.</tt><tt id="link-228" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.has_key
+qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.has_key
+qm.test.context.Context.has_key
+qm.test.result.Result.has_key
+qm.web.CGIWebRequest.has_key
+qm.web.WebRequest.has_key" class="py-name" href="#" onclick="return doclink('link-228', 'has_key', 'link-147');">has_key</a></tt><tt class="py-op">(</tt><tt id="link-229" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-229', 'name', 'link-5');">name</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L423"></a><tt class="py-lineno">423</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt id="link-230" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-230', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt> </tt>
+<a name="L424"></a><tt class="py-lineno">424</tt>  <tt class="py-line">            <tt class="py-string">'Invalid attribute name, "%s"'</tt> <tt class="py-op">%</tt> <tt id="link-231" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-231', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L425"></a><tt class="py-lineno">425</tt>  <tt class="py-line"> </tt>
+<a name="L426"></a><tt class="py-lineno">426</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt id="link-232" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-232', 'result', 'link-181');">result</a></tt><tt class="py-op">.</tt><tt id="link-233" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.has_key
+qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.has_key
+qm.test.context.Context.has_key
+qm.test.result.Result.has_key
+qm.web.CGIWebRequest.has_key
+qm.web.WebRequest.has_key" class="py-name" href="#" onclick="return doclink('link-233', 'has_key', 'link-147');">has_key</a></tt><tt class="py-op">(</tt><tt id="link-234" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-234', 'name', 'link-5');">name</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L427"></a><tt class="py-lineno">427</tt>  <tt class="py-line">        <tt class="py-name">p</tt><tt class="py-op">=</tt><tt class="py-name">parms</tt><tt class="py-op">[</tt><tt id="link-235" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-235', 'name', 'link-5');">name</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L428"></a><tt class="py-lineno">428</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">p</tt><tt class="py-op">)</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">ListType</tt> <tt class="py-keyword">or</tt> <tt class="py-name">p</tt><tt class="py-op">:</tt> </tt>
+<a name="L429"></a><tt class="py-lineno">429</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt id="link-236" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.ParseError
+qm.external.DocumentTemplate.DocumentTemplate.ParseError
+qm.external.DocumentTemplate.gparse.ParseError" class="py-name" href="#" onclick="return doclink('link-236', 'ParseError', 'link-2');">ParseError</a></tt><tt class="py-op">,</tt> <tt class="py-op">(</tt> </tt>
+<a name="L430"></a><tt class="py-lineno">430</tt>  <tt class="py-line">                <tt class="py-string">'Duplicate values for attribute "%s"'</tt> <tt class="py-op">%</tt> <tt id="link-237" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-237', 'name', 'link-5');">name</a></tt><tt class="py-op">,</tt> <tt class="py-name">tag</tt><tt class="py-op">)</tt> </tt>
+<a name="L431"></a><tt class="py-lineno">431</tt>  <tt class="py-line"> </tt>
+<a name="L432"></a><tt class="py-lineno">432</tt>  <tt class="py-line">    <tt id="link-238" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-238', 'result', 'link-181');">result</a></tt><tt class="py-op">[</tt><tt id="link-239" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-239', 'name', 'link-5');">name</a></tt><tt class="py-op">]</tt><tt class="py-op">=</tt><tt id="link-240" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.value" class="py-name" href="#" onclick="return doclink('link-240', 'value', 'link-185');">value</a></tt> </tt>
+<a name="L433"></a><tt class="py-lineno">433</tt>  <tt class="py-line"> </tt>
+<a name="L434"></a><tt class="py-lineno">434</tt>  <tt class="py-line">    <tt class="py-name">text</tt><tt class="py-op">=</tt><tt class="py-name">text</tt><tt class="py-op">[</tt><tt class="py-name">l</tt><tt class="py-op">:</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L435"></a><tt class="py-lineno">435</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">text</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt id="link-241" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.parse_params" class="py-name" href="#" onclick="return doclink('link-241', 'parse_params', 'link-213');">parse_params</a></tt><tt class="py-op">(</tt><tt class="py-name">text</tt><tt class="py-op">,</tt><tt id="link-242" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-242', 'result', 'link-181');">result</a></tt><tt class="py-op">,</tt><tt class="py-op">**</tt><tt class="py-name">parms</tt><tt class="py-op">)</tt> </tt>
+<a name="L436"></a><tt class="py-lineno">436</tt>  <tt class="py-line">    <tt class="py-keyword">else</tt><tt class="py-op">:</tt> <tt class="py-keyword">return</tt> <tt id="link-243" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-243', 'result', 'link-181');">result</a></tt> </tt>
+</div><a name="L437"></a><tt class="py-lineno">437</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:46 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

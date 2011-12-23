@@ -1,0 +1,56 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Chapter 3. Customizing QMTest</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="index.html" title="QMTest: User's Guide"><link rel="prev" href="reference-return-value.html" title="15. Return Value"><link rel="next" href="customizing-tests.html" title="2. Tests"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 3. Customizing <span class="application">QMTest</span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="reference-return-value.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="customizing-tests.html">Next</a></td></tr></table><hr></div><div class="chapter" title="Chapter 3. Customizing QMTest"><div class="titlepage"><div><div><h2 class="title"><a name="customizing"></a>Chapter 3. Customizing <span class="application">QMTest</span></h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="customizing.html#customizing-extensions">1. Extensions</a></span></dt><dt><span class="section"><a href="customizing-tests.html">2. Tests</a></span></dt><dt><span class="section"><a href="customizing-suites.html">3. Test Suites</a></span></dt><dt><span class="section"><a href="customizing-resources.html">4. Test Resources</a></span></dt><dt><span class="section"><a href="customizing-test-databases.html">5. Test Databases</a></span></dt><dt><span class="section"><a href="customizing-expectation-databases.html">6. Expectation Databases</a></span></dt><dt><span class="section"><a href="customizing-test-targets.html">7. Test Targets</a></span></dt><dt><span class="section"><a href="customizing-hosts.html">8. Hosts</a></span></dt><dt><span class="section"><a href="customizing-result-streams.html">9. Result Streams and Result Readers</a></span></dt><dt><span class="section"><a href="customizing-config-file.html">10. The <span class="application">QMTest</span> Configuration File</a></span></dt></dl></div><p>The previous chapter introduced the concepts underlying 
+ <span class="application">QMTest</span>'s design. These were demonstrated with particular
+ types of tests, resources, databases, etc. . These types are designed to be
+ extensible, i.e. <span class="application">QMTest</span> can operate with arbitrary
+ instances of these types. In fact, <span class="application">QMTest</span> provides
+ a large number of such extensions.</p><p>This chapter discusses how to use them, i.e. how to find out what
+ extensions are available, and how to use them to construct custom test databases.
+ </p><div class="section" title="1. Extensions"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="customizing-extensions"></a>1. Extensions</h2></div></div></div><p>In the previous chapter we have created a test database containing 
+     a number of tests. These tests were instances of test types, such as 
+     <span class="type">python.ExecTest</span>. When creating a test, a user chooses a 
+     test type, and assigns test-specific parameters to it.
+   </p><p>The same extension mechanism is used for other aspects of 
+     <span class="application">QMTest</span>'s functionality. All these types are 
+     extensions, which provide a generic interface for <span class="application">QMTest</span>
+     to query.
+   </p><p>To find out what extensions are available, use <span class="command"><strong>qmtest extensions</strong></span>. 
+     To list all available test types, use:</p><pre class="screen">
+<code class="prompt">&gt; </code><strong class="userinput"><code>qmtest extensions -k test</code></strong>
+** Available test classes **
+
+- command.ExecTest
+
+  Check a program's output and exit code.
+
+- command.ShellCommandTest
+
+  Check a shell command's output and exit code.
+
+- python.ExecTest
+
+  Check that a Python expression evaluates to true.
+
+...
+   </pre><p>To find out more about a particular extension type, use the <span class="command"><strong>describe</strong></span> 
+     command:</p><pre class="screen">
+<code class="prompt">&gt; </code><strong class="userinput"><code>qmtest describe test command.ExecTest</code></strong>
+
+class name: python.ExecTest
+   Check that a Python expression evaluates to true.
+
+class attributes:
+   prerequisites     The tests on which this test depends.
+   source            The source code.
+   target_group      The targets on which this test can run.
+   expression        The expression to evaluate.
+   resources         Resources on which this test or resource depends.
+   </pre><p>To create a test of that type, you can call:</p><pre class="screen">
+<code class="prompt">&gt; </code>qmtest create --id=my_test -a expression='True' test python.ExecTest
+   </pre><p>where the extension parameters are specified with the <code class="option">-a</code> option.</p><p>QMTest searches for extensions in particular places, in the following order:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>in the paths contained in the <code class="envar">QMTEST_CLASS_PATH</code> 
+       environment variable.</p></li><li class="listitem"><p>in the class-path associated with a particular test database 
+       (typically the <code class="filename">QMTest/</code> subdirectory).</p></li><li class="listitem"><p>in the site-extension path associated with a particular QMTest 
+       installation.</p></li><li class="listitem"><p>in the set of built-in extensions that come with a particular 
+       <span class="application">QMTest</span> installation.</p></li></ol></div><p>This search allows users to provide their own extension types. See 
+   <a class="xref" href="extending.html" title="Chapter 4. Extending QMTest">Chapter 4, <i>Extending QMTest</i></a> for a detailed discussion of how to create new
+   extensions.</p><p>The rest of this chapter will discuss the various extension kinds that 
+   can be used to customize <span class="application">QMTest</span>.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="reference-return-value.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="customizing-tests.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">15. Return Value </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2. Tests</td></tr></table></div></body></html>

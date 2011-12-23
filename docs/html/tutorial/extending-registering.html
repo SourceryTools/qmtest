@@ -1,0 +1,33 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>6. Registering and Distributing Extension Classes</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="extending.html" title="Chapter 4. Extending QMTest"><link rel="prev" href="extending-database-classes.html" title="5. Writing Database Classes"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6. Registering and Distributing Extension Classes</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="extending-database-classes.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Extending QMTest</th><td width="20%" align="right"> </td></tr></table><hr></div><div class="section" title="6. Registering and Distributing Extension Classes"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extending-registering"></a>6. Registering and Distributing Extension Classes</h2></div></div></div><p>To use your Extension class, you must place the Python
+  module file containing it in a directory where <span class="application">QMTest</span> can find
+  it. QMTest searches for extensions in particular places, in the 
+  following order:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>in the paths contained in the <code class="envar">QMTEST_CLASS_PATH</code> 
+       environment variable.</p></li><li class="listitem"><p>in the class-path associated with a particular test database 
+       (typically the <code class="filename">QMTest/</code> subdirectory).</p></li><li class="listitem"><p>in the site-extension path associated with a particular QMTest 
+       installation.</p></li><li class="listitem"><p>in the set of built-in extensions that come with a particular 
+       <span class="application">QMTest</span> installation.</p></li></ol></div><p>You should generally place module files containing extension classes
+  in the test database's <code class="filename">QMTest</code> directory, unless you 
+  plan to use the test classes in more than one test database.</p><p>You must use the <span class="command"><strong>qmtest register</strong></span>
+  command to register your new extension class.  You must perform
+  this step no matter where you place the module containing your
+  extension class.</p><p>You can refer to the new extension class using the syntax
+  <code class="classname">module.Class</code>, where
+  <code class="classname">module</code> is the name of the module and
+  <code class="classname">Class</code> is the name of the class.</p><p>To make your extension classes sharable by other test database
+  instances, you should install them into the site-extension path associated
+  with a qmtest installation.</p><p>To facilitate this installation, QMTest provides code that can be used
+  in conjunction with python's 
+  <a class="ulink" href="" target="_top">distutils</a>
+  to install, and even distribute them.
+  The following <code class="filename">setup.py</code> script will allow you to install 
+  (and even package !) all extension modules from the <code class="filename">extensions</code>
+  subdirectory:</p><pre class="programlisting">
+from qm.dist.distribution import Distribution
+from distutils.core import setup
+
+setup(distclass=Distribution,
+      qmtest_extensions="extensions")
+  </pre><p>Then, the following command installs extension modules from 
+  <code class="filename">extensions</code>:</p><pre class="screen">
+<code class="prompt">&gt; </code><strong class="userinput"><code>python setup.py install</code></strong>
+  </pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="extending-database-classes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="extending.html">Up</a></td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top">5. Writing Database Classes </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

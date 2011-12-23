@@ -1,0 +1,888 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.execution_engine.ExecutionEngine</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.execution_engine-module.html">Module&nbsp;execution_engine</a> ::
+        Class&nbsp;ExecutionEngine
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.execution_engine.ExecutionEngine-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class ExecutionEngine</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine">source&nbsp;code</a></span></p>
+<p>A 'ExecutionEngine' executes tests.</p>
+  <p>A 'ExecutionEngine' object handles the execution of a collection of 
+  tests.</p>
+  <p>This class schedules the tests across one or more targets.</p>
+  <p>The shedule is determined dynamically as the tests are executed based 
+  on which targets are idle and which are not.  Therefore, the testing load
+  should be reasonably well balanced, even across a heterogeneous network 
+  of testing machines.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.execution_engine.ExecutionEngine.__TestStatus-class.html" class="summary-name" onclick="show_private();">__TestStatus</a><br />
+      A '__TestStatus' indicates whether or not a test has been run.
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">database</span>,
+        <span class="summary-sig-arg">test_ids</span>,
+        <span class="summary-sig-arg">context</span>,
+        <span class="summary-sig-arg">targets</span>,
+        <span class="summary-sig-arg">result_streams</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">expectations</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Set up a test run.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#RequestTermination" class="summary-sig-name">RequestTermination</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Request that the execution engine stop executing tests.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.RequestTermination">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#_IsTerminationRequested" class="summary-sig-name" onclick="show_private();">_IsTerminationRequested</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns true if termination has been requested.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine._IsTerminationRequested">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#Run" class="summary-sig-name">Run</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Run the tests.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.Run">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#AddInputHandler" class="summary-sig-name">AddInputHandler</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">fd</span>,
+        <span class="summary-sig-arg">function</span>)</span><br />
+      Add an input handler for 'fd'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.AddInputHandler">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_RunTests"></a><span class="summary-sig-name">_RunTests</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine._RunTests">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#__FeedTarget" class="summary-sig-name" onclick="show_private();">__FeedTarget</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">target</span>)</span><br />
+      Run a test on 'target'</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__FeedTarget">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#__FindRunnableTest" class="summary-sig-name" onclick="show_private();">__FindRunnableTest</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">target</span>)</span><br />
+      Return a test that is ready to run.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__FindRunnableTest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#__AddTestToStack" class="summary-sig-name" onclick="show_private();">__AddTestToStack</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">test_id</span>)</span><br />
+      Adds 'test_id' to the stack of current tests.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__AddTestToStack">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#__AddToTargetPatternQueue" class="summary-sig-name" onclick="show_private();">__AddToTargetPatternQueue</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">descriptor</span>)</span><br />
+      A a test to the appropriate target pattern queue.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__AddToTargetPatternQueue">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#__GetPendingPrerequisites" class="summary-sig-name" onclick="show_private();">__GetPendingPrerequisites</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">descriptor</span>)</span><br />
+      Return pending prerequisite tests for 'descriptor'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__GetPendingPrerequisites">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#__AddResult" class="summary-sig-name" onclick="show_private();">__AddResult</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Report the result of running a test or resource.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__AddResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#__CheckForResponse" class="summary-sig-name" onclick="show_private();">__CheckForResponse</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">wait</span>)</span><br />
+      See if any of the targets have completed a task.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__CheckForResponse">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#__AddUntestedResult" class="summary-sig-name" onclick="show_private();">__AddUntestedResult</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">test_name</span>,
+        <span class="summary-sig-arg">cause</span>,
+        <span class="summary-sig-arg">annotations</span>=<span class="summary-sig-default">{}</span>,
+        <span class="summary-sig-arg">exc_info</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Add a 'Result' indicating that 'test_name' was not run.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__AddUntestedResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#__GetTestDescriptor" class="summary-sig-name" onclick="show_private();">__GetTestDescriptor</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">test_id</span>)</span><br />
+      Return the 'TestDescriptor' for 'test_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__GetTestDescriptor">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.execution_engine.ExecutionEngine-class.html#_Trace" class="summary-sig-name" onclick="show_private();">_Trace</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">message</span>)</span><br />
+      Write a trace 'message'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine._Trace">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_WriteInitialAnnotations"></a><span class="summary-sig-name">_WriteInitialAnnotations</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine._WriteInitialAnnotations">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__TARGET_IDLE"></a><span class="summary-name">__TARGET_IDLE</span> = <code title="&quot;IDLE&quot;">&quot;IDLE&quot;</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__TARGET_BUSY"></a><span class="summary-name">__TARGET_BUSY</span> = <code title="&quot;BUSY&quot;">&quot;BUSY&quot;</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__TARGET_STARVING"></a><span class="summary-name">__TARGET_STARVING</span> = <code title="&quot;STARVING&quot;">&quot;STARVING&quot;</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">database</span>,
+        <span class="sig-arg">test_ids</span>,
+        <span class="sig-arg">context</span>,
+        <span class="sig-arg">targets</span>,
+        <span class="sig-arg">result_streams</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">expectations</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set up a test run.</p>
+  <p>'database' -- The 'Database' containing the tests that will be 
+  run.</p>
+  <p>'test_ids' -- A sequence of IDs of tests to run.  Where possible, the 
+  tests are started in the order specified.</p>
+  <p>'context' -- The context object to use when running tests.</p>
+  <p>'targets' -- A sequence of 'Target' objects, representing targets on 
+  which tests may be run.</p>
+  <p>'result_streams' -- A sequence of 'ResultStream' objects.  Each stream
+  will be provided with results as they are available.</p>
+  <p>'expectations' -- If not 'None', an ExpectationDatabase object.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="RequestTermination"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">RequestTermination</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.RequestTermination">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Request that the execution engine stop executing tests.</p>
+  <p>Request that the execution thread be terminated.  Termination may take
+  some time; tests that are already running will continue to run, for 
+  example.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_IsTerminationRequested"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_IsTerminationRequested</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine._IsTerminationRequested">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns true if termination has been requested.</p>
+  <p>returns -- True if no further tests should be executed.  If the value 
+  is -1, the execution engine should simply terminate gracefully.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Run"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Run</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.Run">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run the tests.</p>
+  <p>This method runs the tests specified in the __init__ function.</p>
+  <p>returns -- True if any tests had unexpected outcomes.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="AddInputHandler"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">AddInputHandler</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">fd</span>,
+        <span class="sig-arg">function</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.AddInputHandler">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Add an input handler for 'fd'.</p>
+  <p>'fd' -- A file descriptor, open for reading.</p>
+  <p>'function' -- A callable object taking a single parameter.</p>
+  <p>The execution engine will periodically monitor 'fd'.  When input is 
+  available, it will call 'function' passing it 'fd'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__FeedTarget"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__FeedTarget</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">target</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__FeedTarget">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run a test on 'target'</p>
+  <p>'target' -- The 'Target' on which the test should be run.</p>
+  <p>returns -- True, iff a test could be found to run on 'target'. False 
+  otherwise.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__FindRunnableTest"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__FindRunnableTest</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">target</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__FindRunnableTest">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a test that is ready to run.</p>
+  <p>'target' -- The 'Target' on which the test will run.</p>
+  <p>returns -- the 'TestDescriptor' for the next available ready test, or 
+  'None' if no test could be found that will run on 'target'.</p>
+  <p>If a test with unsatisfied prerequisites is encountered, the test will
+  be pushed on the stack and the prerequisites processed recursively.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__AddTestToStack"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__AddTestToStack</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">test_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__AddTestToStack">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds 'test_id' to the stack of current tests.</p>
+  <p>returns -- True if the test was added to the stack; false if the test 
+  could not be loaded.  In the latter case, an 'UNTESTED' result is 
+  recorded for the test.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__AddToTargetPatternQueue"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__AddToTargetPatternQueue</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">descriptor</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__AddToTargetPatternQueue">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>A a test to the appropriate target pattern queue.</p>
+  <p>'descriptor' -- A 'TestDescriptor'.</p>
+  <p>Adds the test to the target pattern queue indicated in the 
+  descriptor.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__GetPendingPrerequisites"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__GetPendingPrerequisites</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">descriptor</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__GetPendingPrerequisites">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return pending prerequisite tests for 'descriptor'.</p>
+  <p>'descriptor' -- A 'TestDescriptor'.</p>
+  <p>returns -- A list of prerequisite test ids that have to complete, or 
+  'None' if one of the prerequisites had an unexpected outcome.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__AddResult"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__AddResult</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__AddResult">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Report the result of running a test or resource.</p>
+  <p>'result' -- A 'Result' object representing the result of running a 
+  test or resource.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__CheckForResponse"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__CheckForResponse</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">wait</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__CheckForResponse">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>See if any of the targets have completed a task.</p>
+  <p>'wait' -- If false, this function returns immediately if there is no 
+  available response.  If 'wait' is true, this function continues to wait 
+  until a response is available.</p>
+  <p>returns -- True iff a response was received.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__AddUntestedResult"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__AddUntestedResult</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">test_name</span>,
+        <span class="sig-arg">cause</span>,
+        <span class="sig-arg">annotations</span>=<span class="sig-default">{}</span>,
+        <span class="sig-arg">exc_info</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__AddUntestedResult">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Add a 'Result' indicating that 'test_name' was not run.</p>
+  <p>'test_name' -- The label for the test that could not be run.</p>
+  <p>'cause' -- A string explaining why the test could not be run.</p>
+  <p>'annotations' -- A map from strings to strings giving additional 
+  annotations for the result.</p>
+  <p>'exc_info' -- If this test could not be tested due to a thrown 
+  exception, 'exc_info' is the result of 'sys.exc_info()' when the 
+  exception was caught.  'None' otherwise.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__GetTestDescriptor"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__GetTestDescriptor</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">test_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine.__GetTestDescriptor">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'TestDescriptor' for 'test_id'.</p>
+  <p>returns -- The 'TestDescriptor' for 'test_id', or 'None' if the 
+  descriptor could not be loaded.</p>
+  <p>If the database cannot load the descriptor, an 'UNTESTED' result is 
+  recorded for 'test_id'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_Trace"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_Trace</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">message</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.execution_engine-pysrc.html#ExecutionEngine._Trace">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Write a trace 'message'.</p>
+  <p>'message' -- A string to be output as a trace message.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:41 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

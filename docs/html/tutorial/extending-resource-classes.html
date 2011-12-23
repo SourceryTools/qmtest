@@ -1,0 +1,37 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>4. Writing Resource Classes</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="extending.html" title="Chapter 4. Extending QMTest"><link rel="prev" href="extending-test-classes.html" title="3. Writing Test Classes"><link rel="next" href="extending-database-classes.html" title="5. Writing Database Classes"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4. Writing Resource Classes</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="extending-test-classes.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Extending QMTest</th><td width="20%" align="right"> <a accesskey="n" href="extending-database-classes.html">Next</a></td></tr></table><hr></div><div class="section" title="4. Writing Resource Classes"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extending-resource-classes"></a>4. Writing Resource Classes</h2></div></div></div><p>Writing resource classes is similar to writing test classes.
+  The requirements are the same except that, instead of a
+  <code class="function">Run</code> method, you must provide two methods named
+  <code class="function">SetUp</code> and <code class="function">CleanUp</code>. The
+  <code class="function">SetUp</code> method must have the same signature as a
+  test classs <code class="function">Run</code>.  The
+  <code class="function">CleanUp</code> method is similar, but does not take a
+  <em class="parameter"><code>context</code></em> parameter.</p><p>The <code class="function">SetUp</code> method may add additional
+  properties to the context by assigning to its
+  <em class="parameter"><code>context</code></em> parameter.  These additional
+  properties will be visible only to tests that require this
+  resource.</p><p>The example below shows the <code class="function">SetUp</code> and
+  <code class="function">CleanUp</code> from the standard QMTest
+  <code class="classname">TempDirectoryResource</code> class.  This resource
+  creates a temporary directory for use by the tests that depend on
+  the resource.  The <code class="function">SetUp</code> method creates the
+  temporary directory and records the path to the temporary directory
+  in the context so that tests know where to find the directory.  The
+  <code class="function">CleanUp</code> method removes the temporary directory.
+  </p><pre class="programlisting"> 
+ 
+    def SetUp(self, context, result):
+
+        # Create a temporary directory.
+        self.__dir = qm.temporary_directory.TemporaryDirectory()
+        # Provide dependent tests with the path to the new directory.
+        context["TemporaryDirectoryResource.temp_dir_path"] 
+          = self.__dir.GetPath()
+    
+
+    def CleanUp(self, result):
+
+        # Remove the temporary directory.
+        del self.__dir
+
+  </pre><p>
+  </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="extending-test-classes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="extending.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="extending-database-classes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3. Writing Test Classes </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 5. Writing Database Classes</td></tr></table></div></body></html>

@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.resource.Resource</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.resource-module.html">Module&nbsp;resource</a> ::
+        Class&nbsp;Resource
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.resource.Resource-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Resource</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.resource-pysrc.html#Resource">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+         object --+        
+                  |        
+<a href="qm.extension.Extension-class.html">extension.Extension</a> --+    
+                      |    
+      <a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a> --+
+                          |
+                         <strong class="uidshort">Resource</strong>
+</pre>
+
+<dl><dt>Known Subclasses:</dt>
+<dd>
+      <ul class="subclass-list">
+<li><a href="qm.test.resource_adapter.ResourceAdapter-class.html">resource_adapter.ResourceAdapter</a></li><li>, <a href="qm.test.classes.temporary.TempDirectoryResource-class.html">classes.temporary.TempDirectoryResource</a></li>  </ul>
+</dd></dl>
+
+<hr />
+<p>A 'Resource' sets up before a test and cleans up afterwards.</p>
+  <p>Some tests take a lot of work to set up.  For example, a database test
+  that checks the result of SQL queries may require that the database first
+  be populated with a substantial number of records. If there are many 
+  tests that all use the same set of records, it would be wasteful to set 
+  up the database for each test.  It would be more efficient to set up the 
+  database once, run all of the tests, and then remove the databases upon 
+  completion.</p>
+  <p>You can use a 'Resource' to gain this efficiency.  If a test depends 
+  on a resource, QMTest will ensure that the resource is available before 
+  the test runs.  Once all tests that depend on the resource have been run 
+  QMTest will destroy the resource.</p>
+  <p>Each resource class (i.e., class derived from 'Resource') describes a 
+  set of &quot;arguments&quot;.  Each argument has a name and a type.  The 
+  values of these arguments determine the design-time parameters for the 
+  resource.  See the documentation for the 'Test' class for more complete 
+  information.</p>
+  <p>Each resource class also defines a 'SetUp' method that indicates how 
+  to set up the resource, and a 'CleanUp' method that indicates how to 
+  clean up afterwards.</p>
+  <p>'Resource' is an abstract class.</p>
+  <p>You can extend QMTest by providing your own resource class 
+  implementation.  If the resource classes that come with QMTest cannot be 
+  used conveniently with your application domain, you may wish to create a 
+  new resource class.</p>
+  <p>To create your own resource class, you must create a Python class 
+  derived (directly or indirectly) from 'Resource'.  The documentation for 
+  each method of 'Resource' indicates whether you must override it in your 
+  resource class implementation.  Some methods may be overridden, but do 
+  not need to be.  You might want to override such a method to provide a 
+  more efficient implementation, but QMTest will work fine if you just use 
+  the default version.</p>
+  <p>If QMTest calls a method on a resource and that method raises an 
+  exception that is not caught within the method itself, QMTest will catch 
+  the exception and continue processing.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b>:
+      <code><a href="qm.test.runnable.Runnable.ResourceField-class.html">ResourceField</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension.Type-class.html">Type</a></code>,
+      <code><a href="qm.extension.Extension.Type-class.html">__metaclass__</a></code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.resource.Resource-class.html#SetUp" class="summary-sig-name">SetUp</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">context</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Set up the resource.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.resource-pysrc.html#Resource.SetUp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.resource.Resource-class.html#CleanUp" class="summary-sig-name">CleanUp</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Clean up the resource.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.resource-pysrc.html#Resource.CleanUp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b>:
+      <code><a href="qm.test.runnable.Runnable-class.html#GetAttachments">GetAttachments</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#GetDatabase">GetDatabase</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#GetId">GetId</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#__init__">__init__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension-class.html#GetClassName">GetClassName</a></code>,
+      <code><a href="qm.extension.Extension-class.html#GetExplicitArguments">GetExplicitArguments</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomDocument">MakeDomDocument</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomElement">MakeDomElement</a></code>,
+      <code><a href="qm.extension.Extension-class.html#Write">Write</a></code>,
+      <code><a href="qm.extension.Extension-class.html#__getattr__">__getattr__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="kind"></a><span class="summary-name">kind</span> = <code title="'resource'"><code class="variable-quote">'</code><code class="variable-string">resource</code><code class="variable-quote">'</code></code><br />
+      A string giving kind of extension is implemented by the class.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b>:
+      <code><a href="qm.test.runnable.Runnable-class.html#EXTRA_DATABASE">EXTRA_DATABASE</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#EXTRA_ID">EXTRA_ID</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#RESOURCE_FIELD_ID">RESOURCE_FIELD_ID</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#arguments">arguments</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#resources">resources</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b> (private):
+      <code><a href="qm.test.runnable.Runnable-class.html#_argument_dictionary" onclick="show_private();">_argument_dictionary</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#_argument_list" onclick="show_private();">_argument_list</a></code>
+      </p></div>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b> (private):
+      <code><a href="qm.extension.Extension-class.html#_allow_arg_names_matching_class_vars" onclick="show_private();">_allow_arg_names_matching_class_vars</a></code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="SetUp"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">SetUp</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">context</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.resource-pysrc.html#Resource.SetUp">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set up the resource.</p>
+  <p>'context' -- A 'Context' giving run-time parameters to the resource.  
+  The resource may place additional variables into the 'context'; these 
+  variables will be visible to tests that depend on the resource.</p>
+  <p>'result' -- A 'Result' object.  The outcome will be 'Result.PASS' when
+  this method is called.  The 'result' may be modified by this method to 
+  indicate outcomes other than 'Result.PASS' or to add annotations.</p>
+  <p>This method should not return a value.</p>
+  <p>Derived classes must override this method.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="CleanUp"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">CleanUp</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.resource-pysrc.html#Resource.CleanUp">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Clean up the resource.</p>
+  <p>'result' -- A 'Result' object.  The outcome will be 'Result.PASS' when
+  this method is called.  The 'result' may be modified by this method to 
+  indicate outcomes other than 'Result.PASS' or to add annotations.</p>
+  <p>This method should not return a value.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:41 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

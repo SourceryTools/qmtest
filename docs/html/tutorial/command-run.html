@@ -1,0 +1,131 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>10. qmtest run</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="cli.html" title="Chapter 2. Invoking QMTest"><link rel="prev" href="command-register.html" title="9. qmtest register"><link rel="next" href="command-summarize.html" title="11. qmtest summarize"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">10. <span class="command"><strong>qmtest run</strong></span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="command-register.html">Prev</a> </td><th width="60%" align="center">Chapter 2. Invoking <span class="application">QMTest</span></th><td width="20%" align="right"> <a accesskey="n" href="command-summarize.html">Next</a></td></tr></table><hr></div><div class="section" title="10. qmtest run"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="command-run"></a>10. <span class="command"><strong>qmtest run</strong></span></h2></div></div></div><div class="section" title="10.1. Summary"><div class="titlepage"><div><div><h3 class="title"><a name="id382285"></a>10.1. Summary</h3></div></div></div><p>Run tests or test suites.</p></div><div class="section" title="10.2. Synopsis"><div class="titlepage"><div><div><h3 class="title"><a name="id382297"></a>10.2. Synopsis</h3></div></div></div><div class="cmdsynopsis"><p><code class="command">qmtest run</code>  [
+     <em class="replaceable"><code>option</code></em>
+    ...] [ <em class="replaceable"><code>test-name</code></em>  |   <em class="replaceable"><code>suite-name</code></em> ...]</p></div></div><div class="section" title="10.3. Description"><div class="titlepage"><div><div><h3 class="title"><a name="id382355"></a>10.3. Description</h3></div></div></div><p>The <span class="command"><strong>qmtest run</strong></span> command runs tests
+   and displays the results.  If no test or suite names are
+   specified, <span class="application">QMTest</span> runs all of the tests in the test database.
+   If test or suite names are specified, only those tests or suites
+   are run.  Tests listed more than once (directly or by inclusion in
+   a test suite) are run only once.</p><p>The <span class="command"><strong>run</strong></span> command accepts these
+   options:</p><div class="variablelist"><dl><dt><a name="opt-test-run-annotate"></a><span class="term">
+      <code class="option">-a</code>
+      <em class="replaceable"><code>name</code></em>=<em class="replaceable"><code>value</code></em>
+     , </span><span class="term">
+      <code class="option">--annotate</code> 
+      <em class="replaceable"><code>name</code></em>=<em class="replaceable"><code>value</code></em>
+     </span></dt><dd><p>Annotate the test run by inserting the named annotation
+        <em class="replaceable"><code>name</code></em> with the value 
+        <em class="replaceable"><code>value</code></em> into all result streams.</p><p>This option may be specified multiple times.</p></dd><dt><a name="opt-test-run-context"></a><span class="term">
+      <code class="option">-c</code>
+      <em class="replaceable"><code>name</code></em>=<em class="replaceable"><code>value</code></em>
+     , </span><span class="term">
+      <code class="option">--context</code> 
+      <em class="replaceable"><code>name</code></em>=<em class="replaceable"><code>value</code></em>
+     </span></dt><dd><p>Add a property to the <a class="link" href="concepts-context.html" title="6. Context">test
+      execution context</a>.  The name of the property is
+      <em class="replaceable"><code>name</code></em>, and its value is set to the string
+      <em class="replaceable"><code>value</code></em>.</p><p>This option may be specified multiple times.</p></dd><dt><a name="opt-test-run-context-file"></a><span class="term"><code class="option">-C</code> <em class="replaceable"><code>file</code></em>, </span><span class="term">
+      <code class="option">--load-context</code> <em class="replaceable"><code>file</code></em>
+     </span></dt><dd><p>Read properties for the <a class="link" href="concepts-context.html" title="6. Context">test
+      execution context</a> from the file
+      <em class="replaceable"><code>file</code></em>.</p><p>The file should be a text file with one context property on
+      each line, in the format <em class="replaceable"><code>name=value</code></em>.
+      Leading and trailing whitespace on each line are ignored.  Also,
+      blank lines and lines that begin with "#" (a hash mark) are
+      ignored as comments.</p><p>This option may be specified more than once, and used in
+      conjunction with the <code class="option">--context</code>
+      option.  All of the context properties specified are added to
+      the eventual context.  If a property is set more than once,
+      the last value provided is the one used.</p><p>If this option is not specified, but a file named
+      <code class="filename">context</code> exists in the current directory,
+      that file is read.  The properties specified in this file are
+      processed first; the values in this file can be overridden by
+      subsequent uses of the <code class="option">--context</code>
+      option on the command line.</p></dd><dt><span class="term"><code class="option">-f</code> <em class="replaceable"><code>format</code></em>, </span><span class="term">
+      <code class="option">--format</code> 
+      <em class="replaceable"><code>format</code></em>
+     </span></dt><dd><p>Control the format used when displaying results.  The
+      format specified must be one of <code class="literal">full</code>,
+      <code class="literal">brief</code>, <code class="literal">stats</code>,
+      <code class="literal">batch</code>, or <code class="literal">none</code>.  The
+      <code class="literal">brief</code> format is the default if <span class="application">QMTest</span> was
+      invoked interactively; the <code class="literal">batch</code> format is
+      the default otherwise.  In the <code class="literal">full</code> format,
+      <span class="application">QMTest</span> displays any annotations provided in test results.  In
+      the <code class="literal">brief</code> mode only the causes of failures
+      are shown; detailed annotations are not shown.  In the
+      <code class="literal">stats</code> format, no details about failing tests
+      are displayed; only statistics showing the number of passing
+      and failing tests are displayed.  In the
+      <code class="literal">batch</code> mode, the summary is displayed first,
+      followed by detailed results for tests with unexpected
+      outcomes.  In the <code class="literal">none</code> mode, no results are
+      displayed, but a results file is still created, unless the
+      <code class="option">--no-output</code> option is also
+      provided.</p></dd><dt><span class="term"><code class="option">-j</code> <em class="replaceable"><code>count</code></em>, </span><span class="term">
+      <code class="option">--concurrency</code> <em class="replaceable"><code>count</code></em>
+     </span></dt><dd><p>Run tests in multiple <em class="replaceable"><code>count</code></em>
+      concurrent processes on the local computer.  On multiprocessor
+      machines, the processes may be scheduled to run in parallel on
+      different processors.  <span class="application">QMTest</span> automatically collects results
+      from the processes and presents combines test results and summary.
+      By default, one process is used.</p><p>This option may not be combined with the <a class="link" href="command-run.html#opt-test-run-targets"><code class="option">--targets</code>
+      (<code class="option">-T</code>) option</a>.</p></dd><dt><span class="term">
+      <code class="option">--no-output</code>
+     </span></dt><dd><p>Do not produce a test results file.</p></dd><dt><span class="term"><code class="option">-o</code> <em class="replaceable"><code>file</code></em>, </span><span class="term">
+      <code class="option">--output</code> <em class="replaceable"><code>file</code></em> 
+     </span></dt><dd><p>
+       Write full test results to <em class="replaceable"><code>file</code></em>, in
+       QMTest's machine-readable file format.  Use a 
+       "<code class="literal">-</code>" (a hyphen) to write results to 
+       the standard output.  If neither this option nor
+       <code class="option">--no-output</code> is specified, the results
+       are written to the file named <code class="filename">results.qmr</code>
+       in the current directory.
+      </p></dd><dt><span class="term"><code class="option">-O</code> <em class="replaceable"><code>file</code></em>, </span><span class="term">
+      <code class="option">--outcomes</code> <em class="replaceable"><code>file</code></em>
+     </span></dt><dd><p>Treat <em class="replaceable"><code>file</code></em> as a set of
+      expected outcomes.  The <em class="replaceable"><code>file</code></em> is
+      usually a results file created either by using the 
+      <span class="command"><strong>qmtest run</strong></span> or by saving results in the
+      graphical user interface.  If <em class="replaceable"><code>file</code></em>
+      does not appear to be such a file, it is interpreted as an
+      extension descriptor, as described in <a class="xref" href="command-create.html" title="2. qmtest create">Section 2, &#8220;<span class="command"><strong>qmtest create</strong></span>&#8221;</a>.  QMTest will expect the results
+      of the current test run to match those specified in the
+      <em class="replaceable"><code>file</code></em> and will highlight differences
+      from those results.</p></dd><dt><span class="term"><code class="option">--random</code></span></dt><dd><p>Run the tests in a random order.</p><p>This option can be used to find hidden dependencies
+      between tests in the testsuite.  (You may not notice the
+      dependencies if you always run the tests in the same order.)</p></dd><dt><span class="term"><code class="option">--rerun</code> 
+           <em class="replaceable"><code>file</code></em></span></dt><dd><p>Rerun only those tests that had unexpected outcomes.</p><p>The tests run are determined as follows.  QMTest starts
+      with all of the tests specified on the command line, or, if no
+      tests are explicitly specified, all of the tests in the
+      database.  If no expectations file is specified (see the
+      description of the <code class="option">--outcomes</code> option),
+      then all tests that passed in the results file indicated by the
+      <code class="option">--rerun</code> option are removed form the
+      set of eligible tests.  If an expectations file is specified,
+      then the tests removed are tests whose outcome in the results
+      file indicated by the <code class="option">--rerun</code> option
+      is the same as in the expectations file.</p><p>The <code class="option">--rerun</code> provides a simple
+      way of rerunning failing tests.  If you run your tests and
+      notice failures, you might try to fix those failing tests.
+      Then, you can rerun the failing tests to see if you succeeded
+      by using the <code class="option">--rerun</code> option.</p></dd><dt><span class="term">
+      <code class="option">--result-stream <em class="replaceable"><code>descriptor</code></em></code>
+     </span></dt><dd><p>Specify an additional output result stream.  The
+      descriptor is in the format described in <a class="xref" href="command-create.html" title="2. qmtest create">Section 2, &#8220;<span class="command"><strong>qmtest create</strong></span>&#8221;</a>.</p></dd><dt><span class="term">
+      <code class="option">--seed</code> <em class="replaceable"><code>integer</code></em>
+     </span></dt><dd><p>If the <code class="option">--random</code> is used, <span class="application">QMTest</span>
+      randomizes the order in which tests are run, subject to the
+      constraints described in <a class="xref" href="concepts.html#sec-ordering-and-dependencies" title="1.3. Ordering and Dependencies">Section 1.3, &#8220;Ordering and Dependencies&#8221;</a>.  By default, the
+      random number generator is seeded using the system time.</p><p>For debugging purposes, it is sometimes necessary to obtain
+      a reproducible sequence of tests.  Use the
+      <code class="option">--seed</code> option to specify the seed for the
+      random number generator.</p><p>Note that even with the same random number seed, if tests
+      are run in parallel, scheduling uncertainty may still produce
+      variation in the order in which tests are run.</p></dd><dt><a name="opt-test-run-targets"></a><span class="term"><code class="option">-T</code> <em class="replaceable"><code>file</code></em>, </span><span class="term">
+      <code class="option">--targets</code> <em class="replaceable"><code>file</code></em>
+     </span></dt><dd><p>Use targets specified in target specification file
+      <em class="replaceable"><code>file</code></em>.  If this option is not
+      present, the <code class="filename">QMTest/targets</code> in the test
+      database directory will be used.  If that file is not present,
+      the tests will be run in serial on the local machine.</p></dd></dl></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="command-register.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="cli.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="command-summarize.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">9. <span class="command"><strong>qmtest register</strong></span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 11. <span class="command"><strong>qmtest summarize</strong></span></td></tr></table></div></body></html>

@@ -1,0 +1,1060 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.fields.Field</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        qm ::
+        fields ::
+        Field ::
+        Class&nbsp;Field
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.fields.Field-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Field</h1><p class="nomargin-top"><span class="codelink"><a href="qm.fields-pysrc.html#Field">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">Field</strong>
+</pre>
+
+<dl><dt>Known Subclasses:</dt>
+<dd>
+      <ul class="subclass-list">
+<li><a href="qm.fields.AttachmentField-class.html">AttachmentField</a></li><li>, <a href="qm.fields.TextField-class.html">TextField</a></li><li>, <a href="qm.fields.DictionaryField-class.html">DictionaryField</a></li><li>, <a href="qm.fields.IntegerField-class.html">IntegerField</a></li><li>, <a href="qm.fields.PythonField-class.html">PythonField</a></li><li>, <a href="qm.fields.SetField-class.html">SetField</a></li><li>, <a href="qm.fields.TupleField-class.html">TupleField</a></li>  </ul>
+</dd></dl>
+
+<hr />
+<p>A 'Field' is a named, typed component of a data structure.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">default_value</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">title</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">description</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">hidden</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">false</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">read_only</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">false</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">computed</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">false</code><code class="variable-quote">'</code></span>)</span><br />
+      Create a new (generic) field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="SetName"></a><span class="summary-sig-name">SetName</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">name</span>)</span><br />
+      Set the name of the field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.SetName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetName"></a><span class="summary-sig-name">GetName</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the name of the field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.GetName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetDefaultValue"></a><span class="summary-sig-name">GetDefaultValue</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the default value for this field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.GetDefaultValue">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetTitle"></a><span class="summary-sig-name">GetTitle</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the user-friendly title of the field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.GetTitle">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#GetDescription" class="summary-sig-name">GetDescription</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return a description of this field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.GetDescription">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#GetBriefDescription" class="summary-sig-name">GetBriefDescription</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return a brief description of this field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.GetBriefDescription">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetHelp"></a><span class="summary-sig-name">GetHelp</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Generate help text about this field in structured text format.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.GetHelp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#GetHtmlHelp" class="summary-sig-name">GetHtmlHelp</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">edit</span>=<span class="summary-sig-default">0</span>)</span><br />
+      Generate help text about this field in HTML format.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.GetHtmlHelp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#GetSubfields" class="summary-sig-name">GetSubfields</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns the sequence of subfields contained in this field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.GetSubfields">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#IsComputed" class="summary-sig-name">IsComputed</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns true if this field is computed automatically.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.IsComputed">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#IsHidden" class="summary-sig-name">IsHidden</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns true if this 'Field' should be hidden from users.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.IsHidden">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#IsReadOnly" class="summary-sig-name">IsReadOnly</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns true if this 'Field' cannot be modified by users.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.IsReadOnly">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#FormatValueAsText" class="summary-sig-name">FormatValueAsText</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>,
+        <span class="summary-sig-arg">columns</span>=<span class="summary-sig-default">72</span>)</span><br />
+      Return a plain text rendering of a 'value' for this field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.FormatValueAsText">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#FormatValueAsHtml" class="summary-sig-name">FormatValueAsHtml</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">server</span>,
+        <span class="summary-sig-arg">value</span>,
+        <span class="summary-sig-arg">style</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Return an HTML rendering of a 'value' for this field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.FormatValueAsHtml">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#MakeDomNodeForValue" class="summary-sig-name">MakeDomNodeForValue</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>,
+        <span class="summary-sig-arg">document</span>)</span><br />
+      Generate a DOM element node for a value of this field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.MakeDomNodeForValue">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#Validate" class="summary-sig-name">Validate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Validate a field value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.Validate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#ParseTextValue" class="summary-sig-name">ParseTextValue</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Parse a value represented as a string.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.ParseTextValue">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#ParseFormValue" class="summary-sig-name">ParseFormValue</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">attachment_stores</span>)</span><br />
+      Convert a value submitted from an HTML form.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.ParseFormValue">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#GetValueFromDomNode" class="summary-sig-name">GetValueFromDomNode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>,
+        <span class="summary-sig-arg">attachment_store</span>)</span><br />
+      Return a value for this field represented by DOM 'node'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.GetValueFromDomNode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#GetHtmlFormFieldName" class="summary-sig-name">GetHtmlFormFieldName</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the form field name corresponding this field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.GetHtmlFormFieldName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.Field-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      repr(x)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#Field.__repr__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="form_field_prefix"></a><span class="summary-name">form_field_prefix</span> = <code title="'_field_'"><code class="variable-quote">'</code><code class="variable-string">_field_</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">name</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">default_value</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">title</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">description</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">hidden</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">false</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">read_only</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">false</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">computed</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">false</code><code class="variable-quote">'</code></span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create a new (generic) field.</p>
+  <p>'name' -- The name of the field.</p>
+  <p>'default_value' -- The default value for this field.</p>
+  <p>'title' -- The name given this field when it is displayed in user 
+  interfaces.</p>
+  <p>'description' -- A string explaining the purpose of this field. The 
+  'description' must be provided as structured text.  The first line of the
+  structured text must be a one-sentence description of the field; that 
+  line is extracted by 'GetBriefDescription'.</p>
+  <p>'hidden' -- If true, this field is for internal puprpose only and is 
+  not shown in user interfaces.</p>
+  <p>'read_only' -- If true, this field may not be modified by users.</p>
+  <p>'computed' -- If true, this field is computed automatically. All 
+  computed fields are implicitly hidden and implicitly read-only.</p>
+  <p>The boolean parameters (such as 'hidden') use the convention that true
+  is represented by the string '&quot;true&quot;'; any other value is 
+  false.  This convention is a historical artifact.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetDescription"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetDescription</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.GetDescription">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a description of this field.</p>
+  <p>This description is used when displaying detailed help information 
+  about the field.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetBriefDescription"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetBriefDescription</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.GetBriefDescription">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a brief description of this field.</p>
+  <p>This description is used when prompting for input, or when displaying 
+  the current value of the field.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetHtmlHelp"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetHtmlHelp</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">edit</span>=<span class="sig-default">0</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.GetHtmlHelp">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate help text about this field in HTML format.</p>
+  <p>'edit' -- If true, display information about editing controls for this
+  field.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetSubfields"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetSubfields</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.GetSubfields">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the sequence of subfields contained in this field.</p>
+  <p>returns -- The sequence of subfields contained in this field. If there
+  are no subfields, an empty sequence is returned.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="IsComputed"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">IsComputed</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.IsComputed">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns true if this field is computed automatically.</p>
+  <p>returns -- True if this field is computed automatically.  A computed 
+  field is never displayed to users and is not stored should not be stored;
+  the class containing the field is responsible for recomputing it as 
+  necessary.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="IsHidden"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">IsHidden</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.IsHidden">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns true if this 'Field' should be hidden from users.</p>
+  <p>returns -- True if this 'Field' should be hidden from users. The value
+  of a hidden field is not displayed in the GUI.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="IsReadOnly"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">IsReadOnly</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.IsReadOnly">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns true if this 'Field' cannot be modified by users.</p>
+  <p>returns -- True if this 'Field' cannot be modified by users. The GUI 
+  does not allow users to modify a read-only field.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="FormatValueAsText"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">FormatValueAsText</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>,
+        <span class="sig-arg">columns</span>=<span class="sig-default">72</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.FormatValueAsText">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a plain text rendering of a 'value' for this field.</p>
+  <p>'columns' -- The maximum width of each line of text.</p>
+  <p>returns -- A plain-text string representing 'value'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="FormatValueAsHtml"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">FormatValueAsHtml</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">server</span>,
+        <span class="sig-arg">value</span>,
+        <span class="sig-arg">style</span>,
+        <span class="sig-arg">name</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.FormatValueAsHtml">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return an HTML rendering of a 'value' for this field.</p>
+  <p>'server' -- The 'WebServer' in which the HTML will be displayed.</p>
+  <p>'value' -- The value for this field.  May be 'None', which renders a 
+  default value (useful for blank forms).</p>
+  <p>'style' -- The rendering style.  Can be &quot;full&quot; or 
+  &quot;brief&quot; (both read-only), or &quot;new&quot; or 
+  &quot;edit&quot; or &quot;hidden&quot;.</p>
+  <p>'name' -- The name to use for the primary HTML form element containing
+  the value of this field, if 'style' specifies the generation of form 
+  elements.  If 'name' is 'None', the value returned by 
+  'GetHtmlFormFieldName()' should be used.</p>
+  <p>returns -- A string containing the HTML representation of 'value'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="MakeDomNodeForValue"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MakeDomNodeForValue</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>,
+        <span class="sig-arg">document</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.MakeDomNodeForValue">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate a DOM element node for a value of this field.</p>
+  <p>'value' -- The value to represent.</p>
+  <p>'document' -- The containing DOM document node.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Validate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Validate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.Validate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validate a field value.</p>
+  <p>For an acceptable type and value, return the representation of 'value'
+  in the underlying field storage.</p>
+  <p>'value' -- A value to validate for this field.</p>
+  <p>returns -- If the 'value' is valid, returns 'value' or an equivalent 
+  &quot;canonical&quot; version of 'value'.  (For example, this function 
+  may search a hash table and return an equivalent entry from the hash 
+  table.)</p>
+  <p>This function must raise an exception if the value is not valid. The 
+  string representation of the exception will be used as an error message 
+  in some situations.</p>
+  <p>Implementations of this method must be idempotent.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="ParseTextValue"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">ParseTextValue</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.ParseTextValue">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parse a value represented as a string.</p>
+  <p>'value' -- A string representing the value.</p>
+  <p>returns -- The corresponding field value.  The value returned should 
+  be processed by 'Validate' to ensure that it is valid before it is 
+  returned.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="ParseFormValue"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">ParseFormValue</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>,
+        <span class="sig-arg">name</span>,
+        <span class="sig-arg">attachment_stores</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.ParseFormValue">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Convert a value submitted from an HTML form.</p>
+  <p>'request' -- The 'WebRequest' containing a value corresponding to this
+  field.</p>
+  <p>'name' -- The name corresponding to this field in the 'request'.</p>
+  <p>'attachment_stores' -- A dictionary mapping 'AttachmentStore' ids (in 
+  the sense of Python's 'id' built-in) to the 'AttachmentStore's 
+  themselves.</p>
+  <p>returns -- A pair '(value, redisplay)'.  'value' is the value for this
+  field, as indicated in 'request'.  'redisplay' is true if and only if the
+  form should be redisplayed, rather than committed.  If an error occurs, 
+  an exception is thrown.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetValueFromDomNode"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetValueFromDomNode</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">node</span>,
+        <span class="sig-arg">attachment_store</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.GetValueFromDomNode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a value for this field represented by DOM 'node'.</p>
+  <p>This method does not validate the value for this particular instance; 
+  it only makes sure the node is well-formed, and returns a value of the 
+  correct Python type.</p>
+  <p>'node' -- The DOM node that is being evaluated.</p>
+  <p>'attachment_store' -- For attachments, the store that should be 
+  used.</p>
+  <p>If the 'node' is incorrectly formed, this method should raise an 
+  exception.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetHtmlFormFieldName"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetHtmlFormFieldName</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.GetHtmlFormFieldName">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the form field name corresponding this field.</p>
+  <p>returns -- A string giving the name that should be used for this field
+  when used in an HTML form.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#Field.__repr__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>repr(x)</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

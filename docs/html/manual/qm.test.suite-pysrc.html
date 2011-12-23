@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.suite</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        Module&nbsp;suite
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.suite-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.test.suite-module.html">Module qm.test.suite</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># File:   suite.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Mark Mitchell</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   11/05/2001</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#   QMTest Suite class</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2001 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># For license terms see the file COPYING.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment"># Imports</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-0" class="py-name" targets="Package qm=qm-module.html"><a title="qm" class="py-name" href="#" onclick="return doclink('link-0', 'qm', 'link-0');">qm</a></tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-1" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-1', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Module qm.extension=qm.extension-module.html"><a title="qm.extension" class="py-name" href="#" onclick="return doclink('link-2', 'extension', 'link-2');">extension</a></tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment"># Classes</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"> </tt>
+<a name="Suite"></a><div id="Suite-def"><a name="L27"></a><tt class="py-lineno"> 27</tt> <a class="py-toggle" href="#" id="Suite-toggle" onclick="return toggle('Suite');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.test.suite.Suite-class.html">Suite</a><tt class="py-op">(</tt><tt class="py-base-class">qm</tt><tt class="py-op">.</tt><tt class="py-base-class">extension</tt><tt class="py-op">.</tt><tt class="py-base-class">Extension</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Suite-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Suite-expanded"><a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line">    <tt class="py-docstring">"""A collection of tests.</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-docstring">     A test suite is a collection of tests.  The suite may contain other</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-docstring">    suites by reference as well; all tests contained in these contained</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-docstring">    suites are considered contained in the containing suite as well."""</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line">    <tt id="link-3" class="py-name" targets="Variable qm.extension.Extension.arguments=qm.extension.Extension-class.html#arguments,Variable qm.test.classes.command.ExecTest.arguments=qm.test.classes.command.ExecTest-class.html#arguments,Variable qm.test.classes.command.ExecTestBase.arguments=qm.test.classes.command.ExecTestBase-class.html#arguments,Variable qm.test.classes.command.ShellCommandTest.arguments=qm.test.classes.command.ShellCommandTest-class.html#arguments,Variable qm.test.classes.command.ShellScriptTest.arguments=qm.test.classes.command.ShellScriptTest-class.html#arguments,Variable qm.test.classes.dejagnu_stream.DejaGNUReader.arguments=qm.test.classes.dejagnu_stream.DejaGNUReader-class.html#arguments,Variable qm.test.classes.dejagnu_stream.DejaGNUStream.arguments=qm.test.classes.dejagnu_stream.DejaGNUStream-class.html#arguments,Variable qm.test.classes.dejagnu_test.DejaGNUTest.arguments=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#arguments,Variable qm.test.classes.explicit_suite.ExplicitSuite.arguments=qm.test.classes.explicit_suite.ExplicitSuite-class.html#arguments,Variable qm.test.classes.file.FileContentsTest.arguments=qm.test.classes.file.FileContentsTest-class.html#arguments,Variable qm.test.classes.pickle_result_stream.PickleResultStream.arguments=qm.test.classes.pickle_result_stream.PickleResultStream-class.html#arguments,Variable qm.test.classes.process_target.ProcessTarget.arguments=qm.test.classes.process_target.ProcessTarget-class.html#arguments,Variable qm.test.classes.python.BaseExceptionTest.arguments=qm.test.classes.python.BaseExceptionTest-class.html#arguments,Variable qm.test.classes.python.ExceptionTest.arguments=qm.test.classes.python.ExceptionTest-class.html#arguments,Variable qm.test.classes.python.ExecTest.arguments=qm.test.classes.python.ExecTest-class.html#arguments,Variable qm.test.classes.python.StringExceptionTest.arguments=qm.test.classes.python.StringExceptionTest-class.html#arguments,Variable qm.test.classes.rsh_target.RSHTarget.arguments=qm.test.classes.rsh_target.RSHTarget-class.html#arguments,Variable qm.test.classes.sql_result_stream.SQLResultReader.arguments=qm.test.classes.sql_result_stream.SQLResultReader-class.html#arguments,Variable qm.test.classes.sql_result_stream._SQLConnected.arguments=qm.test.classes.sql_result_stream._SQLConnected-class.html#arguments,Variable qm.test.classes.temporary.TempDirectoryResource.arguments=qm.test.classes.temporary.TempDirectoryResource-class.html#arguments,Variable qm.test.classes.text_result_stream.TextResultStream.arguments=qm.test.classes.text_result_stream.TextResultStream-class.html#arguments,Variable qm.test.classes.thread_target.ThreadTarget.arguments=qm.test.classes.thread_target.ThreadTarget-class.html#arguments,Variable qm.test.database.Database.arguments=qm.test.database.Database-class.html#arguments,Variable qm.test.file_database.ExtensionDatabase.arguments=qm.test.file_database.ExtensionDatabase-class.html#arguments,Variable qm.test.file_result_reader.FileResultReader.arguments=qm.test.file_result_reader.FileResultReader-class.html#arguments,Variable qm.test.file_result_stream.FileResultStream.arguments=qm.test.file_result_stream.FileResultStream-class.html#arguments,Variable qm.test.runnable.Runnable.arguments=qm.test.runnable.Runnable-class.html#arguments,Variable qm.test.suite.Suite.arguments=qm.test.suite.Suite-class.html#arguments,Variable qm.test.target.Target.arguments=qm.test.target.Target-class.html#arguments,Variable qm.test.test.Test.arguments=qm.test.test.Test-class.html#arguments"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-3', 'arguments', 'link-3');">arguments</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">       <tt class="py-op">]</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line">    <tt id="link-4" class="py-name" targets="Variable qm.extension.Extension.kind=qm.extension.Extension-class.html#kind,Variable qm.host.Host.kind=qm.host.Host-class.html#kind,Variable qm.test.database.Database.kind=qm.test.database.Database-class.html#kind,Variable qm.test.expectation_database.ExpectationDatabase.kind=qm.test.expectation_database.ExpectationDatabase-class.html#kind,Variable qm.test.resource.Resource.kind=qm.test.resource.Resource-class.html#kind,Variable qm.test.result_reader.ResultReader.kind=qm.test.result_reader.ResultReader-class.html#kind,Variable qm.test.result_stream.ResultStream.kind=qm.test.result_stream.ResultStream-class.html#kind,Variable qm.test.suite.Suite.kind=qm.test.suite.Suite-class.html#kind,Variable qm.test.target.Target.kind=qm.test.target.Target-class.html#kind,Variable qm.test.test.Test.kind=qm.test.test.Test-class.html#kind"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-4', 'kind', 'link-4');">kind</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"suite"</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">    <tt id="link-5" class="py-name" targets="Variable qm.test.runnable.Runnable.EXTRA_ID=qm.test.runnable.Runnable-class.html#EXTRA_ID,Variable qm.test.suite.Suite.EXTRA_ID=qm.test.suite.Suite-class.html#EXTRA_ID"><a title="qm.test.runnable.Runnable.EXTRA_ID
+qm.test.suite.Suite.EXTRA_ID" class="py-name" href="#" onclick="return doclink('link-5', 'EXTRA_ID', 'link-5');">EXTRA_ID</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"qmtest_id"</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">    <tt class="py-string">"""The name of the extra keyword argument to '__init__' that</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-string">    specifies the name of the test or resource."""</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line">    <tt id="link-6" class="py-name" targets="Variable qm.test.runnable.Runnable.EXTRA_DATABASE=qm.test.runnable.Runnable-class.html#EXTRA_DATABASE,Variable qm.test.suite.Suite.EXTRA_DATABASE=qm.test.suite.Suite-class.html#EXTRA_DATABASE"><a title="qm.test.runnable.Runnable.EXTRA_DATABASE
+qm.test.suite.Suite.EXTRA_DATABASE" class="py-name" href="#" onclick="return doclink('link-6', 'EXTRA_DATABASE', 'link-6');">EXTRA_DATABASE</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"qmtest_database"</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">    <tt class="py-string">"""The name of the extra keyword argument to '__init__' that</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-string">    specifies the database containing the test or resource."""</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"> </tt>
+<a name="Suite.__init__"></a><div id="Suite.__init__-def"><a name="L48"></a><tt class="py-lineno"> 48</tt> <a class="py-toggle" href="#" id="Suite.__init__-toggle" onclick="return toggle('Suite.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.suite.Suite-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">arguments</tt> <tt class="py-op">=</tt> <tt id="link-7" class="py-name" targets="Variable qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#None"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-7', 'None', 'link-7');">None</a></tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">args</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Suite.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Suite.__init__-expanded"><a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">        <tt class="py-docstring">"""Construct a new 'Runnable'.</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-docstring">        'arguments' -- As for 'Extension.__init__'.</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-docstring">        'args' -- As for 'Extension.__init__'."""</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__id</tt> <tt class="py-op">=</tt> <tt id="link-8" class="py-name" targets="Variable qm.test.classes.compilation_test.ExecutableTest.args=qm.test.classes.compilation_test.ExecutableTest-class.html#args"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-8', 'args', 'link-8');">args</a></tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Method qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.pop()=qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping-class.html#pop"><a title="qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.pop" class="py-name" href="#" onclick="return doclink('link-9', 'pop', 'link-9');">pop</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name"><a title="qm.test.runnable.Runnable.EXTRA_ID
+qm.test.suite.Suite.EXTRA_ID" class="py-name" href="#" onclick="return doclink('link-10', 'EXTRA_ID', 'link-5');">EXTRA_ID</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__database</tt> <tt class="py-op">=</tt> <tt id="link-11" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-11', 'args', 'link-8');">args</a></tt><tt class="py-op">.</tt><tt id="link-12" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.pop" class="py-name" href="#" onclick="return doclink('link-12', 'pop', 'link-9');">pop</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-13" class="py-name"><a title="qm.test.runnable.Runnable.EXTRA_DATABASE
+qm.test.suite.Suite.EXTRA_DATABASE" class="py-name" href="#" onclick="return doclink('link-13', 'EXTRA_DATABASE', 'link-6');">EXTRA_DATABASE</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-14" class="py-name"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-14', 'arguments', 'link-3');">arguments</a></tt><tt class="py-op">:</tt> <tt id="link-15" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-15', 'args', 'link-8');">args</a></tt><tt class="py-op">.</tt><tt class="py-name">update</tt><tt class="py-op">(</tt><tt id="link-16" class="py-name"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-16', 'arguments', 'link-3');">arguments</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">        <tt class="py-name">super</tt><tt class="py-op">(</tt><tt id="link-17" class="py-name" targets="Class qm.test.suite.Suite=qm.test.suite.Suite-class.html"><a title="qm.test.suite.Suite" class="py-name" href="#" onclick="return doclink('link-17', 'Suite', 'link-17');">Suite</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-18" class="py-name" targets="Method qm.attachment.Attachment.__init__()=qm.attachment.Attachment-class.html#__init__,Method qm.attachment.FileAttachmentStore.__init__()=qm.attachment.FileAttachmentStore-class.html#__init__,Method qm.attachment.TemporaryAttachmentStore.__init__()=qm.attachment.TemporaryAttachmentStore-class.html#__init__,Method qm.cmdline.CommandParser.__init__()=qm.cmdline.CommandParser-class.html#__init__,Method qm.common.PythonException.__init__()=qm.common.PythonException-class.html#__init__,Method qm.common.QMException.__init__()=qm.common.QMException-class.html#__init__,Method qm.common.RcConfiguration.__init__()=qm.common.RcConfiguration-class.html#__init__,Method qm.db.Connection.__init__()=qm.db.Connection-class.html#__init__,Method qm.diagnostic.DiagnosticSet.__init__()=qm.diagnostic.DiagnosticSet-class.html#__init__,Method qm.dist.distribution.Distribution.__init__()=qm.dist.distribution.Distribution-class.html#__init__,Method qm.executable.Filter.__init__()=qm.executable.Filter-class.html#__init__,Method qm.executable.TimeoutExecutable.__init__()=qm.executable.TimeoutExecutable-class.html#__init__,Method qm.executable.TimeoutExecutable.__init__()=qm.executable.TimeoutExecutable-class.html#__init__,Method qm.extension.Extension.Type.__init__()=qm.extension.Extension.Type-class.html#__init__,Method qm.extension.Extension.__init__()=qm.extension.Extension-class.html#__init__,Method qm.external.DocumentTemplate.DT_If.If.__init__()=qm.external.DocumentTemplate.DT_If.If-class.html#__init__,Method qm.external.DocumentTemplate.DT_If.Unless.__init__()=qm.external.DocumentTemplate.DT_If.Unless-class.html#__init__,Method qm.external.DocumentTemplate.DT_In.InClass.__init__()=qm.external.DocumentTemplate.DT_In.InClass-class.html#__init__,Method qm.external.DocumentTemplate.DT_InSV.sequence_variables.__init__()=qm.external.DocumentTemplate.DT_InSV.sequence_variables-class.html#__init__,Method qm.external.DocumentTemplate.DT_Let.Let.__init__()=qm.external.DocumentTemplate.DT_Let.Let-class.html#__init__,Method qm.external.DocumentTemplate.DT_Raise.Raise.__init__()=qm.external.DocumentTemplate.DT_Raise.Raise-class.html#__init__,Method qm.external.DocumentTemplate.DT_Return.DTReturn.__init__()=qm.external.DocumentTemplate.DT_Return.DTReturn-class.html#__init__,Method qm.external.DocumentTemplate.DT_Return.ReturnTag.__init__()=qm.external.DocumentTemplate.DT_Return.ReturnTag-class.html#__init__,Method qm.external.DocumentTemplate.DT_String.FileMixin.__init__()=qm.external.DocumentTemplate.DT_String.FileMixin-class.html#__init__,Method qm.external.DocumentTemplate.DT_String.String.__init__()=qm.external.DocumentTemplate.DT_String.String-class.html#__init__,Method qm.external.DocumentTemplate.DT_Try.Try.__init__()=qm.external.DocumentTemplate.DT_Try.Try-class.html#__init__,Method qm.external.DocumentTemplate.DT_Var.Call.__init__()=qm.external.DocumentTemplate.DT_Var.Call-class.html#__init__,Method qm.external.DocumentTemplate.DT_Var.Comment.__init__()=qm.external.DocumentTemplate.DT_Var.Comment-class.html#__init__,Method qm.external.DocumentTemplate.DT_Var.Var.__init__()=qm.external.DocumentTemplate.DT_Var.Var-class.html#__init__,Method qm.external.DocumentTemplate.DT_With.With.__init__()=qm.external.DocumentTemplate.DT_With.With-class.html#__init__,Method qm.external.DocumentTemplate.VSEval.Eval.__init__()=qm.external.DocumentTemplate.VSEval.Eval-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.DictInstance.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.DictInstance-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#__init__,Method qm.fields.AttachmentField.__init__()=qm.fields.AttachmentField-class.html#__init__,Method qm.fields.BooleanField.__init__()=qm.fields.BooleanField-class.html#__init__,Method qm.fields.DictionaryField.__init__()=qm.fields.DictionaryField-class.html#__init__,Method qm.fields.EnumerationField.__init__()=qm.fields.EnumerationField-class.html#__init__,Method qm.fields.Field.__init__()=qm.fields.Field-class.html#__init__,Method qm.fields.IntegerField.__init__()=qm.fields.IntegerField-class.html#__init__,Method qm.fields.PythonField.__init__()=qm.fields.PythonField-class.html#__init__,Method qm.fields.SetField.__init__()=qm.fields.SetField-class.html#__init__,Method qm.fields.TextField.__init__()=qm.fields.TextField-class.html#__init__,Method qm.fields.TimeField.__init__()=qm.fields.TimeField-class.html#__init__,Method qm.fields.TupleField.__init__()=qm.fields.TupleField-class.html#__init__,Method qm.fields.UploadAttachmentPage.__init__()=qm.fields.UploadAttachmentPage-class.html#__init__,Method qm.host.Host.__init__()=qm.host.Host-class.html#__init__,Method qm.host.Host.__init__()=qm.host.Host-class.html#__init__,Method qm.label.Label.__init__()=qm.label.Label-class.html#__init__,Method qm.platform_unix.SignalException.__init__()=qm.platform_unix.SignalException-class.html#__init__,Method qm.platform_win32.SignalException.__init__()=qm.platform_win32.SignalException-class.html#__init__,Method qm.structured_text.HtmlFormatter.__init__()=qm.structured_text.HtmlFormatter-class.html#__init__,Method qm.structured_text.StructuredTextProcessor.__init__()=qm.structured_text.StructuredTextProcessor-class.html#__init__,Method qm.structured_text.TextFormatter.__init__()=qm.structured_text.TextFormatter-class.html#__init__,Method qm.temporary_directory.TemporaryDirectory.__init__()=qm.temporary_directory.TemporaryDirectory-class.html#__init__,Method qm.test.base.CouldNotLoadExtensionError.__init__()=qm.test.base.CouldNotLoadExtensionError-class.html#__init__,Method qm.test.classes.compilation_test_database.CompilationTestDatabase.__init__()=qm.test.classes.compilation_test_database.CompilationTestDatabase-class.html#__init__,Method qm.test.classes.compiler.Compiler.__init__()=qm.test.classes.compiler.Compiler-class.html#__init__,Method qm.test.classes.compiler.Diagnostic.__init__()=qm.test.classes.compiler.Diagnostic-class.html#__init__,Method qm.test.classes.compiler.SourcePosition.__init__()=qm.test.classes.compiler.SourcePosition-class.html#__init__,Method qm.test.classes.compiler_test.CompilationStep.__init__()=qm.test.classes.compiler_test.CompilationStep-class.html#__init__,Method qm.test.classes.dejagnu_stream.DejaGNUReader.__init__()=qm.test.classes.dejagnu_stream.DejaGNUReader-class.html#__init__,Method qm.test.classes.dejagnu_stream.DejaGNUStream.__init__()=qm.test.classes.dejagnu_stream.DejaGNUStream-class.html#__init__,Method qm.test.classes.dir_run_database.DirRunDatabase.__init__()=qm.test.classes.dir_run_database.DirRunDatabase-class.html#__init__,Method qm.test.classes.file.SubstitutionField.__init__()=qm.test.classes.file.SubstitutionField-class.html#__init__,Method qm.test.classes.mount_database.MountDatabase.MountedSuite.__init__()=qm.test.classes.mount_database.MountDatabase.MountedSuite-class.html#__init__,Method qm.test.classes.mount_database.MountDatabase.__init__()=qm.test.classes.mount_database.MountDatabase-class.html#__init__,Method qm.test.classes.pickle_result_stream.PickleResultReader.__init__()=qm.test.classes.pickle_result_stream.PickleResultReader-class.html#__init__,Method qm.test.classes.pickle_result_stream.PickleResultStream.__init__()=qm.test.classes.pickle_result_stream.PickleResultStream-class.html#__init__,Method qm.test.classes.previous_testrun.PreviousTestRun.__init__()=qm.test.classes.previous_testrun.PreviousTestRun-class.html#__init__,Method qm.test.classes.process_target.ProcessTarget.__init__()=qm.test.classes.process_target.ProcessTarget-class.html#__init__,Method qm.test.classes.rsh_target.RSHTarget.__init__()=qm.test.classes.rsh_target.RSHTarget-class.html#__init__,Method qm.test.classes.serial_target.SerialTarget.__init__()=qm.test.classes.serial_target.SerialTarget-class.html#__init__,Method qm.test.classes.sql_result_stream.SQLResultReader.__init__()=qm.test.classes.sql_result_stream.SQLResultReader-class.html#__init__,Method qm.test.classes.sql_result_stream.SQLResultStream.__init__()=qm.test.classes.sql_result_stream.SQLResultStream-class.html#__init__,Method qm.test.classes.sql_result_stream._Buffer.__init__()=qm.test.classes.sql_result_stream._Buffer-class.html#__init__,Method qm.test.classes.sql_result_stream._SQLConnected.__init__()=qm.test.classes.sql_result_stream._SQLConnected-class.html#__init__,Method qm.test.classes.tet_stream.TETStream.__init__()=qm.test.classes.tet_stream.TETStream-class.html#__init__,Method qm.test.classes.text_result_stream.TextResultStream.__init__()=qm.test.classes.text_result_stream.TextResultStream-class.html#__init__,Method qm.test.classes.thread_target.LocalThread.__init__()=qm.test.classes.thread_target.LocalThread-class.html#__init__,Method qm.test.classes.thread_target.ThreadTarget.__init__()=qm.test.classes.thread_target.ThreadTarget-class.html#__init__,Method qm.test.classes.xml_database.XMLDatabase.__init__()=qm.test.classes.xml_database.XMLDatabase-class.html#__init__,Method qm.test.classes.xml_expectation_database.XMLExpectationDatabase.__init__()=qm.test.classes.xml_expectation_database.XMLExpectationDatabase-class.html#__init__,Method qm.test.classes.xml_result_stream.XMLResultReader.__init__()=qm.test.classes.xml_result_stream.XMLResultReader-class.html#__init__,Method qm.test.classes.xml_result_stream.XMLResultStream.__init__()=qm.test.classes.xml_result_stream.XMLResultStream-class.html#__init__,Method qm.test.cmdline.QMTest.__init__()=qm.test.cmdline.QMTest-class.html#__init__,Method qm.test.command_thread.CommandThread.__init__()=qm.test.command_thread.CommandThread-class.html#__init__,Method qm.test.context.Context.__init__()=qm.test.context.Context-class.html#__init__,Method qm.test.context.ContextException.__init__()=qm.test.context.ContextException-class.html#__init__,Method qm.test.database.Database.__init__()=qm.test.database.Database-class.html#__init__,Method qm.test.database.ItemDescriptor.__init__()=qm.test.database.ItemDescriptor-class.html#__init__,Method qm.test.database.NoSuchItemError.__init__()=qm.test.database.NoSuchItemError-class.html#__init__,Method qm.test.database.NoSuchResourceError.__init__()=qm.test.database.NoSuchResourceError-class.html#__init__,Method qm.test.database.NoSuchSuiteError.__init__()=qm.test.database.NoSuchSuiteError-class.html#__init__,Method qm.test.database.NoSuchTestError.__init__()=qm.test.database.NoSuchTestError-class.html#__init__,Method qm.test.database.ResourceDescriptor.__init__()=qm.test.database.ResourceDescriptor-class.html#__init__,Method qm.test.database.TestDescriptor.__init__()=qm.test.database.TestDescriptor-class.html#__init__,Method qm.test.directory_suite.DirectorySuite.__init__()=qm.test.directory_suite.DirectorySuite-class.html#__init__,Method qm.test.execution_engine.ExecutionEngine.__TestStatus.__init__()=qm.test.execution_engine.ExecutionEngine.__TestStatus-class.html#__init__,Method qm.test.execution_engine.ExecutionEngine.__init__()=qm.test.execution_engine.ExecutionEngine-class.html#__init__,Method qm.test.execution_thread.ExecutionThread.__init__()=qm.test.execution_thread.ExecutionThread-class.html#__init__,Method qm.test.file_database.ExtensionDatabase.__init__()=qm.test.file_database.ExtensionDatabase-class.html#__init__,Method qm.test.file_result_reader.FileResultReader.__init__()=qm.test.file_result_reader.FileResultReader-class.html#__init__,Method qm.test.file_result_stream.FileResultStream.__init__()=qm.test.file_result_stream.FileResultStream-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.ImplicitSuite.__init__()=qm.test.parameter_database.ParameterDatabase.ImplicitSuite-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.ParameterSuite.__init__()=qm.test.parameter_database.ParameterDatabase.ParameterSuite-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.WrapperSuite.__init__()=qm.test.parameter_database.ParameterDatabase.WrapperSuite-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.__init__()=qm.test.parameter_database.ParameterDatabase-class.html#__init__,Method qm.test.reader_test_run.ReaderTestRun.__init__()=qm.test.reader_test_run.ReaderTestRun-class.html#__init__,Method qm.test.report.ReportGenerator.__init__()=qm.test.report.ReportGenerator-class.html#__init__,Method qm.test.result.Result.__init__()=qm.test.result.Result-class.html#__init__,Method qm.test.result_reader.ResultReader.__init__()=qm.test.result_reader.ResultReader-class.html#__init__,Method qm.test.result_stream.ResultStream.__init__()=qm.test.result_stream.ResultStream-class.html#__init__,Method qm.test.runnable.Runnable.__init__()=qm.test.runnable.Runnable-class.html#__init__,Method qm.test.suite.Suite.__init__()=qm.test.suite.Suite-class.html#__init__,Method qm.test.target.Target.__ResourceSetUpException.__init__()=qm.test.target.Target.__ResourceSetUpException-class.html#__init__,Method qm.test.target.Target.__init__()=qm.test.target.Target-class.html#__init__,Method qm.test.test.Test.OutcomeField.__init__()=qm.test.test.Test.OutcomeField-class.html#__init__,Method qm.test.test.Test.OutcomeField.__init__()=qm.test.test.Test.OutcomeField-class.html#__init__,Method qm.test.web.web.ContextPage.__init__()=qm.test.web.web.ContextPage-class.html#__init__,Method qm.test.web.web.DefaultDtmlPage.__init__()=qm.test.web.web.DefaultDtmlPage-class.html#__init__,Method qm.test.web.web.DirPage.__init__()=qm.test.web.web.DirPage-class.html#__init__,Method qm.test.web.web.DirReportPage.__init__()=qm.test.web.web.DirReportPage-class.html#__init__,Method qm.test.web.web.Item.__init__()=qm.test.web.web.Item-class.html#__init__,Method qm.test.web.web.LoadContextPage.__init__()=qm.test.web.web.LoadContextPage-class.html#__init__,Method qm.test.web.web.LoadExpectationsPage.__init__()=qm.test.web.web.LoadExpectationsPage-class.html#__init__,Method qm.test.web.web.LoadResultsPage.__init__()=qm.test.web.web.LoadResultsPage-class.html#__init__,Method qm.test.web.web.NewItemPage.__init__()=qm.test.web.web.NewItemPage-class.html#__init__,Method qm.test.web.web.NewSuitePage.__init__()=qm.test.web.web.NewSuitePage-class.html#__init__,Method qm.test.web.web.QMTestPage.__init__()=qm.test.web.web.QMTestPage-class.html#__init__,Method qm.test.web.web.QMTestReportPage.__init__()=qm.test.web.web.QMTestReportPage-class.html#__init__,Method qm.test.web.web.QMTestServer.__init__()=qm.test.web.web.QMTestServer-class.html#__init__,Method qm.test.web.web.ResultPage.__init__()=qm.test.web.web.ResultPage-class.html#__init__,Method qm.test.web.web.SetExpectationPage.__init__()=qm.test.web.web.SetExpectationPage-class.html#__init__,Method qm.test.web.web.ShowItemPage.__init__()=qm.test.web.web.ShowItemPage-class.html#__init__,Method qm.test.web.web.ShowItemReportPage.__init__()=qm.test.web.web.ShowItemReportPage-class.html#__init__,Method qm.test.web.web.ShowSuitePage.__init__()=qm.test.web.web.ShowSuitePage-class.html#__init__,Method qm.test.web.web.StorageResultsStream.__init__()=qm.test.web.web.StorageResultsStream-class.html#__init__,Method qm.test.web.web.TestResultsPage.__init__()=qm.test.web.web.TestResultsPage-class.html#__init__,Method qm.trace.Tracer.__init__()=qm.trace.Tracer-class.html#__init__,Method qm.user.Group.__init__()=qm.user.Group-class.html#__init__,Method qm.user.User.__init__()=qm.user.User-class.html#__init__,Method qm.user.XmlDatabase.__init__()=qm.user.XmlDatabase-class.html#__init__,Method qm.user.XmlDatabaseAuthenticator.__init__()=qm.user.XmlDatabaseAuthenticator-class.html#__init__,Method qm.web.CGIWebRequest.__init__()=qm.web.CGIWebRequest-class.html#__init__,Method qm.web.DtmlPage.__init__()=qm.web.DtmlPage-class.html#__init__,Method qm.web.HttpRedirect.__init__()=qm.web.HttpRedirect-class.html#__init__,Method qm.web.Session.__init__()=qm.web.Session-class.html#__init__,Method qm.web.WebRequest.__init__()=qm.web.WebRequest-class.html#__init__,Method qm.web.WebServer.__init__()=qm.web.WebServer-class.html#__init__"><a title="qm.attachment.Attachment.__init__
+qm.attachment.FileAttachmentStore.__init__
+qm.attachment.TemporaryAttachmentStore.__init__
+qm.cmdline.CommandParser.__init__
+qm.common.PythonException.__init__
+qm.common.QMException.__init__
+qm.common.RcConfiguration.__init__
+qm.db.Connection.__init__
+qm.diagnostic.DiagnosticSet.__init__
+qm.dist.distribution.Distribution.__init__
+qm.executable.Filter.__init__
+qm.executable.TimeoutExecutable.__init__
+qm.executable.TimeoutExecutable.__init__
+qm.extension.Extension.Type.__init__
+qm.extension.Extension.__init__
+qm.external.DocumentTemplate.DT_If.If.__init__
+qm.external.DocumentTemplate.DT_If.Unless.__init__
+qm.external.DocumentTemplate.DT_In.InClass.__init__
+qm.external.DocumentTemplate.DT_InSV.sequence_variables.__init__
+qm.external.DocumentTemplate.DT_Let.Let.__init__
+qm.external.DocumentTemplate.DT_Raise.Raise.__init__
+qm.external.DocumentTemplate.DT_Return.DTReturn.__init__
+qm.external.DocumentTemplate.DT_Return.ReturnTag.__init__
+qm.external.DocumentTemplate.DT_String.FileMixin.__init__
+qm.external.DocumentTemplate.DT_String.String.__init__
+qm.external.DocumentTemplate.DT_Try.Try.__init__
+qm.external.DocumentTemplate.DT_Var.Call.__init__
+qm.external.DocumentTemplate.DT_Var.Comment.__init__
+qm.external.DocumentTemplate.DT_Var.Var.__init__
+qm.external.DocumentTemplate.DT_With.With.__init__
+qm.external.DocumentTemplate.VSEval.Eval.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.DictInstance.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.__init__
+qm.fields.AttachmentField.__init__
+qm.fields.BooleanField.__init__
+qm.fields.DictionaryField.__init__
+qm.fields.EnumerationField.__init__
+qm.fields.Field.__init__
+qm.fields.IntegerField.__init__
+qm.fields.PythonField.__init__
+qm.fields.SetField.__init__
+qm.fields.TextField.__init__
+qm.fields.TimeField.__init__
+qm.fields.TupleField.__init__
+qm.fields.UploadAttachmentPage.__init__
+qm.host.Host.__init__
+qm.host.Host.__init__
+qm.label.Label.__init__
+qm.platform_unix.SignalException.__init__
+qm.platform_win32.SignalException.__init__
+qm.structured_text.HtmlFormatter.__init__
+qm.structured_text.StructuredTextProcessor.__init__
+qm.structured_text.TextFormatter.__init__
+qm.temporary_directory.TemporaryDirectory.__init__
+qm.test.base.CouldNotLoadExtensionError.__init__
+qm.test.classes.compilation_test_database.CompilationTestDatabase.__init__
+qm.test.classes.compiler.Compiler.__init__
+qm.test.classes.compiler.Diagnostic.__init__
+qm.test.classes.compiler.SourcePosition.__init__
+qm.test.classes.compiler_test.CompilationStep.__init__
+qm.test.classes.dejagnu_stream.DejaGNUReader.__init__
+qm.test.classes.dejagnu_stream.DejaGNUStream.__init__
+qm.test.classes.dir_run_database.DirRunDatabase.__init__
+qm.test.classes.file.SubstitutionField.__init__
+qm.test.classes.mount_database.MountDatabase.MountedSuite.__init__
+qm.test.classes.mount_database.MountDatabase.__init__
+qm.test.classes.pickle_result_stream.PickleResultReader.__init__
+qm.test.classes.pickle_result_stream.PickleResultStream.__init__
+qm.test.classes.previous_testrun.PreviousTestRun.__init__
+qm.test.classes.process_target.ProcessTarget.__init__
+qm.test.classes.rsh_target.RSHTarget.__init__
+qm.test.classes.serial_target.SerialTarget.__init__
+qm.test.classes.sql_result_stream.SQLResultReader.__init__
+qm.test.classes.sql_result_stream.SQLResultStream.__init__
+qm.test.classes.sql_result_stream._Buffer.__init__
+qm.test.classes.sql_result_stream._SQLConnected.__init__
+qm.test.classes.tet_stream.TETStream.__init__
+qm.test.classes.text_result_stream.TextResultStream.__init__
+qm.test.classes.thread_target.LocalThread.__init__
+qm.test.classes.thread_target.ThreadTarget.__init__
+qm.test.classes.xml_database.XMLDatabase.__init__
+qm.test.classes.xml_expectation_database.XMLExpectationDatabase.__init__
+qm.test.classes.xml_result_stream.XMLResultReader.__init__
+qm.test.classes.xml_result_stream.XMLResultStream.__init__
+qm.test.cmdline.QMTest.__init__
+qm.test.command_thread.CommandThread.__init__
+qm.test.context.Context.__init__
+qm.test.context.ContextException.__init__
+qm.test.database.Database.__init__
+qm.test.database.ItemDescriptor.__init__
+qm.test.database.NoSuchItemError.__init__
+qm.test.database.NoSuchResourceError.__init__
+qm.test.database.NoSuchSuiteError.__init__
+qm.test.database.NoSuchTestError.__init__
+qm.test.database.ResourceDescriptor.__init__
+qm.test.database.TestDescriptor.__init__
+qm.test.directory_suite.DirectorySuite.__init__
+qm.test.execution_engine.ExecutionEngine.__TestStatus.__init__
+qm.test.execution_engine.ExecutionEngine.__init__
+qm.test.execution_thread.ExecutionThread.__init__
+qm.test.file_database.ExtensionDatabase.__init__
+qm.test.file_result_reader.FileResultReader.__init__
+qm.test.file_result_stream.FileResultStream.__init__
+qm.test.parameter_database.ParameterDatabase.ImplicitSuite.__init__
+qm.test.parameter_database.ParameterDatabase.ParameterSuite.__init__
+qm.test.parameter_database.ParameterDatabase.WrapperSuite.__init__
+qm.test.parameter_database.ParameterDatabase.__init__
+qm.test.reader_test_run.ReaderTestRun.__init__
+qm.test.report.ReportGenerator.__init__
+qm.test.result.Result.__init__
+qm.test.result_reader.ResultReader.__init__
+qm.test.result_stream.ResultStream.__init__
+qm.test.runnable.Runnable.__init__
+qm.test.suite.Suite.__init__
+qm.test.target.Target.__ResourceSetUpException.__init__
+qm.test.target.Target.__init__
+qm.test.test.Test.OutcomeField.__init__
+qm.test.test.Test.OutcomeField.__init__
+qm.test.web.web.ContextPage.__init__
+qm.test.web.web.DefaultDtmlPage.__init__
+qm.test.web.web.DirPage.__init__
+qm.test.web.web.DirReportPage.__init__
+qm.test.web.web.Item.__init__
+qm.test.web.web.LoadContextPage.__init__
+qm.test.web.web.LoadExpectationsPage.__init__
+qm.test.web.web.LoadResultsPage.__init__
+qm.test.web.web.NewItemPage.__init__
+qm.test.web.web.NewSuitePage.__init__
+qm.test.web.web.QMTestPage.__init__
+qm.test.web.web.QMTestReportPage.__init__
+qm.test.web.web.QMTestServer.__init__
+qm.test.web.web.ResultPage.__init__
+qm.test.web.web.SetExpectationPage.__init__
+qm.test.web.web.ShowItemPage.__init__
+qm.test.web.web.ShowItemReportPage.__init__
+qm.test.web.web.ShowSuitePage.__init__
+qm.test.web.web.StorageResultsStream.__init__
+qm.test.web.web.TestResultsPage.__init__
+qm.trace.Tracer.__init__
+qm.user.Group.__init__
+qm.user.User.__init__
+qm.user.XmlDatabase.__init__
+qm.user.XmlDatabaseAuthenticator.__init__
+qm.web.CGIWebRequest.__init__
+qm.web.DtmlPage.__init__
+qm.web.HttpRedirect.__init__
+qm.web.Session.__init__
+qm.web.WebRequest.__init__
+qm.web.WebServer.__init__" class="py-name" href="#" onclick="return doclink('link-18', '__init__', 'link-18');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-op">**</tt><tt id="link-19" class="py-name"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-19', 'args', 'link-8');">args</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line">         </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">         </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line">         </tt>
+<a name="Suite.GetDatabase"></a><div id="Suite.GetDatabase-def"><a name="L62"></a><tt class="py-lineno"> 62</tt> <a class="py-toggle" href="#" id="Suite.GetDatabase-toggle" onclick="return toggle('Suite.GetDatabase');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.suite.Suite-class.html#GetDatabase">GetDatabase</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Suite.GetDatabase-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Suite.GetDatabase-expanded"><a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the 'Database' that contains this suite.</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- The 'Database' that contains this suite."""</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">         </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__database</tt> </tt>
+</div><a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">     </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"> </tt>
+<a name="Suite.GetId"></a><div id="Suite.GetId-def"><a name="L70"></a><tt class="py-lineno"> 70</tt> <a class="py-toggle" href="#" id="Suite.GetId-toggle" onclick="return toggle('Suite.GetId');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.suite.Suite-class.html#GetId">GetId</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Suite.GetId-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Suite.GetId-expanded"><a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the ID of this test suite."""</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">         </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__id</tt> </tt>
+</div><a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"> </tt>
+<a name="Suite.GetTestIds"></a><div id="Suite.GetTestIds-def"><a name="L76"></a><tt class="py-lineno"> 76</tt> <a class="py-toggle" href="#" id="Suite.GetTestIds-toggle" onclick="return toggle('Suite.GetTestIds');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.suite.Suite-class.html#GetTestIds">GetTestIds</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Suite.GetTestIds-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Suite.GetTestIds-expanded"><a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the tests contained in this suite.</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A sequence of labels corresponding to the tests</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"><tt class="py-docstring">        contained in this suite.  Tests that are contained in this suite</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"><tt class="py-docstring">        only because they are contained in a suite which is itself</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line"><tt class="py-docstring">        contained in this suite are not returned."""</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">         </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line"> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line"> </tt>
+<a name="Suite.GetSuiteIds"></a><div id="Suite.GetSuiteIds-def"><a name="L87"></a><tt class="py-lineno"> 87</tt> <a class="py-toggle" href="#" id="Suite.GetSuiteIds-toggle" onclick="return toggle('Suite.GetSuiteIds');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.suite.Suite-class.html#GetSuiteIds">GetSuiteIds</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Suite.GetSuiteIds-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Suite.GetSuiteIds-expanded"><a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the suites contained in this suite.</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A sequence of labels corresponding to the suites</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"><tt class="py-docstring">        contained in this suite.  Suites that are contained in this suite</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"><tt class="py-docstring">        only because they are contained in a suite which is itself</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-docstring">        contained in this suite are not returned."""</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">         </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"> </tt>
+<a name="Suite.IsImplicit"></a><div id="Suite.IsImplicit-def"><a name="L98"></a><tt class="py-lineno"> 98</tt> <a class="py-toggle" href="#" id="Suite.IsImplicit-toggle" onclick="return toggle('Suite.IsImplicit');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.suite.Suite-class.html#IsImplicit">IsImplicit</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Suite.IsImplicit-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Suite.IsImplicit-expanded"><a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return true if this is an implicit test suite.</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line"><tt class="py-docstring">        Implicit test suites cannot be edited."""</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">         </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">NotImplementedError</tt> </tt>
+</div><a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">     </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"> </tt>
+<a name="Suite.GetAllTestAndSuiteIds"></a><div id="Suite.GetAllTestAndSuiteIds-def"><a name="L106"></a><tt class="py-lineno">106</tt> <a class="py-toggle" href="#" id="Suite.GetAllTestAndSuiteIds-toggle" onclick="return toggle('Suite.GetAllTestAndSuiteIds');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.suite.Suite-class.html#GetAllTestAndSuiteIds">GetAllTestAndSuiteIds</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Suite.GetAllTestAndSuiteIds-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Suite.GetAllTestAndSuiteIds-expanded"><a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the tests/suites contained in this suite and its subsuites.</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A pair '(test_ids, suite_ids)'.  The 'test_ids' and</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line"><tt class="py-docstring">        'suite_ids' elements are both sequences of labels.  The values</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line"><tt class="py-docstring">        returned include all tests and suites that are contained in this</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line"><tt class="py-docstring">        suite and its subsuites, recursively."""</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">         </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">        <tt id="link-20" class="py-name" targets="Module qm.test.suite=qm.test.suite-module.html"><a title="qm.test.suite" class="py-name" href="#" onclick="return doclink('link-20', 'suite', 'link-20');">suite</a></tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">         </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">        <tt id="link-21" class="py-name" targets="Variable qm.test.classes.explicit_suite.ExplicitSuite.test_ids=qm.test.classes.explicit_suite.ExplicitSuite-class.html#test_ids"><a title="qm.test.classes.explicit_suite.ExplicitSuite.test_ids" class="py-name" href="#" onclick="return doclink('link-21', 'test_ids', 'link-21');">test_ids</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">        <tt id="link-22" class="py-name" targets="Variable qm.test.classes.explicit_suite.ExplicitSuite.suite_ids=qm.test.classes.explicit_suite.ExplicitSuite-class.html#suite_ids"><a title="qm.test.classes.explicit_suite.ExplicitSuite.suite_ids" class="py-name" href="#" onclick="return doclink('link-22', 'suite_ids', 'link-22');">suite_ids</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">         </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">        <tt class="py-comment"># Maintain a work list of suites to process.</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">        <tt class="py-name">work_list</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt id="link-23" class="py-name"><a title="qm.test.suite" class="py-name" href="#" onclick="return doclink('link-23', 'suite', 'link-20');">suite</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">        <tt class="py-comment"># Process until the work list is empty.</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">        <tt class="py-keyword">while</tt> <tt id="link-24" class="py-name" targets="Method qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len()=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#len"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-24', 'len', 'link-24');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">work_list</tt><tt class="py-op">)</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">            <tt id="link-25" class="py-name"><a title="qm.test.suite" class="py-name" href="#" onclick="return doclink('link-25', 'suite', 'link-20');">suite</a></tt> <tt class="py-op">=</tt> <tt class="py-name">work_list</tt><tt class="py-op">.</tt><tt id="link-26" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.pop" class="py-name" href="#" onclick="return doclink('link-26', 'pop', 'link-9');">pop</a></tt><tt class="py-op">(</tt><tt class="py-number">0</tt><tt class="py-op">)</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">            <tt class="py-comment"># Accumulate test and resource IDs in the suite.</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">            <tt id="link-27" class="py-name"><a title="qm.test.classes.explicit_suite.ExplicitSuite.test_ids" class="py-name" href="#" onclick="return doclink('link-27', 'test_ids', 'link-21');">test_ids</a></tt><tt class="py-op">.</tt><tt class="py-name">extend</tt><tt class="py-op">(</tt><tt id="link-28" class="py-name"><a title="qm.test.suite" class="py-name" href="#" onclick="return doclink('link-28', 'suite', 'link-20');">suite</a></tt><tt class="py-op">.</tt><tt id="link-29" class="py-name" targets="Method qm.test.classes.explicit_suite.ExplicitSuite.GetTestIds()=qm.test.classes.explicit_suite.ExplicitSuite-class.html#GetTestIds,Method qm.test.classes.mount_database.MountDatabase.MountedSuite.GetTestIds()=qm.test.classes.mount_database.MountDatabase.MountedSuite-class.html#GetTestIds,Method qm.test.database.Database.GetTestIds()=qm.test.database.Database-class.html#GetTestIds,Method qm.test.directory_suite.DirectorySuite.GetTestIds()=qm.test.directory_suite.DirectorySuite-class.html#GetTestIds,Method qm.test.parameter_database.ParameterDatabase.GetTestIds()=qm.test.parameter_database.ParameterDatabase-class.html#GetTestIds,Method qm.test.parameter_database.ParameterDatabase.ImplicitSuite.GetTestIds()=qm.test.parameter_database.ParameterDatabase.ImplicitSuite-class.html#GetTestIds,Method qm.test.parameter_database.ParameterDatabase.ParameterSuite.GetTestIds()=qm.test.parameter_database.ParameterDatabase.ParameterSuite-class.html#GetTestIds,Method qm.test.parameter_database.ParameterDatabase.WrapperSuite.GetTestIds()=qm.test.parameter_database.ParameterDatabase.WrapperSuite-class.html#GetTestIds,Method qm.test.suite.Suite.GetTestIds()=qm.test.suite.Suite-class.html#GetTestIds"><a title="qm.test.classes.explicit_suite.ExplicitSuite.GetTestIds
+qm.test.classes.mount_database.MountDatabase.MountedSuite.GetTestIds
+qm.test.database.Database.GetTestIds
+qm.test.directory_suite.DirectorySuite.GetTestIds
+qm.test.parameter_database.ParameterDatabase.GetTestIds
+qm.test.parameter_database.ParameterDatabase.ImplicitSuite.GetTestIds
+qm.test.parameter_database.ParameterDatabase.ParameterSuite.GetTestIds
+qm.test.parameter_database.ParameterDatabase.WrapperSuite.GetTestIds
+qm.test.suite.Suite.GetTestIds" class="py-name" href="#" onclick="return doclink('link-29', 'GetTestIds', 'link-29');">GetTestIds</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">            <tt class="py-comment"># Find sub suites in the suite.</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">            <tt class="py-name">sub_suite_ids</tt> <tt class="py-op">=</tt> <tt id="link-30" class="py-name"><a title="qm.test.suite" class="py-name" href="#" onclick="return doclink('link-30', 'suite', 'link-20');">suite</a></tt><tt class="py-op">.</tt><tt id="link-31" class="py-name" targets="Method qm.test.classes.explicit_suite.ExplicitSuite.GetSuiteIds()=qm.test.classes.explicit_suite.ExplicitSuite-class.html#GetSuiteIds,Method qm.test.classes.mount_database.MountDatabase.MountedSuite.GetSuiteIds()=qm.test.classes.mount_database.MountDatabase.MountedSuite-class.html#GetSuiteIds,Method qm.test.database.Database.GetSuiteIds()=qm.test.database.Database-class.html#GetSuiteIds,Method qm.test.directory_suite.DirectorySuite.GetSuiteIds()=qm.test.directory_suite.DirectorySuite-class.html#GetSuiteIds,Method qm.test.parameter_database.ParameterDatabase.GetSuiteIds()=qm.test.parameter_database.ParameterDatabase-class.html#GetSuiteIds,Method qm.test.parameter_database.ParameterDatabase.ParameterSuite.GetSuiteIds()=qm.test.parameter_database.ParameterDatabase.ParameterSuite-class.html#GetSuiteIds,Method qm.test.parameter_database.ParameterDatabase.WrapperSuite.GetSuiteIds()=qm.test.parameter_database.ParameterDatabase.WrapperSuite-class.html#GetSuiteIds,Method qm.test.suite.Suite.GetSuiteIds()=qm.test.suite.Suite-class.html#GetSuiteIds"><a title="qm.test.classes.explicit_suite.ExplicitSuite.GetSuiteIds
+qm.test.classes.mount_database.MountDatabase.MountedSuite.GetSuiteIds
+qm.test.database.Database.GetSuiteIds
+qm.test.directory_suite.DirectorySuite.GetSuiteIds
+qm.test.parameter_database.ParameterDatabase.GetSuiteIds
+qm.test.parameter_database.ParameterDatabase.ParameterSuite.GetSuiteIds
+qm.test.parameter_database.ParameterDatabase.WrapperSuite.GetSuiteIds
+qm.test.suite.Suite.GetSuiteIds" class="py-name" href="#" onclick="return doclink('link-31', 'GetSuiteIds', 'link-31');">GetSuiteIds</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">            <tt class="py-comment"># Accumulate them.</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">            <tt id="link-32" class="py-name"><a title="qm.test.classes.explicit_suite.ExplicitSuite.suite_ids" class="py-name" href="#" onclick="return doclink('link-32', 'suite_ids', 'link-22');">suite_ids</a></tt><tt class="py-op">.</tt><tt class="py-name">extend</tt><tt class="py-op">(</tt><tt class="py-name">sub_suite_ids</tt><tt class="py-op">)</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">            <tt class="py-comment"># Retrieve the 'Suite' objects.</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">            <tt class="py-name">sub_suites</tt> <tt class="py-op">=</tt> <tt class="py-name">map</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-33" class="py-name" targets="Method qm.test.cmdline.QMTest.GetDatabase()=qm.test.cmdline.QMTest-class.html#GetDatabase,Method qm.test.database.ItemDescriptor.GetDatabase()=qm.test.database.ItemDescriptor-class.html#GetDatabase,Method qm.test.runnable.Runnable.GetDatabase()=qm.test.runnable.Runnable-class.html#GetDatabase,Method qm.test.suite.Suite.GetDatabase()=qm.test.suite.Suite-class.html#GetDatabase,Method qm.test.target.Target.GetDatabase()=qm.test.target.Target-class.html#GetDatabase,Method qm.test.target.Target.GetDatabase()=qm.test.target.Target-class.html#GetDatabase,Method qm.test.web.web.DefaultDtmlPage.GetDatabase()=qm.test.web.web.DefaultDtmlPage-class.html#GetDatabase,Method qm.test.web.web.QMTestServer.GetDatabase()=qm.test.web.web.QMTestServer-class.html#GetDatabase"><a title="qm.test.cmdline.QMTest.GetDatabase
+qm.test.database.ItemDescriptor.GetDatabase
+qm.test.runnable.Runnable.GetDatabase
+qm.test.suite.Suite.GetDatabase
+qm.test.target.Target.GetDatabase
+qm.test.target.Target.GetDatabase
+qm.test.web.web.DefaultDtmlPage.GetDatabase
+qm.test.web.web.QMTestServer.GetDatabase" class="py-name" href="#" onclick="return doclink('link-33', 'GetDatabase', 'link-33');">GetDatabase</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-34" class="py-name" targets="Method qm.test.classes.mount_database.MountDatabase.GetSuite()=qm.test.classes.mount_database.MountDatabase-class.html#GetSuite,Method qm.test.database.Database.GetSuite()=qm.test.database.Database-class.html#GetSuite,Method qm.test.file_database.FileDatabase.GetSuite()=qm.test.file_database.FileDatabase-class.html#GetSuite,Method qm.test.file_database.FileDatabase.GetSuite()=qm.test.file_database.FileDatabase-class.html#GetSuite,Method qm.test.parameter_database.ParameterDatabase.GetSuite()=qm.test.parameter_database.ParameterDatabase-class.html#GetSuite"><a title="qm.test.classes.mount_database.MountDatabase.GetSuite
+qm.test.database.Database.GetSuite
+qm.test.file_database.FileDatabase.GetSuite
+qm.test.file_database.FileDatabase.GetSuite
+qm.test.parameter_database.ParameterDatabase.GetSuite" class="py-name" href="#" onclick="return doclink('link-34', 'GetSuite', 'link-34');">GetSuite</a></tt><tt class="py-op">,</tt> <tt class="py-name">sub_suite_ids</tt><tt class="py-op">)</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">            <tt class="py-comment"># Don't expand ordinary suites contained in implicit suites.</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-35" class="py-name"><a title="qm.test.suite" class="py-name" href="#" onclick="return doclink('link-35', 'suite', 'link-20');">suite</a></tt><tt class="py-op">.</tt><tt id="link-36" class="py-name" targets="Method qm.test.classes.explicit_suite.ExplicitSuite.IsImplicit()=qm.test.classes.explicit_suite.ExplicitSuite-class.html#IsImplicit,Method qm.test.classes.mount_database.MountDatabase.MountedSuite.IsImplicit()=qm.test.classes.mount_database.MountDatabase.MountedSuite-class.html#IsImplicit,Method qm.test.directory_suite.DirectorySuite.IsImplicit()=qm.test.directory_suite.DirectorySuite-class.html#IsImplicit,Method qm.test.parameter_database.ParameterDatabase.ImplicitSuite.IsImplicit()=qm.test.parameter_database.ParameterDatabase.ImplicitSuite-class.html#IsImplicit,Method qm.test.parameter_database.ParameterDatabase.ParameterSuite.IsImplicit()=qm.test.parameter_database.ParameterDatabase.ParameterSuite-class.html#IsImplicit,Method qm.test.parameter_database.ParameterDatabase.WrapperSuite.IsImplicit()=qm.test.parameter_database.ParameterDatabase.WrapperSuite-class.html#IsImplicit,Method qm.test.suite.Suite.IsImplicit()=qm.test.suite.Suite-class.html#IsImplicit"><a title="qm.test.classes.explicit_suite.ExplicitSuite.IsImplicit
+qm.test.classes.mount_database.MountDatabase.MountedSuite.IsImplicit
+qm.test.directory_suite.DirectorySuite.IsImplicit
+qm.test.parameter_database.ParameterDatabase.ImplicitSuite.IsImplicit
+qm.test.parameter_database.ParameterDatabase.ParameterSuite.IsImplicit
+qm.test.parameter_database.ParameterDatabase.WrapperSuite.IsImplicit
+qm.test.suite.Suite.IsImplicit" class="py-name" href="#" onclick="return doclink('link-36', 'IsImplicit', 'link-36');">IsImplicit</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">                <tt class="py-name">sub_suites</tt> <tt class="py-op">=</tt> <tt class="py-name">filter</tt><tt class="py-op">(</tt><tt class="py-keyword">lambda</tt> <tt class="py-name">s</tt><tt class="py-op">:</tt> <tt class="py-name">s</tt><tt class="py-op">.</tt><tt id="link-37" class="py-name"><a title="qm.test.classes.explicit_suite.ExplicitSuite.IsImplicit
+qm.test.classes.mount_database.MountDatabase.MountedSuite.IsImplicit
+qm.test.directory_suite.DirectorySuite.IsImplicit
+qm.test.parameter_database.ParameterDatabase.ImplicitSuite.IsImplicit
+qm.test.parameter_database.ParameterDatabase.ParameterSuite.IsImplicit
+qm.test.parameter_database.ParameterDatabase.WrapperSuite.IsImplicit
+qm.test.suite.Suite.IsImplicit" class="py-name" href="#" onclick="return doclink('link-37', 'IsImplicit', 'link-36');">IsImplicit</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">sub_suites</tt><tt class="py-op">)</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">            <tt class="py-comment"># Add contained suites to the work list.</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">            <tt class="py-name">work_list</tt><tt class="py-op">.</tt><tt class="py-name">extend</tt><tt class="py-op">(</tt><tt class="py-name">sub_suites</tt><tt class="py-op">)</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line"> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-38" class="py-name"><a title="qm.test.classes.explicit_suite.ExplicitSuite.test_ids" class="py-name" href="#" onclick="return doclink('link-38', 'test_ids', 'link-21');">test_ids</a></tt><tt class="py-op">,</tt> <tt id="link-39" class="py-name"><a title="qm.test.classes.explicit_suite.ExplicitSuite.suite_ids" class="py-name" href="#" onclick="return doclink('link-39', 'suite_ids', 'link-22');">suite_ids</a></tt> </tt>
+</div></div><a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:45 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

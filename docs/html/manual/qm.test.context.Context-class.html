@@ -1,0 +1,937 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.context.Context</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.context-module.html">Module&nbsp;context</a> ::
+        Class&nbsp;Context
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.context.Context-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Context</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.context-pysrc.html#Context">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+    
+         |    
+      dict --+
+             |
+            <strong class="uidshort">Context</strong>
+</pre>
+
+<hr />
+<pre class="literalblock">
+Test-time and local configuration for tests.
+
+A 'Context' object contains all of the information a test needs to
+execute, beyond what is stored as part of the test specification
+itself.  Information in the context can include,
+
+  * Local (per-user, etc.) configuration, such as where to find the
+    tested program.
+
+  * Environmental information, such as which machine the test is
+    running on.
+
+  * One-time configuration, including test arguments specified on
+    the command line.
+
+A 'Context' object is effectively a mapping object whose keys must
+be labels and values must be strings.
+
+</pre>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type"><pre class="literalblock">
+new empty dictionary
+
+</pre></span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">context</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Construct a new context.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#GetDerivedValue" class="summary-sig-name">GetDerivedValue</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">klass</span>,
+        <span class="summary-sig-arg">variable</span>,
+        <span class="summary-sig-arg">default</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Return the value for 'variable' in scope 'klass'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.GetDerivedValue">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#GetBoolean" class="summary-sig-name">GetBoolean</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>,
+        <span class="summary-sig-arg">default</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Return the boolean value associated with 'key'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.GetBoolean">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#GetStringList" class="summary-sig-name">GetStringList</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>,
+        <span class="summary-sig-arg">default</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Return the list of strings associated with 'key'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.GetStringList">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#GetTemporaryDirectory" class="summary-sig-name">GetTemporaryDirectory</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the path to the a temporary directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.GetTemporaryDirectory">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#Read" class="summary-sig-name">Read</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">file_name</span>)</span><br />
+      Read the context file 'file_name'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.Read">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">True if D has a key k, else False</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#__contains__" class="summary-sig-name">__contains__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.__contains__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">D[k] if k in D, else d</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#get" class="summary-sig-name">get</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>,
+        <span class="summary-sig-arg">default</span>=<span class="summary-sig-default">None</span>)</span><br />
+      d defaults to None.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.get">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">True if D has a key k, else False</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#has_key" class="summary-sig-name">has_key</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.has_key">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#__getitem__" class="summary-sig-name">__getitem__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>)</span><br />
+      x[y]</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.__getitem__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">list of D's (key, value) pairs, as 2-tuples</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#items" class="summary-sig-name">items</a>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.items">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.context.Context-class.html#GetAddedProperties" class="summary-sig-name">GetAddedProperties</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the properties added to this context by resources.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.context-pysrc.html#Context.GetAddedProperties">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>dict</code></b>:
+      <code>__cmp__</code>,
+      <code>__delitem__</code>,
+      <code>__eq__</code>,
+      <code>__ge__</code>,
+      <code>__getattribute__</code>,
+      <code>__gt__</code>,
+      <code>__iter__</code>,
+      <code>__le__</code>,
+      <code>__len__</code>,
+      <code>__lt__</code>,
+      <code>__ne__</code>,
+      <code>__new__</code>,
+      <code>__repr__</code>,
+      <code>__setitem__</code>,
+      <code>__sizeof__</code>,
+      <code>clear</code>,
+      <code>copy</code>,
+      <code>fromkeys</code>,
+      <code>iteritems</code>,
+      <code>iterkeys</code>,
+      <code>itervalues</code>,
+      <code>keys</code>,
+      <code>pop</code>,
+      <code>popitem</code>,
+      <code>setdefault</code>,
+      <code>update</code>,
+      <code>values</code>,
+      <code>viewitems</code>,
+      <code>viewkeys</code>,
+      <code>viewvalues</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TARGET_CONTEXT_PROPERTY"></a><span class="summary-name">TARGET_CONTEXT_PROPERTY</span> = <code title="'qmtest.target'"><code class="variable-quote">'</code><code class="variable-string">qmtest.target</code><code class="variable-quote">'</code></code><br />
+      The context variable giving the name of the current target.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.context.Context-class.html#DB_PATH_CONTEXT_PROPERTY" class="summary-name">DB_PATH_CONTEXT_PROPERTY</a> = <code title="'qmtest.dbpath'"><code class="variable-quote">'</code><code class="variable-string">qmtest.dbpath</code><code class="variable-quote">'</code></code><br />
+      The context variable giving the path to the database.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.context.Context-class.html#ID_CONTEXT_PROPERTY" class="summary-name">ID_CONTEXT_PROPERTY</a> = <code title="'qmtest.id'"><code class="variable-quote">'</code><code class="variable-string">qmtest.id</code><code class="variable-quote">'</code></code><br />
+      The context variable giving the name of the running test or resource.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.context.Context-class.html#TMPDIR_CONTEXT_PROPERTY" class="summary-name">TMPDIR_CONTEXT_PROPERTY</a> = <code title="'qmtest.tmpdir'"><code class="variable-quote">'</code><code class="variable-string">qmtest.tmpdir</code><code class="variable-quote">'</code></code><br />
+      A context property whose value is a string giving the path to a 
+      temporary directory.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__safe_for_unpickling__"></a><span class="summary-name">__safe_for_unpickling__</span> = <code title="1">1</code><br />
+      Required to unpickle new-style classes under Python 2.2.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>dict</code></b>:
+      <code>__hash__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">context</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a new context.</p>
+  <p>'context' -- If not 'None', the existing 'Context' being wrapped by 
+  this new context.</p>
+  <dl class="fields">
+    <dt>Returns: <pre class="literalblock">
+new empty dictionary
+
+</pre></dt>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetDerivedValue"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetDerivedValue</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">klass</span>,
+        <span class="sig-arg">variable</span>,
+        <span class="sig-arg">default</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.GetDerivedValue">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Return the value for 'variable' in scope 'klass'.
+Scopes are nested with '.', and inner variables hide
+outer variables of the same name. Thus, looking up the
+value of 'a.b.c.var' will return 1 if the context
+contains
+  a.b.c.var=1
+but 2 if it contains
+  a.b.d.var=1
+  a.b.var=2
+  a.var=3.
+
+'klass' -- The variable's scope.
+
+'variable' -- The variable name.
+
+'default' -- Default value.
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetBoolean"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetBoolean</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">key</span>,
+        <span class="sig-arg">default</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.GetBoolean">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the boolean value associated with 'key'.</p>
+  <p>'key' -- A string.</p>
+  <p>'default' -- A default boolean value.</p>
+  <p>returns -- The value associated with 'key' in the context, interpreted
+  as a boolean.</p>
+  <p>If there is no value associated with 'key' and default is not 'None', 
+  then the boolean value associated with default is used.  If there is no 
+  value associated with 'key' and default is 'None', an exception is 
+  raised.</p>
+  <p>The value associated with 'key' must be a string.  If not, an 
+  exception is raised.  If the value is a string, but does not correspond 
+  to a boolean value, an exception is raised.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetStringList"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetStringList</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">key</span>,
+        <span class="sig-arg">default</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.GetStringList">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the list of strings associated with 'key'.</p>
+  <p>'key' -- A string.</p>
+  <p>'default' -- A default list.</p>
+  <p>If there is no value associated with 'key' and default is not 'None', 
+  then the boolean value associated with default is used.  If there is no 
+  value associated with 'key' and default is 'None', an exception is 
+  raised.</p>
+  <p>The value associated with 'key' must be a string.  If not, an 
+  exception is raised.  If the value is a string, but does not correspond 
+  to a string list, an exception is raised.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetTemporaryDirectory"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetTemporaryDirectory</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.GetTemporaryDirectory">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the path to the a temporary directory.</p>
+  <p>returns -- The path to the a temporary directory.  The 'Runnable' 
+  object may make free use of this temporary directory; no other 
+  'Runnable's will use the same directory at the same time.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Read"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Read</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">file_name</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.Read">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Read the context file 'file_name'.</p>
+  <p>'file_name' -- The name of the context file.</p>
+  <p>Reads the context file and adds the context properties in the file to 
+  'self'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__contains__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__contains__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">key</span>)</span>
+    <br /><em class="fname">(In operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.__contains__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Returns: True if D has a key k, else False</dt>
+    <dt>Overrides:
+        dict.__contains__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">key</span>,
+        <span class="sig-arg">default</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.get">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>d defaults to None.</p>
+  <dl class="fields">
+    <dt>Returns: D[k] if k in D, else d</dt>
+    <dt>Overrides:
+        dict.get
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="has_key"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">has_key</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">key</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.has_key">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Returns: True if D has a key k, else False</dt>
+    <dt>Overrides:
+        dict.has_key
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__getitem__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__getitem__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">key</span>)</span>
+    <br /><em class="fname">(Indexing operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.__getitem__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>x[y]</p>
+  <dl class="fields">
+    <dt>Overrides:
+        dict.__getitem__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="items"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">items</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.items">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Returns: list of D's (key, value) pairs, as 2-tuples</dt>
+    <dt>Overrides:
+        dict.items
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetAddedProperties"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetAddedProperties</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.context-pysrc.html#Context.GetAddedProperties">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the properties added to this context by resources.</p>
+  <p>returns -- A map from strings to values indicating properties that 
+  were added to this context by resources.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="DB_PATH_CONTEXT_PROPERTY"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">DB_PATH_CONTEXT_PROPERTY</h3>
+  <p>The context variable giving the path to the database.</p>
+  <p>The value of this context variable will be a string giving the path to
+  the database directory.  For example, if QMTest is invoked as 'qmtest -D 
+  /path/to/db run', the value of this variable would be '/path/to/db'.  The
+  value may be an absolute or a relative path.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-quote">'</code><code class="variable-string">qmtest.dbpath</code><code class="variable-quote">'</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ID_CONTEXT_PROPERTY"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ID_CONTEXT_PROPERTY</h3>
+  <p>The context variable giving the name of the running test or 
+  resource.</p>
+  <p>This value of this context variable will be the string giving the name
+  of the of the test or resource that is presently executing.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-quote">'</code><code class="variable-string">qmtest.id</code><code class="variable-quote">'</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="TMPDIR_CONTEXT_PROPERTY"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">TMPDIR_CONTEXT_PROPERTY</h3>
+  <p>A context property whose value is a string giving the path to a 
+  temporary directory.  This directory will be used only by the 'Runnable' 
+  in whose context this property occurs during the execution of that 
+  'Runnable'. No other object will use the same temporary directory at the 
+  same time.  There is no guarantee that the temporary directory is empty, 
+  however; it may contain files left behind by the execution of other 
+  'Runnable' objects.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-quote">'</code><code class="variable-string">qmtest.tmpdir</code><code class="variable-quote">'</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:41 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

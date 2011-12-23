@@ -1,0 +1,2206 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.web.web.QMTestServer</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.web-module.html">Package&nbsp;web</a> ::
+        <a href="qm.test.web.web-module.html">Module&nbsp;web</a> ::
+        Class&nbsp;QMTestServer
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.web.web.QMTestServer-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class QMTestServer</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+SocketServer.BaseServer --+                
+                          |                
+     SocketServer.TCPServer --+            
+                              |            
+      BaseHTTPServer.HTTPServer --+        
+                                  |        
+                     web.HTTPServer --+    
+                                      |    
+                          web.WebServer --+
+                                          |
+                                         <strong class="uidshort">QMTestServer</strong>
+</pre>
+
+<hr />
+<p>A 'QMTestServer' is the web GUI interface to QMTest.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">database</span>,
+        <span class="summary-sig-arg">port</span>,
+        <span class="summary-sig-arg">address</span>,
+        <span class="summary-sig-arg">log_file</span>,
+        <span class="summary-sig-arg">targets</span>,
+        <span class="summary-sig-arg">context</span>,
+        <span class="summary-sig-arg">expectations</span>,
+        <span class="summary-sig-arg">run_db</span>)</span><br />
+      Create and bind an HTTP server.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#GetContext" class="summary-sig-name">GetContext</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the 'Context' in which tests will be run.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetContext">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#GetDatabase" class="summary-sig-name">GetDatabase</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the 'Database' handled by this server.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetDatabase">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#GetRunDatabase" class="summary-sig-name">GetRunDatabase</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the 'RunDatabase' handled by this server.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetRunDatabase">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#GetExpectationDatabase" class="summary-sig-name">GetExpectationDatabase</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the current ExpectationDatabase.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetExpectationDatabase">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#GetExpectedOutcomes" class="summary-sig-name">GetExpectedOutcomes</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the current expected outcomes for the test database.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetExpectedOutcomes">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#GetHTMLClassForOutcome" class="summary-sig-name">GetHTMLClassForOutcome</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">outcome</span>)</span><br />
+      Return the CSS class for the 'outcome'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetHTMLClassForOutcome">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#GetResultsStream" class="summary-sig-name">GetResultsStream</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the 'StorageResultsStream' containing test results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetResultsStream">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleClearResults" class="summary-sig-name">HandleClearResults</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to clear the current test results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleClearResults">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleCreateSuite" class="summary-sig-name">HandleCreateSuite</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a submission of a new test suite.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleCreateSuite">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleDeleteItem" class="summary-sig-name">HandleDeleteItem</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to delete a test or resource.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleDeleteItem">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleDeleteSuite" class="summary-sig-name">HandleDeleteSuite</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to delete a test suite.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleDeleteSuite">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleDir" class="summary-sig-name">HandleDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Generate a directory page.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleDirReport" class="summary-sig-name">HandleDirReport</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Generate a directory report page.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleDirReport">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleEditContext" class="summary-sig-name">HandleEditContext</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to edit the context.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleEditContext">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="HandleEditSuite"></a><span class="summary-sig-name">HandleEditSuite</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Generate the page for editing a test suite.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleEditSuite">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleLoadContext" class="summary-sig-name">HandleLoadContext</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to upload a context file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleLoadContext">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleLoadExpectations" class="summary-sig-name">HandleLoadExpectations</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to upload results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleLoadExpectations">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleLoadResults" class="summary-sig-name">HandleLoadResults</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to upload results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleLoadResults">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleNewResource" class="summary-sig-name">HandleNewResource</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to create a new test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleNewResource">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleNewTest" class="summary-sig-name">HandleNewTest</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to create a new test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleNewTest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleNewSuite" class="summary-sig-name">HandleNewSuite</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to create a new suite.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleNewSuite">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleRunTests" class="summary-sig-name">HandleRunTests</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to run tests.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleRunTests">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSaveContext" class="summary-sig-name">HandleSaveContext</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handlea  request to save the context to a file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSaveContext">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSaveExpectations" class="summary-sig-name">HandleSaveExpectations</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to save expectations to a file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSaveExpectations">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSaveResults" class="summary-sig-name">HandleSaveResults</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to save results to a file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSaveResults">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSetExpectation" class="summary-sig-name">HandleSetExpectation</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to set expectations.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSetExpectation">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleShowItem" class="summary-sig-name">HandleShowItem</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to show a test or resource.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowItem">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleShowResult" class="summary-sig-name">HandleShowResult</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to show result detail.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleShowResults" class="summary-sig-name">HandleShowResults</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to show results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowResults">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleShowItemReport" class="summary-sig-name">HandleShowItemReport</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to show a test or resource report.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowItemReport">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleShowResultReport" class="summary-sig-name">HandleShowResultReport</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to show result report.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowResultReport">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleShowSuite" class="summary-sig-name">HandleShowSuite</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">edit</span>=<span class="summary-sig-default">0</span>)</span><br />
+      Generate the page for displaying or editing a test suite.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowSuite">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleShutdown" class="summary-sig-name">HandleShutdown</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to shut down the server.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShutdown">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleStopTests" class="summary-sig-name">HandleStopTests</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a request to stop test execution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleStopTests">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSubmitContext" class="summary-sig-name">HandleSubmitContext</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a context submission..</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitContext">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSubmitContextFile" class="summary-sig-name">HandleSubmitContextFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a context file submission..</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitContextFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSubmitExpectation" class="summary-sig-name">HandleSubmitExpectation</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle setting a single expectation.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitExpectation">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSubmitExpectations" class="summary-sig-name">HandleSubmitExpectations</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle uploading expected results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitExpectations">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSubmitExpectationsForm" class="summary-sig-name">HandleSubmitExpectationsForm</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle uploading expected results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitExpectationsForm">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSubmitItem" class="summary-sig-name">HandleSubmitItem</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle a test or resource submission.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitItem">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSubmitResults" class="summary-sig-name">HandleSubmitResults</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle uploading results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitResults">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#HandleSubmitSuite" class="summary-sig-name">HandleSubmitSuite</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle test suite submission.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitSuite">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#MakeNewTest" class="summary-sig-name">MakeNewTest</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">test_class_name</span>,
+        <span class="summary-sig-arg">test_id</span>)</span><br />
+      Create a new test with default arguments.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.MakeNewTest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#MakeNewResource" class="summary-sig-name">MakeNewResource</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">resource_class_name</span>,
+        <span class="summary-sig-arg">resource_id</span>)</span><br />
+      Create a new resource with default arguments.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.MakeNewResource">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#_HandleRoot" class="summary-sig-name" onclick="show_private();">_HandleRoot</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle the '/' URL.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer._HandleRoot">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.web.web.QMTestServer-class.html#_ClosePopupAndRedirect" class="summary-sig-name" onclick="show_private();">_ClosePopupAndRedirect</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">url</span>)</span><br />
+      Close the current window.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer._ClosePopupAndRedirect">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>web.WebServer</code></b>:
+      <code>Bind</code>,
+      <code>CachePage</code>,
+      <code>GetCachedPage</code>,
+      <code>GetServerAddress</code>,
+      <code>GetTemporaryAttachmentStore</code>,
+      <code>HandleNoSessionError</code>,
+      <code>IsScript</code>,
+      <code>LogMessage</code>,
+      <code>MakeButtonForCachedPopup</code>,
+      <code>MakeConfirmationDialog</code>,
+      <code>MakePopupDialog</code>,
+      <code>ProcessScript</code>,
+      <code>RegisterPathTranslation</code>,
+      <code>RegisterScript</code>,
+      <code>RequestShutdown</code>,
+      <code>Run</code>,
+      <code>TranslateRequest</code>,
+      <code>handle_error</code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>web.WebServer</code></b> (private):
+      <code>_HandleProblems</code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>web.HTTPServer</code></b>:
+      <code>server_bind</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>SocketServer.TCPServer</code></b>:
+      <code>close_request</code>,
+      <code>fileno</code>,
+      <code>get_request</code>,
+      <code>server_activate</code>,
+      <code>server_close</code>,
+      <code>shutdown_request</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>SocketServer.BaseServer</code></b>:
+      <code>finish_request</code>,
+      <code>handle_request</code>,
+      <code>handle_timeout</code>,
+      <code>process_request</code>,
+      <code>serve_forever</code>,
+      <code>shutdown</code>,
+      <code>verify_request</code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>SocketServer.BaseServer</code></b> (private):
+      <code>_handle_request_noblock</code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>BaseHTTPServer.HTTPServer</code></b>:
+      <code>allow_reuse_address</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>SocketServer.TCPServer</code></b>:
+      <code>address_family</code>,
+      <code>request_queue_size</code>,
+      <code>socket_type</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>SocketServer.BaseServer</code></b>:
+      <code>timeout</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">database</span>,
+        <span class="sig-arg">port</span>,
+        <span class="sig-arg">address</span>,
+        <span class="sig-arg">log_file</span>,
+        <span class="sig-arg">targets</span>,
+        <span class="sig-arg">context</span>,
+        <span class="sig-arg">expectations</span>,
+        <span class="sig-arg">run_db</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create and bind an HTTP server.</p>
+  <p>'database' -- The test database to serve.</p>
+  <p>'port' -- The port number on which to accept HTTP requests.</p>
+  <p>'address' -- The local address to which to bind the server.  An empty 
+  string indicates all local addresses.</p>
+  <p>'log_file' -- A file object to which the server will log requests. 
+  'None' for no logging.</p>
+  <p>'targets' -- A sequence of 'Target' objects to use when running 
+  tests.</p>
+  <p>'context' -- The 'Context' in which tests will execute.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        SocketServer.BaseServer.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetContext"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetContext</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetContext">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'Context' in which tests will be run.</p>
+  <p>returns -- The 'Context' in which tests will be run.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetDatabase"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetDatabase</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetDatabase">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'Database' handled by this server.</p>
+  <p>returns -- The 'Database' handled by this server.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetRunDatabase"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetRunDatabase</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetRunDatabase">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'RunDatabase' handled by this server.</p>
+  <p>returns -- The 'RunDatabase' handled by this server.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetExpectationDatabase"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetExpectationDatabase</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetExpectationDatabase">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the current ExpectationDatabase.</p>
+  <p>returns -- The ExpectationDatabase instance.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetExpectedOutcomes"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetExpectedOutcomes</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetExpectedOutcomes">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the current expected outcomes for the test database.</p>
+  <p>returns -- A map from test IDs to outcomes.  Some tests may have not 
+  have an entry in the map.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetHTMLClassForOutcome"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetHTMLClassForOutcome</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">outcome</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetHTMLClassForOutcome">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the CSS class for the 'outcome'.</p>
+  <p>'outcome' -- One of the result outcomes.</p>
+  <p>returns -- The name of a CSS class.  These are used with &lt;span&gt; 
+  elements.  See 'qm.css'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetResultsStream"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetResultsStream</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.GetResultsStream">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'StorageResultsStream' containing test results.</p>
+  <p>returns -- The 'StorageResultsStream' associated with this server.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleClearResults"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleClearResults</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleClearResults">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to clear the current test results.</p>
+  <p>'request' -- A 'WebRequest' object.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleCreateSuite"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleCreateSuite</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleCreateSuite">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a submission of a new test suite.</p>
+  <p>'request' -- A 'WebRequest' object.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleDeleteItem"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleDeleteItem</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleDeleteItem">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to delete a test or resource.</p>
+  <p>This function handles the script requests 'delete-test' and 
+  'delete-resource'.</p>
+  <p>'request' -- A 'WebRequest' object.</p>
+  <p>The ID of the test or resource to delete is specified in the 'id' 
+  field of the request.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleDeleteSuite"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleDeleteSuite</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleDeleteSuite">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to delete a test suite.</p>
+  <p>'request' -- A 'WebRequest' object.</p>
+  <p>The ID of the suite to delete is specified in the 'id' field of the 
+  request.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleDir"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleDir</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate a directory page.</p>
+  <p>'request' -- A 'WebRequest' object.</p>
+  <p>The request has these fields:</p>
+  <p>'path' -- A path in test/resource/suite ID space.  If specified, only 
+  tests and resources in this subtree are displayed, and their IDs are 
+  displayed relative to this path.  If omitted, the entire contents of the 
+  test database are shown.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleDirReport"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleDirReport</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleDirReport">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate a directory report page.</p>
+  <p>'request' -- A 'WebRequest' object.</p>
+  <p>The request has these fields:</p>
+  <p>'path' -- A path in test/resource/suite ID space.  If specified, only 
+  tests and resources in this subtree are displayed, and their IDs are 
+  displayed relative to this path.  If omitted, the entire contents of the 
+  test database are shown.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleEditContext"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleEditContext</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleEditContext">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to edit the context.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleLoadContext"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleLoadContext</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleLoadContext">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to upload a context file.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleLoadExpectations"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleLoadExpectations</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleLoadExpectations">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to upload results.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleLoadResults"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleLoadResults</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleLoadResults">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to upload results.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleNewResource"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleNewResource</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleNewResource">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to create a new test.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleNewTest"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleNewTest</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleNewTest">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to create a new test.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleNewSuite"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleNewSuite</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleNewSuite">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to create a new suite.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleRunTests"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleRunTests</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleRunTests">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Handle a request to run tests.
+
+'request' -- The 'WebRequest' that caused the event.
+
+These fields in 'request' are used:
+
+  'ids' -- A comma-separated list of test and suite IDs.  These IDs
+  are expanded into the list of IDs of tests to run.
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSaveContext"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSaveContext</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSaveContext">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handlea  request to save the context to a file.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSaveExpectations"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSaveExpectations</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSaveExpectations">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to save expectations to a file.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSaveResults"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSaveResults</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSaveResults">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to save results to a file.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSetExpectation"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSetExpectation</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSetExpectation">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to set expectations.</p>
+  <p>'request' -- A 'WebRequest' object.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleShowItem"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleShowItem</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowItem">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Handle a request to show a test or resource.
+
+'request' -- A 'WebRequest' object.
+
+This function generates pages to handle these requests:
+
+  'create-test' -- Generate a form for initial editing of a test
+  about to be created, given its test ID and test class.
+
+  'create-resource' -- Likewise for an resource.
+
+  'show-test' -- Display a test.
+
+  'show-resource' -- Likewise for an resource.
+
+  'edit-test' -- Generate a form for editing an existing test.
+
+  'edit-resource' -- Likewise for an resource.
+
+This function distinguishes among these cases by checking the script
+name of the request object.
+
+The request must have the following fields:
+
+  'id' -- A test or resource ID.  For show or edit pages, the ID of an
+  existing item.  For create pages, the ID of the item being
+  created.
+
+  'class' -- For create pages, the name of the test or resource
+  class.
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleShowResult"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleShowResult</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowResult">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to show result detail. If a 'test_run' argument was 
+  provided, fetch the result from the corresponding test run. Else read it 
+  from the results stream.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleShowResults"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleShowResults</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowResults">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to show results.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleShowItemReport"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleShowItemReport</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowItemReport">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Handle a request to show a test or resource report.
+
+'request' -- A 'WebRequest' object.
+
+This function generates pages to handle these requests:
+
+  'show-test' -- Display a test.
+
+  'show-resource' -- Likewise for an resource.
+
+This function distinguishes among these cases by checking the script
+name of the request object.
+
+The request must have the following fields:
+
+  'id' -- A test or resource ID.  For show or edit pages, the ID of an
+  existing item.  For create pages, the ID of the item being
+  created.
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleShowResultReport"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleShowResultReport</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowResultReport">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to show result report.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleShowSuite"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleShowSuite</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>,
+        <span class="sig-arg">edit</span>=<span class="sig-default">0</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShowSuite">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Generate the page for displaying or editing a test suite.
+
+'request' -- A 'WebRequest' object.
+
+'edit' -- If true, display the page for editing the suite.
+Otherwise, just display the suite.
+
+The request has the following fields:
+
+  'id' -- The ID of the suite to display or edit.
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleShutdown"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleShutdown</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleShutdown">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to shut down the server.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleStopTests"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleStopTests</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleStopTests">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a request to stop test execution.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSubmitContext"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSubmitContext</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitContext">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a context submission..</p>
+  <p>'request' -- The 'WebRequest' that caused the event.  The 'request' 
+  must have a 'context_vars' key, whose value is the the context 
+  variables.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSubmitContextFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSubmitContextFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitContextFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a context file submission..</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSubmitExpectation"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSubmitExpectation</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitExpectation">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle setting a single expectation.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSubmitExpectations"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSubmitExpectations</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitExpectations">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle uploading expected results.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSubmitExpectationsForm"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSubmitExpectationsForm</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitExpectationsForm">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle uploading expected results.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSubmitItem"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSubmitItem</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitItem">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a test or resource submission.</p>
+  <p>This function handles submission of the test or resource editing form 
+  generated by 'handle_show'.  The script name in 'request' should be 
+  'submit-test' or 'submit-resource'.  It constructs the appropriate 'Test'
+  or 'Resource' object and writes it to the database, either as a new item 
+  or overwriting an existing item.</p>
+  <p>The request must have the following form fields:</p>
+  <p>'id' -- The test or resource ID of the item being edited or 
+  created.</p>
+  <p>'class' -- The name of the test or resource class of this item.</p>
+  <p>arguments -- Argument values are encoded in fields whose names start 
+  with 'qm.fields.Field.form_field_prefix'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSubmitResults"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSubmitResults</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitResults">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle uploading results.</p>
+  <p>'request' -- The 'WebRequest' that caused the event.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="HandleSubmitSuite"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HandleSubmitSuite</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.HandleSubmitSuite">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Handle test suite submission.
+
+'request' -- A 'WebRequest' object.
+
+The request object has these fields:
+
+  'id' -- The ID of the test suite being edited.  If a suite with
+  this ID exists, it is replaced (it must not be an implicit suite
+  though).  Otherwise a new suite is edited.
+
+  'test_ids' -- A comma-separated list of test IDs to include in the
+  suite, relative to the suite's own ID.
+
+  'suite_ids' -- A comma-separated list of other test suite IDs to
+  include in the suite, relative to the suite's own ID.
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="MakeNewTest"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MakeNewTest</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">test_class_name</span>,
+        <span class="sig-arg">test_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.MakeNewTest">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create a new test with default arguments.</p>
+  <p>'test_class_name' -- The name of the test class of which to create a 
+  new test.</p>
+  <p>'test_id' -- The test ID of the new test.</p>
+  <p>returns -- A new 'TestDescriptor' object.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="MakeNewResource"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MakeNewResource</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">resource_class_name</span>,
+        <span class="sig-arg">resource_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer.MakeNewResource">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create a new resource with default arguments.</p>
+  <p>'resource_class_name' -- The name of the resource class of which to 
+  create a new resource.</p>
+  <p>'resource_id' -- The resource ID of the new resource.</p>
+  <p>returns -- A new 'ResourceDescriptor' object.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_HandleRoot"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_HandleRoot</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer._HandleRoot">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle the '/' URL.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.web.WebServer-class.html#_HandleRoot">web.WebServer._HandleRoot</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_ClosePopupAndRedirect"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_ClosePopupAndRedirect</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">url</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.web.web-pysrc.html#QMTestServer._ClosePopupAndRedirect">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Close the current window.  Redirect the main window to 'url'.</p>
+  <p>'url' -- A string giving the URL to which the main window should be 
+  redirected.</p>
+  <p>returns -- A string giving HTML that will close the current window and
+  redirect the main window to 'url'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:42 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

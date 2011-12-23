@@ -1,0 +1,66 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>3. Test Suites</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="concepts.html" title="Chapter 1. QMTest Concepts"><link rel="prev" href="concepts-test-results.html" title="2. Test Results"><link rel="next" href="concepts-test-database.html" title="4. Test Database"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3. Test Suites</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="concepts-test-results.html">Prev</a> </td><th width="60%" align="center">Chapter 1. <span class="application">QMTest</span> Concepts</th><td width="20%" align="right"> <a accesskey="n" href="concepts-test-database.html">Next</a></td></tr></table><hr></div><div class="section" title="3. Test Suites"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="concepts-test-suite"></a>3. Test Suites</h2></div></div></div><p>A <em class="firstterm">test suite</em> is a collection of tests.
+    <span class="application">QMTest</span> can run an entire test suite at once, so
+    by grouping tests together in a test suite, you make it easier to run a
+    number of tests at once. A single test can be a member of more than one
+    test suite. A test suite can contain other test suites; the total set of
+    tests in a test suite includes both those tests included directly and
+    those tests included as part of another test suite. Every test suite has a
+    name, following the same conventions given above for tests.</p><p>One use of test suites is to provide groups of tests that are run in
+    different situations. For example, the <code class="literal">nightly</code> test
+    suite might consist of those tests that should be run automatically every
+    night, while the <code class="literal">checkin</code> test suite might consist of
+    those tests that have to pass before any changes are made to the target
+    application.</p><div class="section" title="3.1. Implicit Test Suites"><div class="titlepage"><div><div><h3 class="title"><a name="concepts-implicit-test-suites"></a>3.1. Implicit Test Suites</h3></div></div></div><p><a class="xref" href="concepts.html#concepts-tests" title="1. Tests">Section 1, &#8220;Tests&#8221;</a> explains how you may arrange
+      tests in a tree hierarchy, using a period
+      (<span class="quote">&#8220;<span class="quote"><code class="literal">.</code></span>&#8221;</span>) as the path separator in test
+      names. <span class="application">QMTest</span> defines an <em class="firstterm">implicit
+      test suite</em> for each directory. The name of these implicit
+      test suites is the same as the name of the directory. The implicit test
+      suite corresponding to a directory contains all tests in that directory
+      or its subdirectories.</p><p>Let us create some more tests, but this time within their respective
+        subdirectories:</p><pre class="screen">
+<code class="prompt">&gt; </code>qmtest create --id=dir1.one -a expression='True' test python.ExecTest
+<code class="prompt">&gt; </code>qmtest create --id=dir1.two -a expression='False' test python.ExecTest
+<code class="prompt">&gt; </code>qmtest create --id=dir2.one -a expression='True' test python.ExecTest
+<code class="prompt">&gt; </code>qmtest create --id=dir2.dir3.one -a expression='False' test python.ExecTest
+<code class="prompt">&gt; </code>qmtest create --id=dir2.dir3.two -a expression='False' test python.ExecTest
+      </pre><p>This will create five new tests, together with three directories:</p><pre class="screen">
+<code class="prompt">&gt; </code>qmtest ls -lR
+directory                 dir1
+test      python.ExecTest dir1.one
+test      python.ExecTest dir1.two
+directory                 dir2
+directory                 dir2.dir3
+test      python.ExecTest dir2.dir3.one
+test      python.ExecTest dir2.dir3.two
+test      python.ExecTest dir2.one
+      </pre><p>These directories are implicit suites, i.e. it is possible to only address
+        tests within them:</p><pre class="screen">
+<code class="prompt">&gt; </code>qmtest ls -lR dir2
+directory                 dir2
+directory                 dir2.dir3
+test      python.ExecTest dir2.dir3.one
+test      python.ExecTest dir2.dir3.two
+test      python.ExecTest dir2.one
+      </pre><p>The suite named "<code class="filename">.</code>" (a single period) is the
+      implicit test suite corresponding to the root directory in the test
+      database. This suite therefore contains all tests in the database. For
+      example, the command </p><pre class="screen">
+<code class="prompt">&gt; </code><strong class="userinput"><code>qmtest run .</code></strong>
+    </pre><p> is equivalent to: </p><pre class="screen">
+<code class="prompt">&gt; </code><strong class="userinput"><code>qmtest run</code></strong>
+    </pre><p> Both commands run all tests in the database.</p></div><div class="section" title="3.2. Explicit Test Suites"><div class="titlepage"><div><div><h3 class="title"><a name="concepts-explicit-test-suites"></a>3.2. Explicit Test Suites</h3></div></div></div><p>Explicit test suites are a means to refer to a set of tests for the purpose of executing them
+        together, no matter how they are organized in the test database. For example, you may want to
+        run a subset of all tests nightly. To do this, you create a suite, listing all tests (as well as
+        contained suites) explicitely:</p><pre class="screen">
+<code class="prompt">&gt; </code>qmtest create --id=nightly suite explicit_suite.ExplicitSuite(test_ids="['dir1.one', 'dir2.one']",
+                                                                suite_ids="['dir2.dir3']")
+<code class="prompt">&gt; </code>qmtest ls -l
+directory                              dir1
+directory                              dir2
+suite     explicit_suite.ExplicitSuite nightly
+<code class="prompt">&gt; </code>qmtest ls -l nightly
+test      python.ExecTest dir1.one
+directory                 dir2.dir3
+test      python.ExecTest dir2.one
+      </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="concepts-test-results.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="concepts.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="concepts-test-database.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2. Test Results </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 4. Test Database</td></tr></table></div></body></html>

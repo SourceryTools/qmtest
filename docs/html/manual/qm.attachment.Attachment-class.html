@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.attachment.Attachment</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.attachment-module.html">Module&nbsp;attachment</a> ::
+        Class&nbsp;Attachment
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.attachment.Attachment-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Attachment</h1><p class="nomargin-top"><span class="codelink"><a href="qm.attachment-pysrc.html#Attachment">source&nbsp;code</a></span></p>
+<p>An arbitrary file attachment.</p>
+  <p>Conceptually, an attachment is composed of these parts:</p>
+  <ol start="1">
+    <li>
+      A MIME type, as a string.
+    </li>
+    <li>
+      A description, as a structured text string.
+    </li>
+    <li>
+      A file name, corresponding to the original name of the file from 
+      which the attachment was uploaded, or the name of the file to use 
+      when the attachment is presented to the user in a file system.
+    </li>
+    <li>
+      A block of arbitrary data.
+    </li>
+  </ol>
+  <p>For efficiency reasons, the attachment data is not stored in the 
+  attachment.  Instead, a *location* is stored, which is a key into the 
+  associated 'AttachmentStore' object.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.attachment.Attachment-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">mime_type</span>,
+        <span class="summary-sig-arg">description</span>,
+        <span class="summary-sig-arg">file_name</span>,
+        <span class="summary-sig-arg">location</span>,
+        <span class="summary-sig-arg">store</span>)</span><br />
+      Create a new attachment.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetMimeType"></a><span class="summary-sig-name">GetMimeType</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the attachment's MIME type.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.GetMimeType">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetDescription"></a><span class="summary-sig-name">GetDescription</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the attachment's description.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.GetDescription">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetFileName"></a><span class="summary-sig-name">GetFileName</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the attachment's file name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.GetFileName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetLocation"></a><span class="summary-sig-name">GetLocation</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the attachment's location in an attachment store.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.GetLocation">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.attachment.Attachment-class.html#GetData" class="summary-sig-name">GetData</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Get attachment data.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.GetData">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.attachment.Attachment-class.html#GetDataFile" class="summary-sig-name">GetDataFile</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the path to a file containing attachment data.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.GetDataFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.attachment.Attachment-class.html#GetStore" class="summary-sig-name">GetStore</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the store in which this attachment is located.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.GetStore">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.attachment.Attachment-class.html#Move" class="summary-sig-name">Move</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">store</span>,
+        <span class="summary-sig-arg">location</span>)</span><br />
+      Move the 'Attachment' to a new location.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.Move">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__str__"></a><span class="summary-sig-name">__str__</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.__str__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__cmp__"></a><span class="summary-sig-name">__cmp__</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">other</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.__cmp__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">mime_type</span>,
+        <span class="sig-arg">description</span>,
+        <span class="sig-arg">file_name</span>,
+        <span class="sig-arg">location</span>,
+        <span class="sig-arg">store</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create a new attachment.</p>
+  <p>'mime_type' -- The MIME type.  If 'None' or an empty string, the 
+  function attempts to guess the MIME type from other information.</p>
+  <p>'description' -- A description of the attachment contents.</p>
+  <p>'file_name' -- The user-visible file name to associate the 
+  attachment.</p>
+  <p>'location' -- The location in an attachment store at which to find the
+  attachment data.</p>
+  <p>'store' -- The attachment store in which the data is stored.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetData"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetData</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.GetData">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get attachment data.</p>
+  <p>returns -- The attachment data.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetDataFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetDataFile</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.GetDataFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the path to a file containing attachment data.</p>
+  <p>returns -- A file system path.  The file should be considered 
+  read-only, and should not be modified in any way.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetStore"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetStore</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.GetStore">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the store in which this attachment is located.</p>
+  <p>returns -- The 'AttachmentStore' that contains this attachment.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Move"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Move</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">store</span>,
+        <span class="sig-arg">location</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.attachment-pysrc.html#Attachment.Move">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Move the 'Attachment' to a new location.</p>
+  <p>'store' -- The 'AttachmentStore' that will contain the attachment.</p>
+  <p>'location' -- The location of the attachment within its current 
+  store.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.run_database</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        Module&nbsp;run_database
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.run_database-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.test.run_database-module.html">Module qm.test.run_database</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># File:   run_database.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Mark Mitchell</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   2005-08-08</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#   QMTest RunDatabase class.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2005 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># For license terms see the file COPYING.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment"># Imports</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package qm=qm-module.html"><a title="qm" class="py-name" href="#" onclick="return doclink('link-0', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module qm.extension=qm.extension-module.html"><a title="qm.extension" class="py-name" href="#" onclick="return doclink('link-1', 'extension', 'link-1');">extension</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Class qm.extension.Extension=qm.extension.Extension-class.html"><a title="qm.extension.Extension" class="py-name" href="#" onclick="return doclink('link-2', 'Extension', 'link-2');">Extension</a></tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-3" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-3', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.test()=qm.external.DocumentTemplate.DT_Util-module.html#test,Package qm.test=qm.test-module.html,Module qm.test.test=qm.test.test-module.html"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-4', 'test', 'link-4');">test</a></tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Module qm.test.result=qm.test.result-module.html"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-5', 'result', 'link-5');">result</a></tt> <tt class="py-keyword">import</tt> <tt id="link-6" class="py-name" targets="Class qm.test.result.Result=qm.test.result.Result-class.html"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-6', 'Result', 'link-6');">Result</a></tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-7" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-7', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Module qm.common=qm.common-module.html"><a title="qm.common" class="py-name" href="#" onclick="return doclink('link-8', 'common', 'link-8');">common</a></tt> <tt class="py-keyword">import</tt> <tt id="link-9" class="py-name" targets="Function qm.common.parse_time_iso()=qm.common-module.html#parse_time_iso"><a title="qm.common.parse_time_iso" class="py-name" href="#" onclick="return doclink('link-9', 'parse_time_iso', 'link-9');">parse_time_iso</a></tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment"># Classes</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"> </tt>
+<a name="RunDatabase"></a><div id="RunDatabase-def"><a name="L28"></a><tt class="py-lineno"> 28</tt> <a class="py-toggle" href="#" id="RunDatabase-toggle" onclick="return toggle('RunDatabase');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.test.run_database.RunDatabase-class.html">RunDatabase</a><tt class="py-op">(</tt><tt class="py-base-class">Extension</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RunDatabase-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="RunDatabase-expanded"><a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">    <tt class="py-docstring">"""A 'RunDatabase' stores 'TestRun's.</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-docstring">    A 'RunDatabase' provides a mechanism for selecting 'TestRun's that</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-docstring">    meet particular criteria."""</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
+<a name="RunDatabase.GetAllRuns"></a><div id="RunDatabase.GetAllRuns-def"><a name="L34"></a><tt class="py-lineno"> 34</tt> <a class="py-toggle" href="#" id="RunDatabase.GetAllRuns-toggle" onclick="return toggle('RunDatabase.GetAllRuns');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.run_database.RunDatabase-class.html#GetAllRuns">GetAllRuns</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RunDatabase.GetAllRuns-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="RunDatabase.GetAllRuns-expanded"><a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return all the 'TestRun's in the database.</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A sequence consisting of all of the 'TestRun's in</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">        the database."""</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">NotImplementedError</tt> </tt>
+</div><a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">     </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">         </tt>
+<a name="RunDatabase.GetRuns"></a><div id="RunDatabase.GetRuns-def"><a name="L43"></a><tt class="py-lineno"> 43</tt> <a class="py-toggle" href="#" id="RunDatabase.GetRuns-toggle" onclick="return toggle('RunDatabase.GetRuns');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.run_database.RunDatabase-class.html#GetRuns">GetRuns</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">predicate</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RunDatabase.GetRuns-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="RunDatabase.GetRuns-expanded"><a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the set of 'TestRun's satisfying 'predicate'</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-docstring">        'predicate' -- A callable that can be passed one 'TestRun'</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-docstring">        argument.</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A sequence of 'TestRun's consisting only of those</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-docstring">        'TestRun's in the database for which 'predicate' returns a</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-docstring">        true value."""</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">filter</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Method qm.test.classes.dir_run_database.DirRunDatabase.GetAllRuns()=qm.test.classes.dir_run_database.DirRunDatabase-class.html#GetAllRuns,Method qm.test.run_database.RunDatabase.GetAllRuns()=qm.test.run_database.RunDatabase-class.html#GetAllRuns"><a title="qm.test.classes.dir_run_database.DirRunDatabase.GetAllRuns
+qm.test.run_database.RunDatabase.GetAllRuns" class="py-name" href="#" onclick="return doclink('link-10', 'GetAllRuns', 'link-10');">GetAllRuns</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">predicate</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"> </tt>
+<a name="RunDatabase.GetAnnotations"></a><div id="RunDatabase.GetAnnotations-def"><a name="L56"></a><tt class="py-lineno"> 56</tt> <a class="py-toggle" href="#" id="RunDatabase.GetAnnotations-toggle" onclick="return toggle('RunDatabase.GetAnnotations');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.run_database.RunDatabase-class.html#GetAnnotations">GetAnnotations</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">key</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RunDatabase.GetAnnotations-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="RunDatabase.GetAnnotations-expanded"><a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the set of annotations for 'key' from all test runs.</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-docstring">        'key' -- A string used to look up the annotations.</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A set of (distinct) annotations for 'key' from all</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt class="py-docstring">        test runs."""</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">        <tt class="py-comment"># We can't use sets since we want to remain python 2.2 compatible.</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line">        <tt class="py-name">annotations</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">r</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name"><a title="qm.test.classes.dir_run_database.DirRunDatabase.GetAllRuns
+qm.test.run_database.RunDatabase.GetAllRuns" class="py-name" href="#" onclick="return doclink('link-11', 'GetAllRuns', 'link-10');">GetAllRuns</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">            <tt id="link-12" class="py-name" targets="Method qm.external.DocumentTemplate.DT_InSV.sequence_variables.value()=qm.external.DocumentTemplate.DT_InSV.sequence_variables-class.html#value"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.value" class="py-name" href="#" onclick="return doclink('link-12', 'value', 'link-12');">value</a></tt> <tt class="py-op">=</tt> <tt class="py-name">r</tt><tt class="py-op">.</tt><tt id="link-13" class="py-name" targets="Method qm.test.reader_test_run.ReaderTestRun.GetAnnotation()=qm.test.reader_test_run.ReaderTestRun-class.html#GetAnnotation,Method qm.test.test_run.TestRun.GetAnnotation()=qm.test.test_run.TestRun-class.html#GetAnnotation"><a title="qm.test.reader_test_run.ReaderTestRun.GetAnnotation
+qm.test.test_run.TestRun.GetAnnotation" class="py-name" href="#" onclick="return doclink('link-13', 'GetAnnotation', 'link-13');">GetAnnotation</a></tt><tt class="py-op">(</tt><tt id="link-14" class="py-name" targets="Method qm.external.DocumentTemplate.DT_InSV.sequence_variables.key()=qm.external.DocumentTemplate.DT_InSV.sequence_variables-class.html#key"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.key" class="py-name" href="#" onclick="return doclink('link-14', 'key', 'link-14');">key</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-15" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.value" class="py-name" href="#" onclick="return doclink('link-15', 'value', 'link-12');">value</a></tt> <tt class="py-keyword">not</tt> <tt class="py-keyword">in</tt> <tt class="py-name">annotations</tt><tt class="py-op">:</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line">                <tt class="py-name">annotations</tt><tt class="py-op">.</tt><tt id="link-16" class="py-name" targets="Method qm.user.Group.append()=qm.user.Group-class.html#append"><a title="qm.user.Group.append" class="py-name" href="#" onclick="return doclink('link-16', 'append', 'link-16');">append</a></tt><tt class="py-op">(</tt><tt id="link-17" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.value" class="py-name" href="#" onclick="return doclink('link-17', 'value', 'link-12');">value</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">annotations</tt> </tt>
+</div><a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"> </tt>
+<a name="RunDatabase.GetTimeframe"></a><div id="RunDatabase.GetTimeframe-def"><a name="L73"></a><tt class="py-lineno"> 73</tt> <a class="py-toggle" href="#" id="RunDatabase.GetTimeframe-toggle" onclick="return toggle('RunDatabase.GetTimeframe');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.run_database.RunDatabase-class.html#GetTimeframe">GetTimeframe</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">time_key</tt><tt class="py-op">,</tt> <tt class="py-param">is_iso_time</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RunDatabase.GetTimeframe-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="RunDatabase.GetTimeframe-expanded"><a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return a pair of min / max values found for the given time_key</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-docstring">        across all test runs.</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-docstring">        'time_key' -- Annotation key referring to a string convertible to</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-docstring">        either iso-formatted time or floating point number.</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- minimum, maximum."""</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">        <tt class="py-name">minimum</tt> <tt class="py-op">=</tt> <tt id="link-18" class="py-name" targets="Variable qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#None"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-18', 'None', 'link-18');">None</a></tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">        <tt class="py-name">maximum</tt> <tt class="py-op">=</tt> <tt id="link-19" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-19', 'None', 'link-18');">None</a></tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">r</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name"><a title="qm.test.classes.dir_run_database.DirRunDatabase.GetAllRuns
+qm.test.run_database.RunDatabase.GetAllRuns" class="py-name" href="#" onclick="return doclink('link-20', 'GetAllRuns', 'link-10');">GetAllRuns</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">            <tt class="py-name">time_string</tt> <tt class="py-op">=</tt> <tt class="py-name">r</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name"><a title="qm.test.reader_test_run.ReaderTestRun.GetAnnotation
+qm.test.test_run.TestRun.GetAnnotation" class="py-name" href="#" onclick="return doclink('link-21', 'GetAnnotation', 'link-13');">GetAnnotation</a></tt><tt class="py-op">(</tt><tt class="py-name">time_key</tt><tt class="py-op">)</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">time_string</tt><tt class="py-op">:</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">is_iso_time</tt><tt class="py-op">:</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">                <tt class="py-name">time</tt> <tt class="py-op">=</tt> <tt id="link-22" class="py-name"><a title="qm.common.parse_time_iso" class="py-name" href="#" onclick="return doclink('link-22', 'parse_time_iso', 'link-9');">parse_time_iso</a></tt><tt class="py-op">(</tt><tt class="py-name">time_string</tt><tt class="py-op">)</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">                <tt class="py-name">time</tt> <tt class="py-op">=</tt> <tt id="link-23" class="py-name" targets="Class float=float-class.html"><a title="float" class="py-name" href="#" onclick="return doclink('link-23', 'float', 'link-23');">float</a></tt><tt class="py-op">(</tt><tt class="py-name">time_string</tt><tt class="py-op">)</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">minimum</tt> <tt class="py-keyword">or</tt> <tt class="py-name">minimum</tt> <tt class="py-op">&gt;</tt> <tt class="py-name">time</tt><tt class="py-op">:</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">                <tt class="py-name">minimum</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">maximum</tt> <tt class="py-keyword">or</tt> <tt class="py-name">maximum</tt> <tt class="py-op">&lt;</tt> <tt class="py-name">time</tt><tt class="py-op">:</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">                <tt class="py-comment"># Make sure the largest value is still inside the interval.</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">                <tt class="py-name">maximum</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt> <tt class="py-op">+</tt> <tt class="py-number">0.1</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">minimum</tt><tt class="py-op">,</tt> <tt class="py-name">maximum</tt> </tt>
+</div><a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"> </tt>
+<a name="RunDatabase.GetRunInTimeframe"></a><div id="RunDatabase.GetRunInTimeframe-def"><a name="L100"></a><tt class="py-lineno">100</tt> <a class="py-toggle" href="#" id="RunDatabase.GetRunInTimeframe-toggle" onclick="return toggle('RunDatabase.GetRunInTimeframe');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.run_database.RunDatabase-class.html#GetRunInTimeframe">GetRunInTimeframe</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">key</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">,</tt> <tt class="py-param">time_key</tt><tt class="py-op">,</tt> <tt class="py-param">minimum</tt><tt class="py-op">,</tt> <tt class="py-param">maximum</tt><tt class="py-op">,</tt> <tt class="py-param">is_iso_time</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RunDatabase.GetRunInTimeframe-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="RunDatabase.GetRunInTimeframe-expanded"><a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return a test run id matching the key and timeframe."""</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt id="link-24" class="py-name" targets="Method qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len()=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#len"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-24', 'len', 'link-24');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-25" class="py-name"><a title="qm.test.classes.dir_run_database.DirRunDatabase.GetAllRuns
+qm.test.run_database.RunDatabase.GetAllRuns" class="py-name" href="#" onclick="return doclink('link-25', 'GetAllRuns', 'link-10');">GetAllRuns</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">            <tt class="py-name">r</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-26" class="py-name"><a title="qm.test.classes.dir_run_database.DirRunDatabase.GetAllRuns
+qm.test.run_database.RunDatabase.GetAllRuns" class="py-name" href="#" onclick="return doclink('link-26', 'GetAllRuns', 'link-10');">GetAllRuns</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">r</tt><tt class="py-op">.</tt><tt id="link-27" class="py-name"><a title="qm.test.reader_test_run.ReaderTestRun.GetAnnotation
+qm.test.test_run.TestRun.GetAnnotation" class="py-name" href="#" onclick="return doclink('link-27', 'GetAnnotation', 'link-13');">GetAnnotation</a></tt><tt class="py-op">(</tt><tt id="link-28" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.key" class="py-name" href="#" onclick="return doclink('link-28', 'key', 'link-14');">key</a></tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt id="link-29" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.value" class="py-name" href="#" onclick="return doclink('link-29', 'value', 'link-12');">value</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">            <tt class="py-name">time_string</tt> <tt class="py-op">=</tt> <tt class="py-name">r</tt><tt class="py-op">.</tt><tt id="link-30" class="py-name"><a title="qm.test.reader_test_run.ReaderTestRun.GetAnnotation
+qm.test.test_run.TestRun.GetAnnotation" class="py-name" href="#" onclick="return doclink('link-30', 'GetAnnotation', 'link-13');">GetAnnotation</a></tt><tt class="py-op">(</tt><tt class="py-name">time_key</tt><tt class="py-op">)</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">time_string</tt><tt class="py-op">:</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">is_iso_time</tt><tt class="py-op">:</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">                <tt class="py-name">time</tt> <tt class="py-op">=</tt> <tt id="link-31" class="py-name"><a title="qm.common.parse_time_iso" class="py-name" href="#" onclick="return doclink('link-31', 'parse_time_iso', 'link-9');">parse_time_iso</a></tt><tt class="py-op">(</tt><tt class="py-name">time_string</tt><tt class="py-op">)</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">                <tt class="py-name">time</tt> <tt class="py-op">=</tt> <tt id="link-32" class="py-name"><a title="float" class="py-name" href="#" onclick="return doclink('link-32', 'float', 'link-23');">float</a></tt><tt class="py-op">(</tt><tt class="py-name">time_string</tt><tt class="py-op">)</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">time</tt> <tt class="py-op">&gt;=</tt> <tt class="py-name">minimum</tt> <tt class="py-keyword">and</tt> <tt class="py-name">time</tt> <tt class="py-op">&lt;</tt> <tt class="py-name">maximum</tt><tt class="py-op">:</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">i</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">        <tt class="py-comment"># No match.</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-33" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-33', 'None', 'link-18');">None</a></tt> </tt>
+</div><a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">     </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"> </tt>
+<a name="RunDatabase.GetRunsByAnnotations"></a><div id="RunDatabase.GetRunsByAnnotations-def"><a name="L120"></a><tt class="py-lineno">120</tt> <a class="py-toggle" href="#" id="RunDatabase.GetRunsByAnnotations-toggle" onclick="return toggle('RunDatabase.GetRunsByAnnotations');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.run_database.RunDatabase-class.html#GetRunsByAnnotations">GetRunsByAnnotations</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">annotation_filter</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RunDatabase.GetRunsByAnnotations-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="RunDatabase.GetRunsByAnnotations-expanded"><a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the 'TestRun's matching 'annotation_filter'.</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line"><tt class="py-docstring">        'annotation_filter' -- A dictionary mapping annotation keys</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"><tt class="py-docstring">        (strings) to values (either strings or callables).</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A sequence of 'TestRun's consisting only of those</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line"><tt class="py-docstring">        'TestRun's in the database that match the</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"><tt class="py-docstring">        'annotation_filter'.  A 'TestRun' matches the</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line"><tt class="py-docstring">        'annotation_filter' if it matches each of the key-value pairs</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line"><tt class="py-docstring">        in the filter.  If the value in such a pair is a string, then</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line"><tt class="py-docstring">        the annotation in the 'TestRun' must exactly match the value.  </tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line"><tt class="py-docstring">        If the value is a callable, rather than a string, then when</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line"><tt class="py-docstring">        passed the value from the 'TestRun', the predicate must return</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line"><tt class="py-docstring">        a true value."""</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">         </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">        <tt class="py-keyword">def</tt> <tt class="py-def-name">predicate</tt><tt class="py-op">(</tt><tt class="py-param">run</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt id="link-34" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.key" class="py-name" href="#" onclick="return doclink('link-34', 'key', 'link-14');">key</a></tt><tt class="py-op">,</tt> <tt id="link-35" class="py-name" targets="Variable string.Template.pattern=string.Template-class.html#pattern,Variable string._TemplateMetaclass.pattern=string._TemplateMetaclass-class.html#pattern"><a title="string.Template.pattern
+string._TemplateMetaclass.pattern" class="py-name" href="#" onclick="return doclink('link-35', 'pattern', 'link-35');">pattern</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">annotation_filter</tt><tt class="py-op">.</tt><tt class="py-name">iteritems</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">                <tt id="link-36" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.value" class="py-name" href="#" onclick="return doclink('link-36', 'value', 'link-12');">value</a></tt> <tt class="py-op">=</tt> <tt id="link-37" class="py-name" targets="Method qm.dist.command.build_extensions.build_extensions.run()=qm.dist.command.build_extensions.build_extensions-class.html#run,Method qm.dist.command.install_extensions.install_extensions.run()=qm.dist.command.install_extensions.install_extensions-class.html#run,Method qm.test.command_thread.CommandThread.run()=qm.test.command_thread.CommandThread-class.html#run,Method qm.test.command_thread.CommandThread.run()=qm.test.command_thread.CommandThread-class.html#run,Method qm.test.execution_thread.ExecutionThread.run()=qm.test.execution_thread.ExecutionThread-class.html#run"><a title="qm.dist.command.build_extensions.build_extensions.run
+qm.dist.command.install_extensions.install_extensions.run
+qm.test.command_thread.CommandThread.run
+qm.test.command_thread.CommandThread.run
+qm.test.execution_thread.ExecutionThread.run" class="py-name" href="#" onclick="return doclink('link-37', 'run', 'link-37');">run</a></tt><tt class="py-op">.</tt><tt id="link-38" class="py-name"><a title="qm.test.reader_test_run.ReaderTestRun.GetAnnotation
+qm.test.test_run.TestRun.GetAnnotation" class="py-name" href="#" onclick="return doclink('link-38', 'GetAnnotation', 'link-13');">GetAnnotation</a></tt><tt class="py-op">(</tt><tt id="link-39" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.key" class="py-name" href="#" onclick="return doclink('link-39', 'key', 'link-14');">key</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">callable</tt><tt class="py-op">(</tt><tt id="link-40" class="py-name"><a title="string.Template.pattern
+string._TemplateMetaclass.pattern" class="py-name" href="#" onclick="return doclink('link-40', 'pattern', 'link-35');">pattern</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">                    <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt id="link-41" class="py-name"><a title="string.Template.pattern
+string._TemplateMetaclass.pattern" class="py-name" href="#" onclick="return doclink('link-41', 'pattern', 'link-35');">pattern</a></tt><tt class="py-op">(</tt><tt id="link-42" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.value" class="py-name" href="#" onclick="return doclink('link-42', 'value', 'link-12');">value</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">                        <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">                <tt class="py-keyword">elif</tt> <tt id="link-43" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.value" class="py-name" href="#" onclick="return doclink('link-43', 'value', 'link-12');">value</a></tt> <tt class="py-op">!=</tt> <tt id="link-44" class="py-name"><a title="string.Template.pattern
+string._TemplateMetaclass.pattern" class="py-name" href="#" onclick="return doclink('link-44', 'pattern', 'link-35');">pattern</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">                    <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">True</tt> </tt>
+</div><a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-45" class="py-name" targets="Method qm.test.run_database.RunDatabase.GetRuns()=qm.test.run_database.RunDatabase-class.html#GetRuns,Method qm.test.run_database.RunDatabase.GetRuns()=qm.test.run_database.RunDatabase-class.html#GetRuns"><a title="qm.test.run_database.RunDatabase.GetRuns
+qm.test.run_database.RunDatabase.GetRuns" class="py-name" href="#" onclick="return doclink('link-45', 'GetRuns', 'link-45');">GetRuns</a></tt><tt class="py-op">(</tt><tt class="py-name">predicate</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line"> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line"> </tt>
+<a name="RunDatabase.GetOutcomes"></a><div id="RunDatabase.GetOutcomes-def"><a name="L149"></a><tt class="py-lineno">149</tt> <a class="py-toggle" href="#" id="RunDatabase.GetOutcomes-toggle" onclick="return toggle('RunDatabase.GetOutcomes');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.run_database.RunDatabase-class.html#GetOutcomes">GetOutcomes</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">id</tt><tt class="py-op">,</tt> <tt class="py-param">kind</tt> <tt class="py-op">=</tt> <tt id="link-46" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-46', 'Result', 'link-6');">Result</a></tt><tt class="py-op">.</tt><tt id="link-47" class="py-name" targets="Variable qm.test.database.Database.TEST=qm.test.database.Database-class.html#TEST,Variable qm.test.result.Result.TEST=qm.test.result.Result-class.html#TEST"><a title="qm.test.database.Database.TEST
+qm.test.result.Result.TEST" class="py-name" href="#" onclick="return doclink('link-47', 'TEST', 'link-47');">TEST</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RunDatabase.GetOutcomes-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="RunDatabase.GetOutcomes-expanded"><a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return an outcome dictionary for the indicated test.</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line"><tt class="py-docstring">        'id' -- The name of a test, suite, or resource item.</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line"><tt class="py-docstring">        'kind' -- The kind of the item to retrieve the outcome for.</tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A dictionary indicating the number of outcomes per category."""</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">         </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">        <tt id="link-48" class="py-name" targets="Variable qm.test.result.Result.outcomes=qm.test.result.Result-class.html#outcomes,Variable qm.test.web.web.DefaultDtmlPage.outcomes=qm.test.web.web.DefaultDtmlPage-class.html#outcomes"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-48', 'outcomes', 'link-48');">outcomes</a></tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt id="link-49" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-49', 'Result', 'link-6');">Result</a></tt><tt class="py-op">.</tt><tt id="link-50" class="py-name" targets="Variable qm.test.classes.dejagnu_test.DejaGNUTest.PASS=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#PASS,Variable qm.test.classes.tet_stream.TETStream.PASS=qm.test.classes.tet_stream.TETStream-class.html#PASS,Variable qm.test.result.Result.PASS=qm.test.result.Result-class.html#PASS"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.PASS
+qm.test.classes.tet_stream.TETStream.PASS
+qm.test.result.Result.PASS" class="py-name" href="#" onclick="return doclink('link-50', 'PASS', 'link-50');">PASS</a></tt><tt class="py-op">:</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">                    <tt id="link-51" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-51', 'Result', 'link-6');">Result</a></tt><tt class="py-op">.</tt><tt id="link-52" class="py-name" targets="Variable qm.test.classes.dejagnu_test.DejaGNUTest.FAIL=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#FAIL,Variable qm.test.classes.tet_stream.TETStream.FAIL=qm.test.classes.tet_stream.TETStream-class.html#FAIL,Variable qm.test.result.Result.FAIL=qm.test.result.Result-class.html#FAIL"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.FAIL
+qm.test.classes.tet_stream.TETStream.FAIL
+qm.test.result.Result.FAIL" class="py-name" href="#" onclick="return doclink('link-52', 'FAIL', 'link-52');">FAIL</a></tt><tt class="py-op">:</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">                    <tt id="link-53" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-53', 'Result', 'link-6');">Result</a></tt><tt class="py-op">.</tt><tt id="link-54" class="py-name" targets="Variable qm.test.classes.dejagnu_test.DejaGNUTest.ERROR=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#ERROR,Variable qm.test.result.Result.ERROR=qm.test.result.Result-class.html#ERROR"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.ERROR
+qm.test.result.Result.ERROR" class="py-name" href="#" onclick="return doclink('link-54', 'ERROR', 'link-54');">ERROR</a></tt><tt class="py-op">:</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">                    <tt id="link-55" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-55', 'Result', 'link-6');">Result</a></tt><tt class="py-op">.</tt><tt id="link-56" class="py-name" targets="Variable qm.test.classes.dejagnu_test.DejaGNUTest.UNTESTED=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#UNTESTED,Variable qm.test.classes.tet_stream.TETStream.UNTESTED=qm.test.classes.tet_stream.TETStream-class.html#UNTESTED,Variable qm.test.result.Result.UNTESTED=qm.test.result.Result-class.html#UNTESTED"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.UNTESTED
+qm.test.classes.tet_stream.TETStream.UNTESTED
+qm.test.result.Result.UNTESTED" class="py-name" href="#" onclick="return doclink('link-56', 'UNTESTED', 'link-56');">UNTESTED</a></tt><tt class="py-op">:</tt> <tt class="py-number">0</tt><tt class="py-op">}</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">r</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-57" class="py-name"><a title="qm.test.classes.dir_run_database.DirRunDatabase.GetAllRuns
+qm.test.run_database.RunDatabase.GetAllRuns" class="py-name" href="#" onclick="return doclink('link-57', 'GetAllRuns', 'link-10');">GetAllRuns</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line">            <tt id="link-58" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-58', 'result', 'link-5');">result</a></tt> <tt class="py-op">=</tt> <tt class="py-name">r</tt><tt class="py-op">.</tt><tt id="link-59" class="py-name" targets="Method qm.test.classes.dejagnu_stream.DejaGNUReader.GetResult()=qm.test.classes.dejagnu_stream.DejaGNUReader-class.html#GetResult,Method qm.test.classes.pickle_result_stream.PickleResultReader.GetResult()=qm.test.classes.pickle_result_stream.PickleResultReader-class.html#GetResult,Method qm.test.classes.sql_result_stream.SQLResultReader.GetResult()=qm.test.classes.sql_result_stream.SQLResultReader-class.html#GetResult,Method qm.test.classes.xml_result_stream.XMLResultReader.GetResult()=qm.test.classes.xml_result_stream.XMLResultReader-class.html#GetResult,Method qm.test.reader_test_run.ReaderTestRun.GetResult()=qm.test.reader_test_run.ReaderTestRun-class.html#GetResult,Method qm.test.result_reader.ResultReader.GetResult()=qm.test.result_reader.ResultReader-class.html#GetResult,Method qm.test.test_run.TestRun.GetResult()=qm.test.test_run.TestRun-class.html#GetResult,Method qm.test.web.web.StorageResultsStream.GetResult()=qm.test.web.web.StorageResultsStream-class.html#GetResult"><a title="qm.test.classes.dejagnu_stream.DejaGNUReader.GetResult
+qm.test.classes.pickle_result_stream.PickleResultReader.GetResult
+qm.test.classes.sql_result_stream.SQLResultReader.GetResult
+qm.test.classes.xml_result_stream.XMLResultReader.GetResult
+qm.test.reader_test_run.ReaderTestRun.GetResult
+qm.test.result_reader.ResultReader.GetResult
+qm.test.test_run.TestRun.GetResult
+qm.test.web.web.StorageResultsStream.GetResult" class="py-name" href="#" onclick="return doclink('link-59', 'GetResult', 'link-59');">GetResult</a></tt><tt class="py-op">(</tt><tt class="py-name">id</tt><tt class="py-op">,</tt> <tt id="link-60" class="py-name" targets="Variable qm.extension.Extension.kind=qm.extension.Extension-class.html#kind,Variable qm.host.Host.kind=qm.host.Host-class.html#kind,Variable qm.test.database.Database.kind=qm.test.database.Database-class.html#kind,Variable qm.test.expectation_database.ExpectationDatabase.kind=qm.test.expectation_database.ExpectationDatabase-class.html#kind,Variable qm.test.resource.Resource.kind=qm.test.resource.Resource-class.html#kind,Variable qm.test.result_reader.ResultReader.kind=qm.test.result_reader.ResultReader-class.html#kind,Variable qm.test.result_stream.ResultStream.kind=qm.test.result_stream.ResultStream-class.html#kind,Variable qm.test.suite.Suite.kind=qm.test.suite.Suite-class.html#kind,Variable qm.test.target.Target.kind=qm.test.target.Target-class.html#kind,Variable qm.test.test.Test.kind=qm.test.test.Test-class.html#kind"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-60', 'kind', 'link-60');">kind</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-61" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-61', 'result', 'link-5');">result</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">                <tt id="link-62" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-62', 'outcomes', 'link-48');">outcomes</a></tt><tt class="py-op">[</tt><tt id="link-63" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-63', 'result', 'link-5');">result</a></tt><tt class="py-op">.</tt><tt id="link-64" class="py-name" targets="Method qm.test.result.Result.GetOutcome()=qm.test.result.Result-class.html#GetOutcome"><a title="qm.test.result.Result.GetOutcome" class="py-name" href="#" onclick="return doclink('link-64', 'GetOutcome', 'link-64');">GetOutcome</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">]</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">                <tt id="link-65" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-65', 'outcomes', 'link-48');">outcomes</a></tt><tt class="py-op">[</tt><tt id="link-66" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-66', 'Result', 'link-6');">Result</a></tt><tt class="py-op">.</tt><tt id="link-67" class="py-name"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.UNTESTED
+qm.test.classes.tet_stream.TETStream.UNTESTED
+qm.test.result.Result.UNTESTED" class="py-name" href="#" onclick="return doclink('link-67', 'UNTESTED', 'link-56');">UNTESTED</a></tt><tt class="py-op">]</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-68" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-68', 'outcomes', 'link-48');">outcomes</a></tt> </tt>
+</div></div><a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:46 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

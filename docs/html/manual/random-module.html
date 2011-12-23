@@ -1,0 +1,1098 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>random</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Module&nbsp;random
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="random-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module random</h1><p class="nomargin-top"><span class="codelink"><a href="random-pysrc.html">source&nbsp;code</a></span></p>
+<pre class="literalblock">
+Random variable generators.
+
+    integers
+    --------
+           uniform within range
+
+    sequences
+    ---------
+           pick random element
+           pick random sample
+           generate random permutation
+
+    distributions on the real line:
+    ------------------------------
+           uniform
+           triangular
+           normal (Gaussian)
+           lognormal
+           negative exponential
+           gamma
+           beta
+           pareto
+           Weibull
+
+    distributions on the circle (angles 0 to 2pi)
+    ---------------------------------------------
+           circular uniform
+           von Mises
+
+General notes on the underlying Mersenne Twister core generator:
+
+* The period is 2**19937-1.
+* It is one of the most extensively tested generators in existence.
+* Without a direct way to compute N steps forward, the semantics of
+  jumpahead(n) are weakened to simply jump to another distant state and rely
+  on the large period to avoid overlapping sequences.
+* The random() method is implemented in C, executes in a single Python step,
+  and is, therefore, threadsafe.
+
+</pre>
+
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="random.Random-class.html" class="summary-name">Random</a><br />
+      Random number generator base class used by bound module functions.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="random.SystemRandom-class.html" class="summary-name">SystemRandom</a><br />
+      Alternate random number generator using sources provided
+by the operating system (such as /dev/urandom on Unix or
+CryptGenRandom on Windows).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="random.WichmannHill-class.html" class="summary-name">WichmannHill</a>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_test"></a><span class="summary-sig-name">_test</span>(<span class="summary-sig-arg">N</span>=<span class="summary-sig-default">2000</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#_test">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_test_generator"></a><span class="summary-sig-name">_test_generator</span>(<span class="summary-sig-arg">n</span>,
+        <span class="summary-sig-arg">func</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#_test_generator">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#betavariate" class="summary-sig-name">betavariate</a>(<span class="summary-sig-arg">alpha</span>,
+        <span class="summary-sig-arg">beta</span>)</span><br />
+      Beta distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#betavariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="choice"></a><span class="summary-sig-name">choice</span>(<span class="summary-sig-arg">seq</span>)</span><br />
+      Choose a random element from a non-empty sequence.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#choice">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#expovariate" class="summary-sig-name">expovariate</a>(<span class="summary-sig-arg">lambd</span>)</span><br />
+      Exponential distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#expovariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#gammavariate" class="summary-sig-name">gammavariate</a>(<span class="summary-sig-arg">alpha</span>,
+        <span class="summary-sig-arg">beta</span>)</span><br />
+      Gamma distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#gammavariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#gauss" class="summary-sig-name">gauss</a>(<span class="summary-sig-arg">mu</span>,
+        <span class="summary-sig-arg">sigma</span>)</span><br />
+      Gaussian distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#gauss">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">x</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getrandbits"></a><span class="summary-sig-name">getrandbits</span>(<span class="summary-sig-arg">k</span>)</span><br />
+      Generates a long int with k random bits.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#getrandbits">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getstate"></a><span class="summary-sig-name">getstate</span>()</span><br />
+      Return internal state; can be passed to setstate() later.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#getstate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#jumpahead" class="summary-sig-name">jumpahead</a>(<span class="summary-sig-arg">n</span>)</span><br />
+      Change the internal state to one that is likely far away from the 
+      current state.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#jumpahead">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#lognormvariate" class="summary-sig-name">lognormvariate</a>(<span class="summary-sig-arg">mu</span>,
+        <span class="summary-sig-arg">sigma</span>)</span><br />
+      Log normal distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#lognormvariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#normalvariate" class="summary-sig-name">normalvariate</a>(<span class="summary-sig-arg">mu</span>,
+        <span class="summary-sig-arg">sigma</span>)</span><br />
+      Normal distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#normalvariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#paretovariate" class="summary-sig-name">paretovariate</a>(<span class="summary-sig-arg">alpha</span>)</span><br />
+      Pareto distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#paretovariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="randint"></a><span class="summary-sig-name">randint</span>(<span class="summary-sig-arg">a</span>,
+        <span class="summary-sig-arg">b</span>)</span><br />
+      Return random integer in range [a, b], including both end points.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#randint">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">x in the interval [0, 1).</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="random"></a><span class="summary-sig-name">random</span>()</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#random">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#randrange" class="summary-sig-name">randrange</a>(<span class="summary-sig-arg">start</span>,
+        <span class="summary-sig-arg">stop</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">step</span>=<span class="summary-sig-default">1</span>,
+        <span class="summary-sig-arg">int</span>=<span class="summary-sig-default">&lt;type 'int'&gt;</span>,
+        <span class="summary-sig-arg">default</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">maxwidth</span>=<span class="summary-sig-default">9007199254740992</span>)</span><br />
+      Choose a random item from range(start, stop[, step]).</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#randrange">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#sample" class="summary-sig-name">sample</a>(<span class="summary-sig-arg">population</span>,
+        <span class="summary-sig-arg">k</span>)</span><br />
+      Chooses k unique random elements from a population sequence.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#sample">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#seed" class="summary-sig-name">seed</a>(<span class="summary-sig-arg">a</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Initialize internal state from hashable object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#seed">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="setstate"></a><span class="summary-sig-name">setstate</span>(<span class="summary-sig-arg">state</span>)</span><br />
+      Restore internal state from object returned by getstate().</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#setstate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#shuffle" class="summary-sig-name">shuffle</a>(<span class="summary-sig-arg">x</span>,
+        <span class="summary-sig-arg">random</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">int</span>=<span class="summary-sig-default">&lt;type 'int'&gt;</span>)</span><br />
+      x, random=random.random -&gt; shuffle list x in place; return None.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#shuffle">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#triangular" class="summary-sig-name">triangular</a>(<span class="summary-sig-arg">low</span>=<span class="summary-sig-default">0.0</span>,
+        <span class="summary-sig-arg">high</span>=<span class="summary-sig-default">1.0</span>,
+        <span class="summary-sig-arg">mode</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Triangular distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#triangular">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="uniform"></a><span class="summary-sig-name">uniform</span>(<span class="summary-sig-arg">a</span>,
+        <span class="summary-sig-arg">b</span>)</span><br />
+      Get a random number in the range [a, b) or [a, b] depending on 
+      rounding.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#uniform">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#vonmisesvariate" class="summary-sig-name">vonmisesvariate</a>(<span class="summary-sig-arg">mu</span>,
+        <span class="summary-sig-arg">kappa</span>)</span><br />
+      Circular data distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#vonmisesvariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random-module.html#weibullvariate" class="summary-sig-name">weibullvariate</a>(<span class="summary-sig-arg">alpha</span>,
+        <span class="summary-sig-arg">beta</span>)</span><br />
+      Weibull distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#weibullvariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="BPF"></a><span class="summary-name">BPF</span> = <code title="53">53</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="LOG4"></a><span class="summary-name">LOG4</span> = <code title="1.38629436112">1.38629436112</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="NV_MAGICCONST"></a><span class="summary-name">NV_MAGICCONST</span> = <code title="1.71552776992">1.71552776992</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RECIP_BPF"></a><span class="summary-name">RECIP_BPF</span> = <code title="1.11022302463e-16">1.11022302463e-16</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SG_MAGICCONST"></a><span class="summary-name">SG_MAGICCONST</span> = <code title="2.50407739678">2.50407739678</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TWOPI"></a><span class="summary-name">TWOPI</span> = <code title="6.28318530718">6.28318530718</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="None">None</code><br />
+      hash(x)
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_e"></a><span class="summary-name">_e</span> = <code title="2.71828182846">2.71828182846</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_inst"></a><span class="summary-name">_inst</span> = <code title="&lt;random.Random object at 0xf08670&gt;">&lt;random.Random object at 0xf08670&gt;</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_pi"></a><span class="summary-name">_pi</span> = <code title="3.14159265359">3.14159265359</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="betavariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">betavariate</span>(<span class="sig-arg">alpha</span>,
+        <span class="sig-arg">beta</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#betavariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Beta distribution.</p>
+  <p>Conditions on the parameters are alpha &gt; 0 and beta &gt; 0. 
+  Returned values range between 0 and 1.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="expovariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">expovariate</span>(<span class="sig-arg">lambd</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#expovariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Exponential distribution.</p>
+  <p>lambd is 1.0 divided by the desired mean.  It should be nonzero.  (The
+  parameter would be called &quot;lambda&quot;, but that is a reserved word
+  in Python.)  Returned values range from 0 to positive infinity if lambd 
+  is positive, and from negative infinity to 0 if lambd is negative.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="gammavariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">gammavariate</span>(<span class="sig-arg">alpha</span>,
+        <span class="sig-arg">beta</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#gammavariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Gamma distribution.  Not the gamma function!
+
+Conditions on the parameters are alpha &gt; 0 and beta &gt; 0.
+
+The probability distribution function is:
+
+            x ** (alpha - 1) * math.exp(-x / beta)
+  pdf(x) =  --------------------------------------
+              math.gamma(alpha) * beta ** alpha
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="gauss"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">gauss</span>(<span class="sig-arg">mu</span>,
+        <span class="sig-arg">sigma</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#gauss">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gaussian distribution.</p>
+  <p>mu is the mean, and sigma is the standard deviation.  This is slightly
+  faster than the normalvariate() function.</p>
+  <p>Not thread-safe without a lock around calls.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="jumpahead"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">jumpahead</span>(<span class="sig-arg">n</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#jumpahead">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Change the internal state to one that is likely far away from the 
+  current state.  This method will not be in Py3.x, so it is better to 
+  simply reseed.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="lognormvariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">lognormvariate</span>(<span class="sig-arg">mu</span>,
+        <span class="sig-arg">sigma</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#lognormvariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Log normal distribution.</p>
+  <p>If you take the natural logarithm of this distribution, you'll get a 
+  normal distribution with mean mu and standard deviation sigma. mu can 
+  have any value, and sigma must be greater than zero.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="normalvariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">normalvariate</span>(<span class="sig-arg">mu</span>,
+        <span class="sig-arg">sigma</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#normalvariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Normal distribution.</p>
+  <p>mu is the mean, and sigma is the standard deviation.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="paretovariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">paretovariate</span>(<span class="sig-arg">alpha</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#paretovariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Pareto distribution.  alpha is the shape parameter.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="randrange"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">randrange</span>(<span class="sig-arg">start</span>,
+        <span class="sig-arg">stop</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">step</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">int</span>=<span class="sig-default">&lt;type 'int'&gt;</span>,
+        <span class="sig-arg">default</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">maxwidth</span>=<span class="sig-default">9007199254740992</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#randrange">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Choose a random item from range(start, stop[, step]).</p>
+  <p>This fixes the problem with randint() which includes the endpoint; in 
+  Python this is usually not what you want. Do not supply the 'int', 
+  'default', and 'maxwidth' arguments.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="sample"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">sample</span>(<span class="sig-arg">population</span>,
+        <span class="sig-arg">k</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#sample">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Chooses k unique random elements from a population sequence.</p>
+  <p>Returns a new list containing elements from the population while 
+  leaving the original population unchanged.  The resulting list is in 
+  selection order so that all sub-slices will also be valid random samples.
+  This allows raffle winners (the sample) to be partitioned into grand 
+  prize and second place winners (the subslices).</p>
+  <p>Members of the population need not be hashable or unique.  If the 
+  population contains repeats, then each occurrence is a possible selection
+  in the sample.</p>
+  <p>To choose a sample in a range of integers, use xrange as an argument. 
+  This is especially fast and space efficient for sampling from a large 
+  population:   sample(xrange(10000000), 60)</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="seed"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">seed</span>(<span class="sig-arg">a</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#seed">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize internal state from hashable object.</p>
+  <p>None or no argument seeds from current time or from an operating 
+  system specific randomness source if available.</p>
+  <p>If a is not None or an int or long, hash(a) is used instead.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="shuffle"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">shuffle</span>(<span class="sig-arg">x</span>,
+        <span class="sig-arg">random</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">int</span>=<span class="sig-default">&lt;type 'int'&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#shuffle">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>x, random=random.random -&gt; shuffle list x in place; return 
+  None.</p>
+  <p>Optional arg random is a 0-argument function returning a random float 
+  in [0.0, 1.0); by default, the standard random.random.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="triangular"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">triangular</span>(<span class="sig-arg">low</span>=<span class="sig-default">0.0</span>,
+        <span class="sig-arg">high</span>=<span class="sig-default">1.0</span>,
+        <span class="sig-arg">mode</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#triangular">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Triangular distribution.</p>
+  <p>Continuous distribution bounded by given lower and upper limits, and 
+  having a given mode value in-between.</p>
+  <p>http://en.wikipedia.org/wiki/Triangular_distribution</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="vonmisesvariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">vonmisesvariate</span>(<span class="sig-arg">mu</span>,
+        <span class="sig-arg">kappa</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#vonmisesvariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Circular data distribution.</p>
+  <p>mu is the mean angle, expressed in radians between 0 and 2*pi, and 
+  kappa is the concentration parameter, which must be greater than or equal
+  to zero.  If kappa is equal to zero, this distribution reduces to a 
+  uniform random angle over the range 0 to 2*pi.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="weibullvariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">weibullvariate</span>(<span class="sig-arg">alpha</span>,
+        <span class="sig-arg">beta</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#weibullvariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Weibull distribution.</p>
+  <p>alpha is the scale parameter and beta is the shape parameter.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

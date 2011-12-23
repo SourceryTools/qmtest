@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.executable.RedirectedExecutable</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.executable-module.html">Module&nbsp;executable</a> ::
+        Class&nbsp;RedirectedExecutable
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.executable.RedirectedExecutable-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class RedirectedExecutable</h1><p class="nomargin-top"><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+   object --+        
+            |        
+   <a href="qm.executable.Executable-class.html">Executable</a> --+    
+                |    
+<a href="qm.executable.TimeoutExecutable-class.html">TimeoutExecutable</a> --+
+                    |
+                   <strong class="uidshort">RedirectedExecutable</strong>
+</pre>
+
+<hr />
+<p>A 'RedirectedExecutable' redirects the standard I/O streams.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#_InitializeParent" class="summary-sig-name" onclick="show_private();">_InitializeParent</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Initialize the parent process.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._InitializeParent">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#_InitializeChild" class="summary-sig-name" onclick="show_private();">_InitializeChild</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Initialize the child process.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._InitializeChild">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#_HandleChild" class="summary-sig-name" onclick="show_private();">_HandleChild</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Run in the parent process after the child has been created.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._HandleChild">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#_DoParent" class="summary-sig-name" onclick="show_private();">_DoParent</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Perform actions required in the parent after 'Spawn'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._DoParent">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_ReadStdout"></a><span class="summary-sig-name">_ReadStdout</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Read from the standard output pipe.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._ReadStdout">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_ReadStderr"></a><span class="summary-sig-name">_ReadStderr</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Read from the standard error pipe.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._ReadStderr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#_WriteStdin" class="summary-sig-name" onclick="show_private();">_WriteStdin</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Write to the standard input pipe.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._WriteStdin">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#_StdinPipe" class="summary-sig-name" onclick="show_private();">_StdinPipe</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return a pipe to which to redirect the standard input.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._StdinPipe">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#_StdoutPipe" class="summary-sig-name" onclick="show_private();">_StdoutPipe</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return a pipe to which to redirect the standard output.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._StdoutPipe">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#_StderrPipe" class="summary-sig-name" onclick="show_private();">_StderrPipe</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return a pipe to which to redirect the standard input.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._StderrPipe">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#_ClosePipeEnd" class="summary-sig-name" onclick="show_private();">_ClosePipeEnd</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">fd</span>)</span><br />
+      Close the file descriptor 'fd', which is one end of a pipe.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._ClosePipeEnd">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#_CreatePipe" class="summary-sig-name" onclick="show_private();">_CreatePipe</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return a new pipe.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._CreatePipe">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#__CallUntilNone" class="summary-sig-name" onclick="show_private();">__CallUntilNone</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">f</span>,
+        <span class="summary-sig-arg">attribute</span>)</span><br />
+      Call 'f' until 'self.attribute' is 'None'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable.__CallUntilNone">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.RedirectedExecutable-class.html#__UninheritableHandle" class="summary-sig-name" onclick="show_private();">__UninheritableHandle</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">handle</span>)</span><br />
+      Return a duplicate of a file handle that is not inheritable.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable.__UninheritableHandle">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.executable.TimeoutExecutable-class.html">TimeoutExecutable</a></code></b>:
+      <code><a href="qm.executable.TimeoutExecutable-class.html#Run">Run</a></code>,
+      <code><a href="qm.executable.TimeoutExecutable-class.html#__init__">__init__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.executable.Executable-class.html">Executable</a></code></b>:
+      <code><a href="qm.executable.Executable-class.html#Kill">Kill</a></code>,
+      <code><a href="qm.executable.Executable-class.html#Spawn">Spawn</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.executable.Executable-class.html">Executable</a></code></b> (private):
+      <code><a href="qm.executable.Executable-class.html#_CreateCommandLine" onclick="show_private();">_CreateCommandLine</a></code>,
+      <code><a href="qm.executable.Executable-class.html#_GetChildPID" onclick="show_private();">_GetChildPID</a></code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="_InitializeParent"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_InitializeParent</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._InitializeParent">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize the parent process.</p>
+  <p>Before spawning the child, this method is invoked to give the parent a
+  chance to initialize itself.</p>
+  <p>returns -- Under Windows, a 'PySTARTUPINFO' structure explaining how 
+  the child should be initialized.  On other systems, the return value is 
+  ignored.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.executable.Executable-class.html#_InitializeParent" onclick="show_private();">Executable._InitializeParent</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_InitializeChild"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_InitializeChild</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._InitializeChild">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize the child process.</p>
+  <p>After 'fork' is called this method is invoked to give the child a 
+  chance to initialize itself.  '_InitializeParent' will already have been 
+  called in the parent process.</p>
+  <p>This method is not used under Windows.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.executable.Executable-class.html#_InitializeChild" onclick="show_private();">Executable._InitializeChild</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_HandleChild"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_HandleChild</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._HandleChild">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run in the parent process after the child has been created.</p>
+  <p>The child process has been spawned; its PID is avialable via 
+  '_GetChildPID'.  Take any actions in the parent that are required now 
+  that the child exists.</p>
+  <p>Derived class versions must call this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.executable.Executable-class.html#_HandleChild" onclick="show_private();">Executable._HandleChild</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DoParent"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DoParent</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._DoParent">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Perform actions required in the parent after 'Spawn'.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.executable.Executable-class.html#_DoParent" onclick="show_private();">Executable._DoParent</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_WriteStdin"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_WriteStdin</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._WriteStdin">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Write to the standard input pipe.</p>
+  <p>This implementation writes no data and closes the pipe.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_StdinPipe"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_StdinPipe</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._StdinPipe">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a pipe to which to redirect the standard input.</p>
+  <p>returns -- A pipe, or 'None' if the standard input should be closed in
+  the child.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_StdoutPipe"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_StdoutPipe</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._StdoutPipe">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a pipe to which to redirect the standard output.</p>
+  <p>returns -- A pipe, or 'None' if the standard output should be closed 
+  in the child.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_StderrPipe"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_StderrPipe</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._StderrPipe">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a pipe to which to redirect the standard input.</p>
+  <p>returns -- A pipe, or 'None'.  If 'None' is returned, but 
+  '_StdoutPipe' returns a pipe, then the standard error and standard input 
+  will both be redirected to that pipe.  However, if '_StdoutPipe' also 
+  returns 'None', then the standard error will be closed in the child.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_ClosePipeEnd"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_ClosePipeEnd</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">fd</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._ClosePipeEnd">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Close the file descriptor 'fd', which is one end of a pipe.</p>
+  <p>'fd' -- Under UNIX, a file descriptor.  Under Windows, a handle.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_CreatePipe"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_CreatePipe</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable._CreatePipe">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a new pipe.</p>
+  <p>returns -- A tuple (under UNIX) or list (under Windows) consisting of 
+  the file descriptors (UNIX) or handles (Windows) for the read end and 
+  write end of a new pipe.  The pipe is inheritable by child processes.  On
+  UNIX the fds will not be inherited across 'exec'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__CallUntilNone"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__CallUntilNone</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">f</span>,
+        <span class="sig-arg">attribute</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable.__CallUntilNone">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Call 'f' until 'self.attribute' is 'None'.</p>
+  <p>'f' -- A callable.</p>
+  <p>'attribute' -- A string giving the name of an attribute.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__UninheritableHandle"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__UninheritableHandle</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">handle</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#RedirectedExecutable.__UninheritableHandle">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a duplicate of a file handle that is not inheritable.</p>
+  <p>'handle' -- A file handle.</p>
+  <p>returns -- A new handle that is a non-inheritable duplicate of the 
+  'handle'.</p>
+  <p>This method should only be used under Windows.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

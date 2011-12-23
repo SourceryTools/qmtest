@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.db</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        Module&nbsp;db
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.db-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.db-module.html">Module qm.db</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># File:   db.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Nathaniel Smith &lt;njs@codesourcery.com</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   2003-06-13</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#   A few simple functions to help with connecting to SQL databases</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">#   and using the DB 2.0 API.</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2003 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment"># For license terms see the file COPYING.</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment"># Imports</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment"># Classes</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"> </tt>
+<a name="Connection"></a><div id="Connection-def"><a name="L27"></a><tt class="py-lineno"> 27</tt> <a class="py-toggle" href="#" id="Connection-toggle" onclick="return toggle('Connection');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.db.Connection-class.html">Connection</a><tt class="py-op">:</tt> </tt>
+</div><div id="Connection-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Connection-expanded"><a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line">    <tt class="py-docstring">"""A wrapper around a DB 2.0 connection.</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-docstring">    Provides a minimal but consistent interface to an underlying</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-docstring">    database connection.  In particular, a 'Connection' quotes SQL</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-docstring">    queries as necessary for the underlying DB 2.0 connection."""</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
+<a name="Connection.__init__"></a><div id="Connection.__init__-def"><a name="L34"></a><tt class="py-lineno"> 34</tt> <a class="py-toggle" href="#" id="Connection.__init__-toggle" onclick="return toggle('Connection.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.db.Connection-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">module_name</tt><tt class="py-op">,</tt> <tt class="py-op">*</tt><tt class="py-param">args</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">more_args</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Connection.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Connection.__init__-expanded"><a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">        <tt class="py-docstring">"""Uses the given DB 2.0 module to connect to a database.</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-docstring">        'module_name' -- The DB 2.0-compliant module to use to connect,</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">        for example "pgdb".</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-docstring">        'args' -- Positional arguments to pass to the module's 'connect'</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-docstring">        method.</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-docstring">        'more_args' -- Keyword arguments to pass to the module's</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-docstring">        'connect' method."""</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line">        <tt class="py-comment"># Last argument  must be a non-empty list or __import__ will</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">        <tt class="py-comment"># return the wrong module.</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_module</tt> <tt class="py-op">=</tt> <tt class="py-name">__import__</tt><tt class="py-op">(</tt><tt class="py-name">module_name</tt><tt class="py-op">,</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">                                  <tt class="py-name">globals</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">                                  <tt class="py-name">locals</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">                                  <tt class="py-op">[</tt><tt class="py-string">""</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_connection</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_module</tt><tt class="py-op">.</tt><tt class="py-name">connect</tt><tt class="py-op">(</tt><tt class="py-op">*</tt><tt id="link-0" class="py-name" targets="Variable qm.test.classes.compilation_test.ExecutableTest.args=qm.test.classes.compilation_test.ExecutableTest-class.html#args"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-0', 'args', 'link-0');">args</a></tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-name">more_args</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"> </tt>
+<a name="Connection.close"></a><div id="Connection.close-def"><a name="L55"></a><tt class="py-lineno"> 55</tt> <a class="py-toggle" href="#" id="Connection.close-toggle" onclick="return toggle('Connection.close');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.db.Connection-class.html#close">close</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Connection.close-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Connection.close-expanded"><a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_connection</tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Method qm.db.Connection.close()=qm.db.Connection-class.html#close"><a title="qm.db.Connection.close" class="py-name" href="#" onclick="return doclink('link-1', 'close', 'link-1');">close</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"> </tt>
+<a name="Connection.commit"></a><div id="Connection.commit-def"><a name="L60"></a><tt class="py-lineno"> 60</tt> <a class="py-toggle" href="#" id="Connection.commit-toggle" onclick="return toggle('Connection.commit');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.db.Connection-class.html#commit">commit</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Connection.commit-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Connection.commit-expanded"><a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_connection</tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Method qm.db.Connection.commit()=qm.db.Connection-class.html#commit"><a title="qm.db.Connection.commit" class="py-name" href="#" onclick="return doclink('link-2', 'commit', 'link-2');">commit</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"> </tt>
+<a name="Connection.rollback"></a><div id="Connection.rollback-def"><a name="L65"></a><tt class="py-lineno"> 65</tt> <a class="py-toggle" href="#" id="Connection.rollback-toggle" onclick="return toggle('Connection.rollback');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.db.Connection-class.html#rollback">rollback</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Connection.rollback-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Connection.rollback-expanded"><a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_connection</tt><tt class="py-op">.</tt><tt id="link-3" class="py-name" targets="Method qm.db.Connection.rollback()=qm.db.Connection-class.html#rollback"><a title="qm.db.Connection.rollback" class="py-name" href="#" onclick="return doclink('link-3', 'rollback', 'link-3');">rollback</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"> </tt>
+<a name="Connection.execute"></a><div id="Connection.execute-def"><a name="L70"></a><tt class="py-lineno"> 70</tt> <a class="py-toggle" href="#" id="Connection.execute-toggle" onclick="return toggle('Connection.execute');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.db.Connection-class.html#execute">execute</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">sql</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Connection.execute-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Connection.execute-expanded"><a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-docstring">"""Execute a SQL statement in this database.</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-docstring">        If this database requires any overall quoting of the given SQL</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-docstring">        (for instance, doubling of %'s), it will be performed by this</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-docstring">        method.</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A database cursor.</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">        <tt class="py-comment"># According to the DB 2.0 spec, the following lines should be</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">        <tt class="py-comment"># necessary.  But in fact it seems that the database modules we</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">        <tt class="py-comment"># use do not strip doubled %'s inside SQL string constants, and</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-comment"># do not try to expand parameters inside SQL string constants.</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">        <tt class="py-comment"># Since string constants are the main place where %'s may occur,</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">        <tt class="py-comment"># we do not quote %'s at all.</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">        <tt class="py-comment">#if self._module.paramstyle in ["format", "pyformat"]:</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">        <tt class="py-comment">#    sql = sql.replace("%", "%%")</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">        <tt class="py-name">cursor</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_connection</tt><tt class="py-op">.</tt><tt class="py-name">cursor</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">         </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">        <tt class="py-name">cursor</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Method qm.db.Connection.execute()=qm.db.Connection-class.html#execute,Variable qm.test.classes.compilation_test.CompilationTest.execute=qm.test.classes.compilation_test.CompilationTest-class.html#execute"><a title="qm.db.Connection.execute
+qm.test.classes.compilation_test.CompilationTest.execute" class="py-name" href="#" onclick="return doclink('link-4', 'execute', 'link-4');">execute</a></tt><tt class="py-op">(</tt><tt class="py-name">sql</tt><tt class="py-op">)</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">cursor</tt> </tt>
+</div></div><a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">         </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"><tt class="py-comment"># Functions</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"> </tt>
+<a name="quote_string"></a><div id="quote_string-def"><a name="L99"></a><tt class="py-lineno"> 99</tt> <a class="py-toggle" href="#" id="quote_string-toggle" onclick="return toggle('quote_string');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.db-module.html#quote_string">quote_string</a><tt class="py-op">(</tt><tt class="py-param">string</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="quote_string-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="quote_string-expanded"><a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">    <tt class="py-docstring">"""Quotes a string for SQL.</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"><tt class="py-docstring">    'string' -- A string whose contents are to be used in an SQL literal</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line"><tt class="py-docstring">    string.</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"><tt class="py-docstring">    returns -- A SQL literal string whose contents match that of</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line"><tt class="py-docstring">    'string'."""</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line"> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">    <tt class="py-comment"># Replace each ' with '', then surround with more 's.  Also double</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">    <tt class="py-comment"># backslashes.  It'd be nice to handle things like quoting non-ASCII</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">    <tt class="py-comment"># characters (by replacing them with octal escapes), but we don't.</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-string">"'"</tt> <tt class="py-op">+</tt> <tt id="link-5" class="py-name" targets="Module string=string-module.html"><a title="string" class="py-name" href="#" onclick="return doclink('link-5', 'string', 'link-5');">string</a></tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">"'"</tt><tt class="py-op">,</tt> <tt class="py-string">"''"</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">"\\"</tt><tt class="py-op">,</tt> <tt class="py-string">"\\\\"</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-string">"'"</tt> </tt>
+</div><a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line"> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line"><tt class="py-comment"># Local Variables:</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line"><tt class="py-comment"># mode: python</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line"><tt class="py-comment"># indent-tabs-mode: nil</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line"><tt class="py-comment"># fill-column: 72</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line"><tt class="py-comment"># End:</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:46 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

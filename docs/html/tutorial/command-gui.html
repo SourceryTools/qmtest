@@ -1,0 +1,58 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>5. qmtest gui</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="cli.html" title="Chapter 2. Invoking QMTest"><link rel="prev" href="command-create-tdb.html" title="4. qmtest create-tdb"><link rel="next" href="command-extensions.html" title="6. qmtest extensions"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5. <span class="command"><strong>qmtest gui</strong></span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="command-create-tdb.html">Prev</a> </td><th width="60%" align="center">Chapter 2. Invoking <span class="application">QMTest</span></th><td width="20%" align="right"> <a accesskey="n" href="command-extensions.html">Next</a></td></tr></table><hr></div><div class="section" title="5. qmtest gui"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="command-gui"></a>5. <span class="command"><strong>qmtest gui</strong></span></h2></div></div></div><div class="section" title="5.1. Summary"><div class="titlepage"><div><div><h3 class="title"><a name="id381097"></a>5.1. Summary</h3></div></div></div><p>Start the graphical user interface.</p></div><div class="section" title="5.2. Synopsis"><div class="titlepage"><div><div><h3 class="title"><a name="id381108"></a>5.2. Synopsis</h3></div></div></div><div class="cmdsynopsis"><p><code class="command">qmtest gui</code>  [
+     <em class="replaceable"><code>option</code></em>
+    ...]</p></div></div><div class="section" title="5.3. Description"><div class="titlepage"><div><div><h3 class="title"><a name="id381140"></a>5.3. Description</h3></div></div></div><p>The <span class="command"><strong>qmtest gui</strong></span> starts the
+    graphical user interface.  The graphical user interface is
+    accessed through a web browser.  You must have a web browser that
+    supports JavaScript to use the graphical interface.  <span class="application">QMTest</span> has
+    been tested with recent versions of Internet Explorer and
+    Netscape Navigator.  Other web browsers may or may nor work with
+    <span class="application">QMTest</span>.</p><p>The <span class="command"><strong>gui</strong></span> command accepts these
+    options:</p><div class="variablelist"><dl><dt><span class="term"><code class="option">-A</code> <em class="replaceable"><code>address</code></em>, </span><span class="term">
+       <code class="option">--address</code> <em class="replaceable"><code>address</code></em>
+      </span></dt><dd><p>Bind the server to the indicated internet
+        <em class="replaceable"><code>address</code></em>, which should be a dotted
+        quad.  By default, the server binds itself to the address
+        <code class="literal">127.0.0.1</code>, which is the address of the local
+        machine.  If you specify another address, the server will
+        be accessible to users on other machines.  QMTest does not
+        perform any authentication of remote users, so you should
+        not use this option unless you have a firewall in place that
+        blocks all untrusted users.</p></dd><dt><span class="term"><code class="option">-c</code> <em class="replaceable"><code>name=value</code></em>, </span><span class="term">
+       <code class="option">--context</code> 
+       <em class="replaceable"><code>name=value</code></em>
+      </span></dt><dd><p>For details about this option, see the description of the 
+       <span class="command"><strong>qmtest run</strong></span> command.</p></dd><dt><span class="term"><code class="option">-C</code> <em class="replaceable"><code>file</code></em>, </span><span class="term">
+       <code class="option">--load-context</code> <em class="replaceable"><code>file</code></em>
+      </span></dt><dd><p>For details about this option, see the description of the 
+       <span class="command"><strong>qmtest run</strong></span> command.</p></dd><dt><span class="term"><code class="option">--daemon</code></span></dt><dd><p>Run the QMTest GUI as a daemon.  In this mode, QMTest
+       will detach from the controlling terminal and run in the 
+       background until explicitly shutdown.</p></dd><dt><span class="term"><code class="option">-j</code> <em class="replaceable"><code>count</code></em>, </span><span class="term">
+       <code class="option">--concurrency</code> <em class="replaceable"><code>count</code></em>
+      </span></dt><dd><p>For details about this option, see the description of the 
+       <span class="command"><strong>qmtest run</strong></span> command.</p></dd><dt><span class="term">
+       <code class="option">--no-browser</code>
+      </span></dt><dd><p>Do not attempt to start a web browser when starting the
+       GUI.  <span class="application">QMTest</span> will still print out the URL at which the server
+       can be accessed.  You can then connect to this URL
+       manually using the browser of your choice.</p></dd><dt><span class="term"><code class="option">-O</code> <em class="replaceable"><code>file</code></em>, </span><span class="term">
+       <code class="option">--outcomes</code> <em class="replaceable"><code>file</code></em>
+      </span></dt><dd><p>For details about this option, see the description of the 
+       <span class="command"><strong>qmtest run</strong></span> command.</p></dd><dt><span class="term">
+       <code class="option">--pid-file <em class="replaceable"><code>path</code></em></code>
+      </span></dt><dd><p>Specify the <em class="replaceable"><code>path</code></em> to which
+       the QMTest GUI will write its process ID.  This option is
+       useful if you want to run QMTest as a daemon.  If this option
+       is not provided, no PID file is written.  If you specify this
+       option, but <em class="replaceable"><code>path</code></em> is the empty
+       string, QMTest will check the <code class="filename">.qmrc</code>
+       configuration file for a <code class="literal">pid-file</code> entry.
+       If there is no such entry, QMTest will use an appropriate
+       platform-specific default value.</p></dd><dt><span class="term">
+       <code class="option">--port <em class="replaceable"><code>port</code></em></code>
+      </span></dt><dd><p>Specify the <em class="replaceable"><code>port</code></em> on which the
+       <span class="application">QMTest</span> GUI will listen for connections.  If this option is not
+       provided, <span class="application">QMTest</span> will select an available port
+       automatically.</p></dd><dt><span class="term"><code class="option">-T</code> <em class="replaceable"><code>file</code></em>, </span><span class="term">
+       <code class="option">--targets</code> <em class="replaceable"><code>file</code></em>
+      </span></dt><dd><p>For details about this option, see the description of the 
+       <span class="command"><strong>qmtest run</strong></span> command.</p></dd></dl></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="command-create-tdb.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="cli.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="command-extensions.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4. <span class="command"><strong>qmtest create-tdb</strong></span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 6. <span class="command"><strong>qmtest extensions</strong></span></td></tr></table></div></body></html>

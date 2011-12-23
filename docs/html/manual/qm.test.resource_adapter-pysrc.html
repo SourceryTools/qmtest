@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.resource_adapter</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        Module&nbsp;resource_adapter
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.resource_adapter-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.test.resource_adapter-module.html">Module qm.test.resource_adapter</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-comment"># File:   resource_adapter.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Mark Mitchell</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   2005-09-02</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-comment">#   QMTest ResourceAdapter class.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2005 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"><tt class="py-comment"># For license terms see the file COPYING.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"><tt class="py-comment"># Imports</tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package qm=qm-module.html"><a title="qm" class="py-name" href="#" onclick="return doclink('link-0', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.test()=qm.external.DocumentTemplate.DT_Util-module.html#test,Package qm.test=qm.test-module.html,Module qm.test.test=qm.test.test-module.html"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-1', 'test', 'link-1');">test</a></tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Module qm.test.resource=qm.test.resource-module.html"><a title="qm.test.resource" class="py-name" href="#" onclick="return doclink('link-2', 'resource', 'link-2');">resource</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Class qm.test.resource.Resource=qm.test.resource.Resource-class.html"><a title="qm.test.resource.Resource" class="py-name" href="#" onclick="return doclink('link-3', 'Resource', 'link-3');">Resource</a></tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line"><tt class="py-comment"># Classes</tt> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line"> </tt>
+<a name="ResourceAdapter"></a><div id="ResourceAdapter-def"><a name="L26"></a><tt class="py-lineno">26</tt> <a class="py-toggle" href="#" id="ResourceAdapter-toggle" onclick="return toggle('ResourceAdapter');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.test.resource_adapter.ResourceAdapter-class.html">ResourceAdapter</a><tt class="py-op">(</tt><tt class="py-base-class">Resource</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ResourceAdapter-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="ResourceAdapter-expanded"><a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line">    <tt class="py-docstring">"""A 'ResourceAdapter' converts test classes to resource classes.</tt> </tt>
+<a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line"><tt class="py-docstring">    If 'C' is a test class, then a class derived from</tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line"><tt class="py-docstring">    'ResourceAdapter' and 'C' (in that order!) will be a resource</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line"><tt class="py-docstring">    class.  The resource class 'Setup' method is equivalent to the</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line"><tt class="py-docstring">    'Test' class 'Run' method.  The 'CleanUp' action is empty."""</tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line"> </tt>
+<a name="ResourceAdapter.SetUp"></a><div id="ResourceAdapter.SetUp-def"><a name="L34"></a><tt class="py-lineno">34</tt> <a class="py-toggle" href="#" id="ResourceAdapter.SetUp-toggle" onclick="return toggle('ResourceAdapter.SetUp');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.resource_adapter.ResourceAdapter-class.html#SetUp">SetUp</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">context</tt><tt class="py-op">,</tt> <tt class="py-param">result</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ResourceAdapter.SetUp-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="ResourceAdapter.SetUp-expanded"><a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line">         </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line">        <tt class="py-comment"># To set up the resource, just run the underlying test class.</tt> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Method qm.executable.Executable.Run()=qm.executable.Executable-class.html#Run,Method qm.executable.TimeoutExecutable.Run()=qm.executable.TimeoutExecutable-class.html#Run,Method qm.executable.TimeoutExecutable.Run()=qm.executable.TimeoutExecutable-class.html#Run,Method qm.host.Host.Run()=qm.host.Host-class.html#Run,Method qm.host.Host.Run()=qm.host.Host-class.html#Run,Method qm.test.classes.command.ExecTest.Run()=qm.test.classes.command.ExecTest-class.html#Run,Method qm.test.classes.command.ShellCommandTest.Run()=qm.test.classes.command.ShellCommandTest-class.html#Run,Method qm.test.classes.command.ShellScriptTest.Run()=qm.test.classes.command.ShellScriptTest-class.html#Run,Method qm.test.classes.command_host.CommandHost.Run()=qm.test.classes.command_host.CommandHost-class.html#Run,Method qm.test.classes.compilation_test.CompilationTest.Run()=qm.test.classes.compilation_test.CompilationTest-class.html#Run,Method qm.test.classes.compilation_test.CompilationTest.Run()=qm.test.classes.compilation_test.CompilationTest-class.html#Run,Method qm.test.classes.compilation_test.ExecutableTest.Run()=qm.test.classes.compilation_test.ExecutableTest-class.html#Run,Method qm.test.classes.compiler_test.CompilerTest.Run()=qm.test.classes.compiler_test.CompilerTest-class.html#Run,Method qm.test.classes.file.FileContentsTest.Run()=qm.test.classes.file.FileContentsTest-class.html#Run,Method qm.test.classes.python.BaseExceptionTest.Run()=qm.test.classes.python.BaseExceptionTest-class.html#Run,Method qm.test.classes.python.ExecTest.Run()=qm.test.classes.python.ExecTest-class.html#Run,Method qm.test.classes.simulator.Simulator.Run()=qm.test.classes.simulator.Simulator-class.html#Run,Method qm.test.classes.ssh_host.RSHHost.Run()=qm.test.classes.ssh_host.RSHHost-class.html#Run,Method qm.test.classes.ssh_host.SSHHost.Run()=qm.test.classes.ssh_host.SSHHost-class.html#Run,Method qm.test.database.TestDescriptor.Run()=qm.test.database.TestDescriptor-class.html#Run,Method qm.test.execution_engine.ExecutionEngine.Run()=qm.test.execution_engine.ExecutionEngine-class.html#Run,Method qm.test.execution_engine.ExecutionEngine.Run()=qm.test.execution_engine.ExecutionEngine-class.html#Run,Method qm.test.test.Test.Run()=qm.test.test.Test-class.html#Run,Method qm.test.test.Test.Run()=qm.test.test.Test-class.html#Run,Method qm.web.WebServer.Run()=qm.web.WebServer-class.html#Run,Method qm.web.WebServer.Run()=qm.web.WebServer-class.html#Run"><a title="qm.executable.Executable.Run
+qm.executable.TimeoutExecutable.Run
+qm.executable.TimeoutExecutable.Run
+qm.host.Host.Run
+qm.host.Host.Run
+qm.test.classes.command.ExecTest.Run
+qm.test.classes.command.ShellCommandTest.Run
+qm.test.classes.command.ShellScriptTest.Run
+qm.test.classes.command_host.CommandHost.Run
+qm.test.classes.compilation_test.CompilationTest.Run
+qm.test.classes.compilation_test.CompilationTest.Run
+qm.test.classes.compilation_test.ExecutableTest.Run
+qm.test.classes.compiler_test.CompilerTest.Run
+qm.test.classes.file.FileContentsTest.Run
+qm.test.classes.python.BaseExceptionTest.Run
+qm.test.classes.python.ExecTest.Run
+qm.test.classes.simulator.Simulator.Run
+qm.test.classes.ssh_host.RSHHost.Run
+qm.test.classes.ssh_host.SSHHost.Run
+qm.test.database.TestDescriptor.Run
+qm.test.execution_engine.ExecutionEngine.Run
+qm.test.execution_engine.ExecutionEngine.Run
+qm.test.test.Test.Run
+qm.test.test.Test.Run
+qm.web.WebServer.Run
+qm.web.WebServer.Run" class="py-name" href="#" onclick="return doclink('link-4', 'Run', 'link-4');">Run</a></tt><tt class="py-op">(</tt><tt id="link-5" class="py-name" targets="Module qm.test.context=qm.test.context-module.html"><a title="qm.test.context" class="py-name" href="#" onclick="return doclink('link-5', 'context', 'link-5');">context</a></tt><tt class="py-op">,</tt> <tt id="link-6" class="py-name" targets="Module qm.test.result=qm.test.result-module.html"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-6', 'result', 'link-6');">result</a></tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:47 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

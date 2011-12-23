@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.external.DocumentTemplate.DT_Util</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.external-module.html">Package&nbsp;external</a> ::
+        <a href="qm.external.DocumentTemplate-module.html">Package&nbsp;DocumentTemplate</a> ::
+        Module&nbsp;DT_Util
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.external.DocumentTemplate.DT_Util-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module DT_Util</h1><p class="nomargin-top"><span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html">source&nbsp;code</a></span></p>
+<p>DTML Utilities</p>
+  <p>$Id: DT_Util.py 1069 2008-11-13 21:55:43Z stefan $</p>
+
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_Util.Eval-class.html" class="summary-name">Eval</a>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="html_quote"></a><span class="summary-sig-name">html_quote</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>,
+        <span class="summary-sig-arg">character_entities</span>=<span class="summary-sig-default"><code class="variable-group">(</code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">&amp;</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">&amp;amp;</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">, </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">&lt;</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">&amp;lt;</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">, </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">&gt;</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">&amp;gt;</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">, </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">&quot;</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">&amp;quot;</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-group">)</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#html_quote">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="int_param"></a><span class="summary-sig-name">int_param</span>(<span class="summary-sig-arg">params</span>,
+        <span class="summary-sig-arg">md</span>,
+        <span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">default</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">st</span>=<span class="summary-sig-default">&lt;type 'str'&gt;</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#int_param">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="careful_getattr"></a><span class="summary-sig-name">careful_getattr</span>(<span class="summary-sig-arg">md</span>,
+        <span class="summary-sig-arg">inst</span>,
+        <span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">default</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#careful_getattr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="careful_hasattr"></a><span class="summary-sig-name">careful_hasattr</span>(<span class="summary-sig-arg">md</span>,
+        <span class="summary-sig-arg">inst</span>,
+        <span class="summary-sig-arg">name</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#careful_hasattr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="careful_getitem"></a><span class="summary-sig-name">careful_getitem</span>(<span class="summary-sig-arg">md</span>,
+        <span class="summary-sig-arg">mapping</span>,
+        <span class="summary-sig-arg">key</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#careful_getitem">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="careful_getslice"></a><span class="summary-sig-name">careful_getslice</span>(<span class="summary-sig-arg">md</span>,
+        <span class="summary-sig-arg">seq</span>,
+        <span class="summary-sig-arg">*indexes</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#careful_getslice">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="careful_range"></a><span class="summary-sig-name">careful_range</span>(<span class="summary-sig-arg">md</span>,
+        <span class="summary-sig-arg">iFirst</span>,
+        <span class="summary-sig-arg">*args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#careful_range">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="careful_pow"></a><span class="summary-sig-name">careful_pow</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">x</span>,
+        <span class="summary-sig-arg">y</span>,
+        <span class="summary-sig-arg">z</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#careful_pow">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="test"></a><span class="summary-sig-name">test</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">*args</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#test">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="obsolete_attr"></a><span class="summary-sig-name">obsolete_attr</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">inst</span>,
+        <span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">md</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#obsolete_attr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="namespace"></a><span class="summary-sig-name">namespace</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">**kw</span>)</span><br />
+      Create a tuple consisting of a single instance whose attributes are 
+      provided as keyword arguments.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#namespace">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="render"></a><span class="summary-sig-name">render</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">v</span>)</span><br />
+      Render an object in the way done by the 'name' attribute</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#render">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="name_param"></a><span class="summary-sig-name">name_param</span>(<span class="summary-sig-arg">params</span>,
+        <span class="summary-sig-arg">tag</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">expr</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">attr</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">name</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">default_unnamed</span>=<span class="summary-sig-default">1</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#name_param">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.external.DocumentTemplate.DT_Util-module.html#parse_params" class="summary-sig-name">parse_params</a>(<span class="summary-sig-arg">text</span>,
+        <span class="summary-sig-arg">result</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">tag</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">unparmre</span>=<span class="summary-sig-default">re.compile(r'<code class="re-group">(</code><code class="re-group">[</code>\x00<code class="re-op">-</code> <code class="re-group">]</code><code class="re-op">*</code><code class="re-group">(</code><code class="re-group">[</code><code class="re-op">^</code>\x00<code class="re-op">-</code> =&quot;<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code><code class="re-group">)</code>')</span>,
+        <span class="summary-sig-arg">qunparmre</span>=<span class="summary-sig-default">re.compile(r'<code class="re-group">(</code><code class="re-group">[</code>\x00<code class="re-op">-</code> <code class="re-group">]</code><code class="re-op">*</code><code class="re-group">(</code>&quot;<code class="re-group">[^</code>&quot;<code class="re-group">]</code><code class="re-op">*</code>&quot;<code class="re-group">)</code><code class="re-group">)</code>')</span>,
+        <span class="summary-sig-arg">parmre</span>=<span class="summary-sig-default">re.compile(r'<code class="re-group">(</code><code class="re-group">[</code>\x00<code class="re-op">-</code> <code class="re-group">]</code><code class="re-op">*</code><code class="re-group">(</code><code class="re-group">[</code><code class="re-op">^</code>\x00<code class="re-op">-</code> =&quot;<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code>=<code class="re-group">(</code><code class="re-group">[</code><code class="re-op">^</code>\x00<code class="re-op">-</code> =&quot;<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code><code class="re-group">)</code>')</span>,
+        <span class="summary-sig-arg">qparmre</span>=<span class="summary-sig-default">re.compile(r'<code class="re-group">(</code><code class="re-group">[</code>\x00<code class="re-op">-</code> <code class="re-group">]</code><code class="re-op">*</code><code class="re-group">(</code><code class="re-group">[</code><code class="re-op">^</code>\x00<code class="re-op">-</code> =&quot;<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code>=&quot;<code class="re-group">(</code><code class="re-group">[^</code>&quot;<code class="re-group">]</code><code class="re-op">*</code><code class="re-group">)</code>&quot;<code class="re-group">)</code>')</span>,
+        <span class="summary-sig-arg">**parms</span>)</span><br />
+      Parse tag parameters</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#parse_params">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ParseError"></a><span class="summary-name">ParseError</span> = <code title="'Document Template Parse Error'"><code class="variable-quote">'</code><code class="variable-string">Document Template Parse Error</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ValidationError"></a><span class="summary-name">ValidationError</span> = <code title="'Unauthorized'"><code class="variable-quote">'</code><code class="variable-string">Unauthorized</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_marker"></a><span class="summary-name">_marker</span> = <code title="[]"><code class="variable-group">[</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_Util-module.html#d" class="summary-name">d</a> = <code title="TemplateDict.__dict__"><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">None</code><code class="variable-quote">'</code><code class="variable-op">: </code>None<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">__call__</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;function __call__ at 0x166a1b8<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_Util-module.html#expr_globals" class="summary-name">expr_globals</a> = <code title="{'__builtins__': {}, '__guarded_mul__': VSEval.careful_mul, '__guarded\
+_getattr__': careful_getattr, '__guarded_getitem__': careful_getitem, \
+'__guarded_getslice__': careful_getslice,}"><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">__builtins__</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-group">{</code><code class="variable-group">}</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">__guarded_getattr__</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;fu<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_Util-module.html#Expr_doc" class="summary-name">Expr_doc</a> = <code title="'''
+
+
+Python expression support
+
+  Several document template tags, including \'var\', \'in\', \'if\', \\
+'else\',
+  and \'elif\' provide support for using Python expressions via an
+..."><code class="variable-quote">'</code><code class="variable-string">\n\n\nPython expression support\n\n  Several docum</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'qm.external.DocumentTemplate'"><code class="variable-quote">'</code><code class="variable-string">qm.external.DocumentTemplate</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="name"></a><span class="summary-name">name</span> = <code title="'str'"><code class="variable-quote">'</code><code class="variable-string">str</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="parse_params"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_params</span>(<span class="sig-arg">text</span>,
+        <span class="sig-arg">result</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">tag</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">unparmre</span>=<span class="sig-default">re.compile(r'<code class="re-group">(</code><code class="re-group">[</code>\x00<code class="re-op">-</code> <code class="re-group">]</code><code class="re-op">*</code><code class="re-group">(</code><code class="re-group">[</code><code class="re-op">^</code>\x00<code class="re-op">-</code> =&quot;<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code><code class="re-group">)</code>')</span>,
+        <span class="sig-arg">qunparmre</span>=<span class="sig-default">re.compile(r'<code class="re-group">(</code><code class="re-group">[</code>\x00<code class="re-op">-</code> <code class="re-group">]</code><code class="re-op">*</code><code class="re-group">(</code>&quot;<code class="re-group">[^</code>&quot;<code class="re-group">]</code><code class="re-op">*</code>&quot;<code class="re-group">)</code><code class="re-group">)</code>')</span>,
+        <span class="sig-arg">parmre</span>=<span class="sig-default">re.compile(r'<code class="re-group">(</code><code class="re-group">[</code>\x00<code class="re-op">-</code> <code class="re-group">]</code><code class="re-op">*</code><code class="re-group">(</code><code class="re-group">[</code><code class="re-op">^</code>\x00<code class="re-op">-</code> =&quot;<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code>=<code class="re-group">(</code><code class="re-group">[</code><code class="re-op">^</code>\x00<code class="re-op">-</code> =&quot;<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code><code class="re-group">)</code>')</span>,
+        <span class="sig-arg">qparmre</span>=<span class="sig-default">re.compile(r'<code class="re-group">(</code><code class="re-group">[</code>\x00<code class="re-op">-</code> <code class="re-group">]</code><code class="re-op">*</code><code class="re-group">(</code><code class="re-group">[</code><code class="re-op">^</code>\x00<code class="re-op">-</code> =&quot;<code class="re-group">]</code><code class="re-op">+</code><code class="re-group">)</code>=&quot;<code class="re-group">(</code><code class="re-group">[^</code>&quot;<code class="re-group">]</code><code class="re-op">*</code><code class="re-group">)</code>&quot;<code class="re-group">)</code>')</span>,
+        <span class="sig-arg">**parms</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.external.DocumentTemplate.DT_Util-pysrc.html#parse_params">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parse tag parameters</p>
+  <p>The format of tag parameters consists of 1 or more parameter 
+  specifications separated by whitespace.  Each specification consists of 
+  an unnamed and unquoted value, a valueless name, or a name-value pair.  A
+  name-value pair consists of a name and a quoted or unquoted value 
+  separated by an '='.</p>
+  <p>The input parameter, text, gives the text to be parsed.  The keyword 
+  parameters give valid parameter names and default values.</p>
+  <p>If a specification is not a name-value pair and it is not the first 
+  specification and it is a valid parameter name, then it is treated as a 
+  name-value pair with a value as given in the keyword argument.  
+  Otherwise, if it is not a name-value pair, it is treated as an unnamed 
+  value.</p>
+  <p>The data are parsed into a dictionary mapping names to values. Unnamed
+  values are mapped from the name '&quot;&quot;'.  Only one value may be 
+  given for a name and there may be only one unnamed value.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="d"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">d</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+TemplateDict.__dict__
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="expr_globals"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">expr_globals</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+{'__builtins__': {}, '__guarded_mul__': VSEval.careful_mul, '__guarded<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+_getattr__': careful_getattr, '__guarded_getitem__': careful_getitem, <span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+'__guarded_getslice__': careful_getslice,}
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="Expr_doc"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">Expr_doc</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-quote">'''</code><code class="variable-string"></code>
+<code class="variable-string"></code>
+<code class="variable-string"></code>
+<code class="variable-string">Python expression support</code>
+<code class="variable-string"></code>
+<code class="variable-string">  Several document template tags, including \'var\', \'in\', \'if\', \</code><span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+<code class="variable-string">'else\',</code>
+<code class="variable-string">  and \'elif\' provide support for using Python expressions via an</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:39 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

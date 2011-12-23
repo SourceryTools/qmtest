@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>random.WichmannHill</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        random ::
+        WichmannHill ::
+        Class&nbsp;WichmannHill
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="random.WichmannHill-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class WichmannHill</h1><p class="nomargin-top"><span class="codelink"><a href="random-pysrc.html#WichmannHill">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+    object --+        
+             |        
+_random.Random --+    
+                 |    
+            <a href="random.Random-class.html">Random</a> --+
+                     |
+                    <strong class="uidshort">WichmannHill</strong>
+</pre>
+
+<hr />
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.WichmannHill-class.html#__whseed" class="summary-sig-name" onclick="show_private();">__whseed</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">x</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">y</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">z</span>=<span class="summary-sig-default">0</span>)</span><br />
+      Set the Wichmann-Hill seed from (x, y, z).</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#WichmannHill.__whseed">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">tuple containing the current state.</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.WichmannHill-class.html#getstate" class="summary-sig-name">getstate</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return internal state; can be passed to setstate() later.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#WichmannHill.getstate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">None</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.WichmannHill-class.html#jumpahead" class="summary-sig-name">jumpahead</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">n</span>)</span><br />
+      Act as if n calls to random() were made, but quickly.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#WichmannHill.jumpahead">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">x in the interval [0, 1).</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.WichmannHill-class.html#random" class="summary-sig-name">random</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Get the next random number in the range [0.0, 1.0).</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#WichmannHill.random">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">None</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.WichmannHill-class.html#seed" class="summary-sig-name">seed</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">a</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Initialize internal state from hashable object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#WichmannHill.seed">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">None</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.WichmannHill-class.html#setstate" class="summary-sig-name">setstate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">state</span>)</span><br />
+      Restore internal state from object returned by getstate().</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#WichmannHill.setstate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.WichmannHill-class.html#whseed" class="summary-sig-name">whseed</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">a</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Seed from hashable object's hash code.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#WichmannHill.whseed">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="random.Random-class.html">Random</a></code></b>:
+      <code><a href="random.Random-class.html#__getstate__">__getstate__</a></code>,
+      <code><a href="random.Random-class.html#__init__">__init__</a></code>,
+      <code><a href="random.Random-class.html#__reduce__">__reduce__</a></code>,
+      <code><a href="random.Random-class.html#__setstate__">__setstate__</a></code>,
+      <code><a href="random.Random-class.html#betavariate">betavariate</a></code>,
+      <code><a href="random.Random-class.html#choice">choice</a></code>,
+      <code><a href="random.Random-class.html#expovariate">expovariate</a></code>,
+      <code><a href="random.Random-class.html#gammavariate">gammavariate</a></code>,
+      <code><a href="random.Random-class.html#gauss">gauss</a></code>,
+      <code><a href="random.Random-class.html#lognormvariate">lognormvariate</a></code>,
+      <code><a href="random.Random-class.html#normalvariate">normalvariate</a></code>,
+      <code><a href="random.Random-class.html#paretovariate">paretovariate</a></code>,
+      <code><a href="random.Random-class.html#randint">randint</a></code>,
+      <code><a href="random.Random-class.html#randrange">randrange</a></code>,
+      <code><a href="random.Random-class.html#sample">sample</a></code>,
+      <code><a href="random.Random-class.html#shuffle">shuffle</a></code>,
+      <code><a href="random.Random-class.html#triangular">triangular</a></code>,
+      <code><a href="random.Random-class.html#uniform">uniform</a></code>,
+      <code><a href="random.Random-class.html#vonmisesvariate">vonmisesvariate</a></code>,
+      <code><a href="random.Random-class.html#weibullvariate">weibullvariate</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="random.Random-class.html">Random</a></code></b> (private):
+      <code><a href="random.Random-class.html#_randbelow" onclick="show_private();">_randbelow</a></code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>_random.Random</code></b>:
+      <code>__getattribute__</code>,
+      <code>__new__</code>,
+      <code>getrandbits</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__hash__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VERSION"></a><span class="summary-name">VERSION</span> = <code title="1">1</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__whseed"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__whseed</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">x</span>=<span class="sig-default">0</span>,
+        <span class="sig-arg">y</span>=<span class="sig-default">0</span>,
+        <span class="sig-arg">z</span>=<span class="sig-default">0</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#WichmannHill.__whseed">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set the Wichmann-Hill seed from (x, y, z).</p>
+  <p>These must be integers in the range [0, 256).</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="getstate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getstate</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#WichmannHill.getstate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return internal state; can be passed to setstate() later.</p>
+  <dl class="fields">
+    <dt>Returns: tuple containing the current state.</dt>
+    <dt>Overrides:
+        _random.Random.getstate
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="jumpahead"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">jumpahead</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">n</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#WichmannHill.jumpahead">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Act as if n calls to random() were made, but quickly.
+
+n is an int, greater than or equal to 0.
+
+Example use:  If you have 2 threads and know that each will
+consume no more than a million random numbers, create two Random
+objects r1 and r2, then do
+    r2.setstate(r1.getstate())
+    r2.jumpahead(1000000)
+Then r1 and r2 will use guaranteed-disjoint segments of the full
+period.
+
+</pre>
+  <dl class="fields">
+    <dt>Returns: None</dt>
+    <dt>Overrides:
+        _random.Random.jumpahead
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="random"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">random</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#WichmannHill.random">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get the next random number in the range [0.0, 1.0).</p>
+  <dl class="fields">
+    <dt>Returns: x in the interval [0, 1).</dt>
+    <dt>Overrides:
+        _random.Random.random
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="seed"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">seed</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">a</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#WichmannHill.seed">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize internal state from hashable object.</p>
+  <p>None or no argument seeds from current time or from an operating 
+  system specific randomness source if available.</p>
+  <p>If a is not None or an int or long, hash(a) is used instead.</p>
+  <p>If a is an int or long, a is used directly.  Distinct values between 0
+  and 27814431486575L inclusive are guaranteed to yield distinct internal 
+  states (this guarantee is specific to the default Wichmann-Hill 
+  generator).</p>
+  <dl class="fields">
+    <dt>Returns: None</dt>
+    <dt>Overrides:
+        _random.Random.seed
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="setstate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setstate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">state</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#WichmannHill.setstate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Restore internal state from object returned by getstate().</p>
+  <dl class="fields">
+    <dt>Returns: None</dt>
+    <dt>Overrides:
+        _random.Random.setstate
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="whseed"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">whseed</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">a</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#WichmannHill.whseed">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Seed from hashable object's hash code.</p>
+  <p>None or no argument seeds from current time.  It is not guaranteed 
+  that objects with distinct hash codes lead to distinct internal 
+  states.</p>
+  <p>This is obsolete, provided for compatibility with the seed routine 
+  used prior to Python 2.1.  Use the .seed() method instead.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:42 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

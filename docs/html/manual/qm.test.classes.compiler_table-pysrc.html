@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.classes.compiler_table</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.classes-module.html">Package&nbsp;classes</a> ::
+        Module&nbsp;compiler_table
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.classes.compiler_table-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.test.classes.compiler_table-module.html">Module qm.test.classes.compiler_table</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># File:   compiler_table.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Mark Mitchell</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   04/16/2003</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#   CompilerTable</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2003 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-docstring">"""Support for compiler test databases.</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-docstring">This module contains the 'CompilerTable' resource class which can be</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-docstring">used by compiler test databases to determine which compiler to test</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-docstring">based on context variables provided by the user."""</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-comment"># Imports</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-0" class="py-name" targets="Module qm.test.classes.compiler=qm.test.classes.compiler-module.html"><a title="qm.test.classes.compiler" class="py-name" href="#" onclick="return doclink('link-0', 'compiler', 'link-0');">compiler</a></tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-1" class="py-name" targets="Package qm=qm-module.html"><a title="qm" class="py-name" href="#" onclick="return doclink('link-1', 'qm', 'link-1');">qm</a></tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-keyword">from</tt>   <tt id="link-2" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-2', 'qm', 'link-1');">qm</a></tt><tt class="py-op">.</tt><tt id="link-3" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.test()=qm.external.DocumentTemplate.DT_Util-module.html#test,Package qm.test=qm.test-module.html,Module qm.test.test=qm.test.test-module.html"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-3', 'test', 'link-3');">test</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Module qm.test.database=qm.test.database-module.html,Variable qm.user.database=qm.user-module.html#database"><a title="qm.test.database
+qm.user.database" class="py-name" href="#" onclick="return doclink('link-4', 'database', 'link-4');">database</a></tt> <tt class="py-keyword">import</tt> <tt class="py-name">get_database</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-keyword">from</tt>   <tt id="link-5" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-5', 'qm', 'link-1');">qm</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-6', 'test', 'link-3');">test</a></tt><tt class="py-op">.</tt><tt id="link-7" class="py-name" targets="Module qm.test.resource=qm.test.resource-module.html"><a title="qm.test.resource" class="py-name" href="#" onclick="return doclink('link-7', 'resource', 'link-7');">resource</a></tt> <tt class="py-keyword">import</tt> <tt id="link-8" class="py-name" targets="Class qm.test.resource.Resource=qm.test.resource.Resource-class.html"><a title="qm.test.resource.Resource" class="py-name" href="#" onclick="return doclink('link-8', 'Resource', 'link-8');">Resource</a></tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-keyword">from</tt>   <tt id="link-9" class="py-name" targets="Module qm.test.classes.local_host=qm.test.classes.local_host-module.html"><a title="qm.test.classes.local_host" class="py-name" href="#" onclick="return doclink('link-9', 'local_host', 'link-9');">local_host</a></tt> <tt class="py-keyword">import</tt> <tt id="link-10" class="py-name" targets="Class qm.test.classes.local_host.LocalHost=qm.test.classes.local_host.LocalHost-class.html"><a title="qm.test.classes.local_host.LocalHost" class="py-name" href="#" onclick="return doclink('link-10', 'LocalHost', 'link-10');">LocalHost</a></tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-comment"># Classes</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
+<a name="CompilerTable"></a><div id="CompilerTable-def"><a name="L34"></a><tt class="py-lineno"> 34</tt> <a class="py-toggle" href="#" id="CompilerTable-toggle" onclick="return toggle('CompilerTable');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.test.classes.compiler_table.CompilerTable-class.html">CompilerTable</a><tt class="py-op">(</tt><tt class="py-base-class">Resource</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CompilerTable-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="CompilerTable-expanded"><a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">    <tt class="py-docstring">"""A map from programming languages to 'Compiler's.</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-docstring">    The 'CompilerTable' resource uses the context to determine which</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">    compilers the user wants to test.  Test databases containing</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-docstring">    compiler tests should arrange for the tests they compain to depend</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-docstring">    on a 'CompilerTable' resource.</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring">    The first context variable which is examined is</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-docstring">    'CompilerTable.languages'.  The value should be a</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-docstring">    whitespace-separated list of programming language names.  (See</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-docstring">    below for standardized names for some languages.)</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-docstring">    Then, for each language 'l' in the list of languages, the</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt class="py-docstring">    following context variables are examined:</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-docstring">    - 'CompilerTable.l_kind'</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-docstring">      The kind of compiler (e.g., "GCC" or "EDG") used to compile</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-docstring">      programs of language 'l'.  The 'kind' must name a class derived</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-docstring">      from 'Compiler'.</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-docstring">    - 'CompilerTable.l_path'</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-docstring">      The path to the compiler for language 'l'.  This path may be</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-docstring">      either absolute or relative.</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-docstring">    - 'CompilerTable.l_options'</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-docstring">      A whitespace-separated list of command-line options to provide</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-docstring">      to the compiler for language 'l'.  These options are passed to</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-docstring">      the constructor for the 'Compiler' object; generally, all tests</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt class="py-docstring">      are run with these options, followed by any test-specific</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"><tt class="py-docstring">      options.  For example, if the user wants to test the compiler</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"><tt class="py-docstring">      when run with '-O2', the user would put '-O2' in the 'l_options'</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"><tt class="py-docstring">      context variable.</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-docstring">    The 'CompilerTable' resource provides the following context</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-docstring">    variables to all tests that depend upon the resource:</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-docstring">    - 'CompilerTable.compilers'</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-docstring">       The 'compilers' variable is a map from language names to</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-docstring">       instances of 'Compiler'.  Test classes should obtain the</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-docstring">       'Compiler' to use when compiling source files by using this</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"><tt class="py-docstring">       map.</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"><tt class="py-docstring">    - 'CompilerTable.target'</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"><tt class="py-docstring">       An instance of 'Host' that can be used to run compiler</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"><tt class="py-docstring">       programs."""</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line"> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">    <tt id="link-11" class="py-name" targets="Variable qm.test.classes.compiler_table.CompilerTable.LANG_C=qm.test.classes.compiler_table.CompilerTable-class.html#LANG_C"><a title="qm.test.classes.compiler_table.CompilerTable.LANG_C" class="py-name" href="#" onclick="return doclink('link-11', 'LANG_C', 'link-11');">LANG_C</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"c"</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">    <tt class="py-string">"""The name of the C programming language."""</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">     </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">    <tt id="link-12" class="py-name" targets="Variable qm.test.classes.compiler_table.CompilerTable.LANG_CPLUSPLUS=qm.test.classes.compiler_table.CompilerTable-class.html#LANG_CPLUSPLUS"><a title="qm.test.classes.compiler_table.CompilerTable.LANG_CPLUSPLUS" class="py-name" href="#" onclick="return doclink('link-12', 'LANG_CPLUSPLUS', 'link-12');">LANG_CPLUSPLUS</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"cplusplus"</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">    <tt class="py-string">"""The name of the C++ programming language."""</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">     </tt>
+<a name="CompilerTable.SetUp"></a><div id="CompilerTable.SetUp-def"><a name="L92"></a><tt class="py-lineno"> 92</tt> <a class="py-toggle" href="#" id="CompilerTable.SetUp-toggle" onclick="return toggle('CompilerTable.SetUp');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.compiler_table.CompilerTable-class.html#SetUp">SetUp</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">context</tt><tt class="py-op">,</tt> <tt class="py-param">result</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CompilerTable.SetUp-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="CompilerTable.SetUp-expanded"><a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">        <tt class="py-comment"># There are no compilers yet.</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">        <tt class="py-name">compilers</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">         </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">        <tt class="py-comment"># See what programming languages are supported.</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">        <tt class="py-name">languages</tt> <tt class="py-op">=</tt> <tt id="link-13" class="py-name" targets="Module qm.test.context=qm.test.context-module.html"><a title="qm.test.context" class="py-name" href="#" onclick="return doclink('link-13', 'context', 'link-13');">context</a></tt><tt class="py-op">[</tt><tt class="py-string">"CompilerTable.languages"</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">        <tt class="py-comment"># For each language, create a Compiler.</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">l</tt> <tt class="py-keyword">in</tt> <tt class="py-name">languages</tt><tt class="py-op">:</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">            <tt class="py-comment"># Retrieve information from the context.</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">            <tt id="link-14" class="py-name" targets="Variable qm.extension.Extension.kind=qm.extension.Extension-class.html#kind,Variable qm.host.Host.kind=qm.host.Host-class.html#kind,Variable qm.test.database.Database.kind=qm.test.database.Database-class.html#kind,Variable qm.test.expectation_database.ExpectationDatabase.kind=qm.test.expectation_database.ExpectationDatabase-class.html#kind,Variable qm.test.resource.Resource.kind=qm.test.resource.Resource-class.html#kind,Variable qm.test.result_reader.ResultReader.kind=qm.test.result_reader.ResultReader-class.html#kind,Variable qm.test.result_stream.ResultStream.kind=qm.test.result_stream.ResultStream-class.html#kind,Variable qm.test.suite.Suite.kind=qm.test.suite.Suite-class.html#kind,Variable qm.test.target.Target.kind=qm.test.target.Target-class.html#kind,Variable qm.test.test.Test.kind=qm.test.test.Test-class.html#kind"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-14', 'kind', 'link-14');">kind</a></tt> <tt class="py-op">=</tt> <tt id="link-15" class="py-name"><a title="qm.test.context" class="py-name" href="#" onclick="return doclink('link-15', 'context', 'link-13');">context</a></tt><tt class="py-op">[</tt><tt class="py-string">"CompilerTable."</tt> <tt class="py-op">+</tt> <tt class="py-name">l</tt> <tt class="py-op">+</tt> <tt class="py-string">"_kind"</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">            <tt class="py-name">path</tt> <tt class="py-op">=</tt> <tt id="link-16" class="py-name"><a title="qm.test.context" class="py-name" href="#" onclick="return doclink('link-16', 'context', 'link-13');">context</a></tt><tt class="py-op">[</tt><tt class="py-string">"CompilerTable."</tt> <tt class="py-op">+</tt> <tt class="py-name">l</tt> <tt class="py-op">+</tt> <tt class="py-string">"_path"</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">            <tt class="py-comment"># Look for (optional) command-line options.</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">            <tt class="py-name">opts</tt> <tt class="py-op">=</tt> <tt id="link-17" class="py-name"><a title="qm.test.context" class="py-name" href="#" onclick="return doclink('link-17', 'context', 'link-13');">context</a></tt><tt class="py-op">.</tt><tt id="link-18" class="py-name" targets="Method qm.test.context.Context.get()=qm.test.context.Context-class.html#get,Method qm.test.result.Result.get()=qm.test.result.Result-class.html#get,Method qm.user.DefaultDatabase.get()=qm.user.DefaultDatabase-class.html#get,Method qm.user.XmlDatabase.get()=qm.user.XmlDatabase-class.html#get,Method qm.web.WebRequest.get()=qm.web.WebRequest-class.html#get"><a title="qm.test.context.Context.get
+qm.test.result.Result.get
+qm.user.DefaultDatabase.get
+qm.user.XmlDatabase.get
+qm.web.WebRequest.get" class="py-name" href="#" onclick="return doclink('link-18', 'get', 'link-18');">get</a></tt><tt class="py-op">(</tt><tt class="py-string">"CompilerTable."</tt> <tt class="py-op">+</tt> <tt class="py-name">l</tt> <tt class="py-op">+</tt> <tt class="py-string">"_options"</tt><tt class="py-op">,</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">                               <tt class="py-string">""</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">            <tt id="link-19" class="py-name" targets="Variable qm.test.classes.compilation_test.CompilationTest.ldflags=qm.test.classes.compilation_test.CompilationTest-class.html#ldflags,Variable qm.test.classes.compilation_test_database.CompilationTest.ldflags=qm.test.classes.compilation_test_database.CompilationTest-class.html#ldflags"><a title="qm.test.classes.compilation_test.CompilationTest.ldflags
+qm.test.classes.compilation_test_database.CompilationTest.ldflags" class="py-name" href="#" onclick="return doclink('link-19', 'ldflags', 'link-19');">ldflags</a></tt> <tt class="py-op">=</tt> <tt id="link-20" class="py-name"><a title="qm.test.context" class="py-name" href="#" onclick="return doclink('link-20', 'context', 'link-13');">context</a></tt><tt class="py-op">.</tt><tt id="link-21" class="py-name"><a title="qm.test.context.Context.get
+qm.test.result.Result.get
+qm.user.DefaultDatabase.get
+qm.user.XmlDatabase.get
+qm.web.WebRequest.get" class="py-name" href="#" onclick="return doclink('link-21', 'get', 'link-18');">get</a></tt><tt class="py-op">(</tt><tt class="py-string">"CompilerTable."</tt> <tt class="py-op">+</tt> <tt class="py-name">l</tt> <tt class="py-op">+</tt> <tt class="py-string">"_ldflags"</tt><tt class="py-op">,</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">                                  <tt class="py-string">""</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">            <tt class="py-comment"># Find the Python class corresponding to this compiler.</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">            <tt class="py-name">compiler_class</tt> <tt class="py-op">=</tt> <tt id="link-22" class="py-name"><a title="qm.test.classes.compiler" class="py-name" href="#" onclick="return doclink('link-22', 'compiler', 'link-0');">compiler</a></tt><tt class="py-op">.</tt><tt class="py-name">__dict__</tt><tt class="py-op">[</tt><tt id="link-23" class="py-name"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-23', 'kind', 'link-14');">kind</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">            <tt class="py-comment"># Instantiate the compiler.</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">            <tt class="py-name">c</tt> <tt class="py-op">=</tt> <tt class="py-name">compiler_class</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">,</tt> <tt class="py-name">opts</tt><tt class="py-op">)</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">            <tt class="py-name">c</tt><tt class="py-op">.</tt><tt id="link-24" class="py-name" targets="Method qm.test.classes.compiler.Compiler.SetLDFlags()=qm.test.classes.compiler.Compiler-class.html#SetLDFlags"><a title="qm.test.classes.compiler.Compiler.SetLDFlags" class="py-name" href="#" onclick="return doclink('link-24', 'SetLDFlags', 'link-24');">SetLDFlags</a></tt><tt class="py-op">(</tt><tt id="link-25" class="py-name"><a title="qm.test.classes.compilation_test.CompilationTest.ldflags
+qm.test.classes.compilation_test_database.CompilationTest.ldflags" class="py-name" href="#" onclick="return doclink('link-25', 'ldflags', 'link-19');">ldflags</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">            <tt class="py-comment"># Store it in the compilers map.</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">            <tt class="py-name">compilers</tt><tt class="py-op">[</tt><tt class="py-name">l</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">c</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">             </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">        <tt class="py-comment"># Make the table available to tests.</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">        <tt id="link-26" class="py-name"><a title="qm.test.context" class="py-name" href="#" onclick="return doclink('link-26', 'context', 'link-13');">context</a></tt><tt class="py-op">[</tt><tt class="py-string">"CompilerTable.compilers"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">compilers</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line"> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">        <tt class="py-comment"># For backwards compatibility, we recognize this old</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">        <tt class="py-comment"># context variable here.</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">        <tt class="py-name">interpreter</tt> <tt class="py-op">=</tt> <tt id="link-27" class="py-name"><a title="qm.test.context" class="py-name" href="#" onclick="return doclink('link-27', 'context', 'link-13');">context</a></tt><tt class="py-op">.</tt><tt id="link-28" class="py-name"><a title="qm.test.context.Context.get
+qm.test.result.Result.get
+qm.user.DefaultDatabase.get
+qm.user.XmlDatabase.get
+qm.web.WebRequest.get" class="py-name" href="#" onclick="return doclink('link-28', 'get', 'link-18');">get</a></tt><tt class="py-op">(</tt><tt class="py-string">"CompilerTest.interpreter"</tt><tt class="py-op">)</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">interpreter</tt><tt class="py-op">:</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">            <tt class="py-name">interpreter</tt> <tt class="py-op">=</tt> <tt class="py-name">interpreter</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">            <tt id="link-29" class="py-name" targets="Variable qm.extension.Extension.arguments=qm.extension.Extension-class.html#arguments,Variable qm.test.classes.command.ExecTest.arguments=qm.test.classes.command.ExecTest-class.html#arguments,Variable qm.test.classes.command.ExecTestBase.arguments=qm.test.classes.command.ExecTestBase-class.html#arguments,Variable qm.test.classes.command.ShellCommandTest.arguments=qm.test.classes.command.ShellCommandTest-class.html#arguments,Variable qm.test.classes.command.ShellScriptTest.arguments=qm.test.classes.command.ShellScriptTest-class.html#arguments,Variable qm.test.classes.dejagnu_stream.DejaGNUReader.arguments=qm.test.classes.dejagnu_stream.DejaGNUReader-class.html#arguments,Variable qm.test.classes.dejagnu_stream.DejaGNUStream.arguments=qm.test.classes.dejagnu_stream.DejaGNUStream-class.html#arguments,Variable qm.test.classes.dejagnu_test.DejaGNUTest.arguments=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#arguments,Variable qm.test.classes.explicit_suite.ExplicitSuite.arguments=qm.test.classes.explicit_suite.ExplicitSuite-class.html#arguments,Variable qm.test.classes.file.FileContentsTest.arguments=qm.test.classes.file.FileContentsTest-class.html#arguments,Variable qm.test.classes.pickle_result_stream.PickleResultStream.arguments=qm.test.classes.pickle_result_stream.PickleResultStream-class.html#arguments,Variable qm.test.classes.process_target.ProcessTarget.arguments=qm.test.classes.process_target.ProcessTarget-class.html#arguments,Variable qm.test.classes.python.BaseExceptionTest.arguments=qm.test.classes.python.BaseExceptionTest-class.html#arguments,Variable qm.test.classes.python.ExceptionTest.arguments=qm.test.classes.python.ExceptionTest-class.html#arguments,Variable qm.test.classes.python.ExecTest.arguments=qm.test.classes.python.ExecTest-class.html#arguments,Variable qm.test.classes.python.StringExceptionTest.arguments=qm.test.classes.python.StringExceptionTest-class.html#arguments,Variable qm.test.classes.rsh_target.RSHTarget.arguments=qm.test.classes.rsh_target.RSHTarget-class.html#arguments,Variable qm.test.classes.sql_result_stream.SQLResultReader.arguments=qm.test.classes.sql_result_stream.SQLResultReader-class.html#arguments,Variable qm.test.classes.sql_result_stream._SQLConnected.arguments=qm.test.classes.sql_result_stream._SQLConnected-class.html#arguments,Variable qm.test.classes.temporary.TempDirectoryResource.arguments=qm.test.classes.temporary.TempDirectoryResource-class.html#arguments,Variable qm.test.classes.text_result_stream.TextResultStream.arguments=qm.test.classes.text_result_stream.TextResultStream-class.html#arguments,Variable qm.test.classes.thread_target.ThreadTarget.arguments=qm.test.classes.thread_target.ThreadTarget-class.html#arguments,Variable qm.test.database.Database.arguments=qm.test.database.Database-class.html#arguments,Variable qm.test.file_database.ExtensionDatabase.arguments=qm.test.file_database.ExtensionDatabase-class.html#arguments,Variable qm.test.file_result_reader.FileResultReader.arguments=qm.test.file_result_reader.FileResultReader-class.html#arguments,Variable qm.test.file_result_stream.FileResultStream.arguments=qm.test.file_result_stream.FileResultStream-class.html#arguments,Variable qm.test.runnable.Runnable.arguments=qm.test.runnable.Runnable-class.html#arguments,Variable qm.test.suite.Suite.arguments=qm.test.suite.Suite-class.html#arguments,Variable qm.test.target.Target.arguments=qm.test.target.Target-class.html#arguments,Variable qm.test.test.Test.arguments=qm.test.test.Test-class.html#arguments"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-29', 'arguments', 'link-29');">arguments</a></tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt> <tt id="link-30" class="py-name" targets="Module qm.test.classes.simulator=qm.test.classes.simulator-module.html,Variable qm.test.classes.simulator.Simulator.simulator=qm.test.classes.simulator.Simulator-class.html#simulator"><a title="qm.test.classes.simulator
+qm.test.classes.simulator.Simulator.simulator" class="py-name" href="#" onclick="return doclink('link-30', 'simulator', 'link-30');">simulator</a></tt> <tt class="py-op">:</tt> <tt class="py-name">interpreter</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">                          <tt id="link-31" class="py-name" targets="Variable qm.test.classes.simulator.Simulator.simulator_args=qm.test.classes.simulator.Simulator-class.html#simulator_args"><a title="qm.test.classes.simulator.Simulator.simulator_args" class="py-name" href="#" onclick="return doclink('link-31', 'simulator_args', 'link-31');">simulator_args</a></tt> <tt class="py-op">:</tt> <tt class="py-name">interpreter</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">:</tt><tt class="py-op">]</tt> <tt class="py-op">}</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">            <tt id="link-32" class="py-name" targets="Module qm.test.target=qm.test.target-module.html"><a title="qm.test.target" class="py-name" href="#" onclick="return doclink('link-32', 'target', 'link-32');">target</a></tt> <tt class="py-op">=</tt> <tt id="link-33" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-33', 'qm', 'link-1');">qm</a></tt><tt class="py-op">.</tt><tt id="link-34" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-34', 'test', 'link-3');">test</a></tt><tt class="py-op">.</tt><tt id="link-35" class="py-name" targets="Package qm.test.classes=qm.test.classes-module.html"><a title="qm.test.classes" class="py-name" href="#" onclick="return doclink('link-35', 'classes', 'link-35');">classes</a></tt><tt class="py-op">.</tt><tt id="link-36" class="py-name" targets="Class qm.test.classes.simulator.Simulator=qm.test.classes.simulator.Simulator-class.html"><a title="qm.test.classes.simulator.Simulator" class="py-name" href="#" onclick="return doclink('link-36', 'Simulator', 'link-36');">Simulator</a></tt><tt class="py-op">(</tt><tt id="link-37" class="py-name"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-37', 'arguments', 'link-29');">arguments</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">            <tt class="py-name">target_desc</tt> <tt class="py-op">=</tt> <tt id="link-38" class="py-name"><a title="qm.test.context" class="py-name" href="#" onclick="return doclink('link-38', 'context', 'link-13');">context</a></tt><tt class="py-op">.</tt><tt id="link-39" class="py-name"><a title="qm.test.context.Context.get
+qm.test.result.Result.get
+qm.user.DefaultDatabase.get
+qm.user.XmlDatabase.get
+qm.web.WebRequest.get" class="py-name" href="#" onclick="return doclink('link-39', 'get', 'link-18');">get</a></tt><tt class="py-op">(</tt><tt class="py-string">"CompilerTable.target"</tt><tt class="py-op">)</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">target_desc</tt> <tt class="py-keyword">is</tt> <tt id="link-40" class="py-name" targets="Variable qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#None"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-40', 'None', 'link-40');">None</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">                <tt id="link-41" class="py-name"><a title="qm.test.target" class="py-name" href="#" onclick="return doclink('link-41', 'target', 'link-32');">target</a></tt> <tt class="py-op">=</tt> <tt id="link-42" class="py-name"><a title="qm.test.classes.local_host.LocalHost" class="py-name" href="#" onclick="return doclink('link-42', 'LocalHost', 'link-10');">LocalHost</a></tt><tt class="py-op">(</tt><tt class="py-op">{</tt><tt class="py-op">}</tt><tt class="py-op">)</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">                <tt class="py-name">f</tt> <tt class="py-op">=</tt> <tt class="py-keyword">lambda</tt> <tt id="link-43" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_InSV.sequence_variables.n=qm.external.DocumentTemplate.DT_InSV.sequence_variables-class.html#n,Variable qm.external.DocumentTemplate.pDocumentTemplate.n=qm.external.DocumentTemplate.pDocumentTemplate-module.html#n"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.n
+qm.external.DocumentTemplate.pDocumentTemplate.n" class="py-name" href="#" onclick="return doclink('link-43', 'n', 'link-43');">n</a></tt><tt class="py-op">:</tt> <tt id="link-44" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-44', 'qm', 'link-1');">qm</a></tt><tt class="py-op">.</tt><tt id="link-45" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-45', 'test', 'link-3');">test</a></tt><tt class="py-op">.</tt><tt id="link-46" class="py-name" targets="Module qm.test.base=qm.test.base-module.html"><a title="qm.test.base" class="py-name" href="#" onclick="return doclink('link-46', 'base', 'link-46');">base</a></tt><tt class="py-op">.</tt><tt id="link-47" class="py-name" targets="Function qm.test.base.get_extension_class()=qm.test.base-module.html#get_extension_class"><a title="qm.test.base.get_extension_class" class="py-name" href="#" onclick="return doclink('link-47', 'get_extension_class', 'link-47');">get_extension_class</a></tt><tt class="py-op">(</tt><tt id="link-48" class="py-name"><a title="qm.external.DocumentTemplate.DT_InSV.sequence_variables.n
+qm.external.DocumentTemplate.pDocumentTemplate.n" class="py-name" href="#" onclick="return doclink('link-48', 'n', 'link-43');">n</a></tt><tt class="py-op">,</tt> <tt class="py-string">"host"</tt><tt class="py-op">,</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">                                                               <tt class="py-name">get_database</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">                <tt class="py-name">host_class</tt><tt class="py-op">,</tt> <tt id="link-49" class="py-name"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-49', 'arguments', 'link-29');">arguments</a></tt> \ </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">                    <tt class="py-op">=</tt> <tt id="link-50" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-50', 'qm', 'link-1');">qm</a></tt><tt class="py-op">.</tt><tt id="link-51" class="py-name" targets="Module qm.extension=qm.extension-module.html"><a title="qm.extension" class="py-name" href="#" onclick="return doclink('link-51', 'extension', 'link-51');">extension</a></tt><tt class="py-op">.</tt><tt class="py-name">parse_descriptor</tt><tt class="py-op">(</tt><tt class="py-name">target_desc</tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">f</tt><tt class="py-op">)</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">                <tt id="link-52" class="py-name"><a title="qm.test.target" class="py-name" href="#" onclick="return doclink('link-52', 'target', 'link-32');">target</a></tt> <tt class="py-op">=</tt> <tt class="py-name">host_class</tt><tt class="py-op">(</tt><tt id="link-53" class="py-name"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-53', 'arguments', 'link-29');">arguments</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line">        <tt id="link-54" class="py-name"><a title="qm.test.context" class="py-name" href="#" onclick="return doclink('link-54', 'context', 'link-13');">context</a></tt><tt class="py-op">[</tt><tt class="py-string">"CompilerTable.target"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt id="link-55" class="py-name"><a title="qm.test.target" class="py-name" href="#" onclick="return doclink('link-55', 'target', 'link-32');">target</a></tt> </tt>
+</div></div><a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:47 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

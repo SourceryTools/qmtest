@@ -1,0 +1,77 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>2. Field Classes</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="extending.html" title="Chapter 4. Extending QMTest"><link rel="prev" href="extending.html" title="Chapter 4. Extending QMTest"><link rel="next" href="extending-test-classes.html" title="3. Writing Test Classes"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2. Field Classes</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="extending.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Extending QMTest</th><td width="20%" align="right"> <a accesskey="n" href="extending-test-classes.html">Next</a></td></tr></table><hr></div><div class="section" title="2. Field Classes"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extending-field-classes"></a>2. Field Classes</h2></div></div></div><p><a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/Field.html" target="_top"><code class="classname">Field</code></a> instances are used to represent extension parameters.
+  A <code class="classname">Field</code> can read and write XML
+  representations of values, generate HTML representations of values,
+  or present HTML forms that permit the user to update the value of
+  the field.  There are several classes derived from
+  <code class="classname">Field</code> that you can use in extension classes.
+  If none of those classes satisfy your needs, you can create a new
+  class derived from <code class="classname">Field</code>.</p><p>A <code class="classname">Field</code> may have a title, which is used
+  when presenting the <code class="classname">Field</code> to the user.  The
+  title need not be a valid Python identifier.  For example, the
+  <code class="classname">RSHTarget</code> class has a <code class="varname">host</code>
+  parameter whose title is <code class="literal">Remote Host Name</code>.
+  When accessing an instance of this class, the
+  programmer refers to <code class="literal">self.host</code>.  In the GUI,
+  however, the user will see the value presented as <code class="literal">Remote
+  Host Name</code>.</p><p>A <code class="classname">Field</code> may have an associated
+  description, which is a longer explanation of the
+  <code class="classname">Field</code> and its purpose.  This information is
+  presented to the user by the GUI.</p><p>A <code class="classname">Field</code> may have a default value.  The
+  default value is used if no argument is provided for the
+  field when the extension is initialized.</p><p>This example code from <code class="classname">RSHTarget</code> shows
+  how a <code class="classname">Field</code> is constructed:
+  </p><pre class="programlisting">
+ remote_shell = qm.fields.TextField(
+        title="Remote Shell Program",
+        description="""The path to the remote shell program.
+
+         The name of the program that can be used to create a
+         remote shell.  This program must accept the same command
+         line arguments as the 'rsh' program.""",
+         default_value="ssh")
+
+  </pre><p>See the internal documentation for <a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/Field.html" target="_top"><code class="classname">Field</code></a>
+   for complete interface documentation.</p><div class="section" title="2.1. Built-In Field Classes"><div class="titlepage"><div><div><h3 class="title"><a name="field-classes-list"></a>2.1. Built-In Field Classes</h3></div></div></div><p>QMTest comes with several useful field classes:
+    </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p><a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/IntegerField.html" target="_top"><code class="classname">IntegerField</code></a> stores integers.</p></li><li class="listitem"><p><a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/TextField.html" target="_top"><code class="classname">TextField</code></a> stores strings.</p></li><li class="listitem"><p><a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/EnumerationField.html" target="_top"><code class="classname">EnumerationField</code></a> stores one of a
+      set of (statically determined) possible values.</p></li><li class="listitem"><p><a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/ChoiceField.html" target="_top"><code class="classname">ChoiceField</code></a> stores one of a
+      set of (dynamically determined) possible values.</p></li><li class="listitem"><p><a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/BooleanField.html" target="_top"><code class="classname">BooleanField</code></a> stores a boolean value.</p></li><li class="listitem"><p><a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/TimeField.html" target="_top"><code class="classname">TimeField</code></a> stores a date and time.</p></li><li class="listitem"><p><a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/AttachmentField.html" target="_top"><code class="classname">AttachmentField</code></a> stores arbitrary
+      data.</p></li><li class="listitem"><p><a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/SetField.html" target="_top"><code class="classname">SetField</code></a> stores multiple values of the
+      same type.</p></li><li class="listitem"><p><a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/fields/TupleField.html" target="_top"><code class="classname">TupleField</code></a> stores a fixed number of other fields.</p></li></ul></div><p>
+   </p></div><div class="section" title="2.2. Writing Field Classes"><div class="titlepage"><div><div><h3 class="title"><a name="field-classes-writing"></a>2.2. Writing Field Classes</h3></div></div></div><p>Before writing any code, you should decide what kind of data
+   your field class will store.  For example, will your field class
+   store arbitrary strings?  Or only strings that match a particular
+   regular expression?  Or will your field class store images?  Once
+   you have decided this question, you can write the
+   <code class="function">Validate</code> function for your field class.  This
+   function checks an input value (a Python object) for validity.
+   <code class="function">Validate</code> can return a modified version of the
+   value.  For example, if the field stores strings, you could choose
+   to accept an integer as an input to <code class="function">Validate</code>
+   and convert the integer to a string before returning it.</p><p>The <code class="function">FormatValueAsHtml</code> function produces
+   an HTML representation of the value.  You must define this function
+   so that the GUI can display the value of the field.  The
+   <em class="parameter"><code>style</code></em> parameter indicates how the value
+   should be displayed.  If the style is <code class="literal">new</code> or
+   <code class="literal">edit</code>, the HTML representation returned should be
+   a form that the user can use to set the value.  If the user does
+   not modify the form, <code class="function">ParseFormValue</code> should
+   yield the value that was provided to
+   <code class="function">FormatValueAsHtml</code>.</p><p>The <code class="function">MakeDomNodeForValue</code> and
+   <code class="function">GetValueFromDomNode</code> functions convert values
+   to and from XML format.  The <code class="function">FormatValueAsText</code>
+   and <code class="function">ParseTextValue</code> functions convert to and
+   from plain text.  As with <code class="function">FormatValueAsHtml</code>
+   and <code class="function">ParseFormValue</code>, these pairs of functions
+   should be inverses of one another.</p><p>The <code class="function">ParseTextValue</code>,
+   <code class="function">ParseFormValue</code>, and
+   <code class="function">GetValueFromDomNode</code> functions should use
+   <code class="function">Validate</code> to check that the values produced are
+   permitted by the <code class="classname">Field</code>.  In this way,
+   derived classes that want to restrict the set of valid values, but
+   are otherwise content to use the base class functionality, need
+   only provide a new implementation of
+   <code class="function">Validate</code>.</p><p>All of the functions which read and write
+   <code class="classname">Field</code> values may raise exceptions if they
+   cannot complete their tasks.  The caller of the
+   <code class="classname">Field</code> is responsible for handling the
+   exception if it occurs.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="extending.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="extending.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="extending-test-classes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 4. Extending QMTest </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3. Writing Test Classes</td></tr></table></div></body></html>

@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.external.DocumentTemplate.DT_Var</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.external-module.html">Package&nbsp;external</a> ::
+        <a href="qm.external.DocumentTemplate-module.html">Package&nbsp;DocumentTemplate</a> ::
+        Module&nbsp;DT_Var
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.external.DocumentTemplate.DT_Var-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module DT_Var</h1><p class="nomargin-top"><span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html">source&nbsp;code</a></span></p>
+<pre class="literalblock">
+Variable insertion parameters
+
+    When inserting variables, parameters may be specified to
+    control how the data will be formatted.  In HTML source, the
+    'fmt' parameter is used to specify a C-style or custom format
+    to be used when inserting an object.  In EPFS source, the 'fmt'
+    parameter is only used for custom formats, a C-style format is
+    specified after the closing parenthesis.
+
+    Custom formats
+
+       A custom format is used when outputing user-defined
+       objects.  The value of a custom format is a method name to
+       be invoked on the object being inserted.  The method should
+       return an object that, when converted to a string, yields
+       the desired text.  For example, the DTML code::
+
+          &lt;dtml-var date fmt=DayOfWeek&gt;
+
+       Inserts the result of calling the method 'DayOfWeek' of the
+       object bound to the variable 'date', with no arguments.
+
+       In addition to object methods, serveral additional custom
+       formats are available:
+
+           'whole-dollars' -- Show a numeric value with a dollar symbol.
+
+           'dollars-and-cents' -- Show a numeric value with a dollar
+             symbol and two decimal places.
+
+           'collection-length' -- Get the length of a collection of objects.
+
+       Note that when using the EPFS source format, both a
+       C-style and a custom format may be provided.  In this case,
+       the C-Style format is applied to the result of calling
+       the custom formatting method.
+
+    Null values and missing variables
+
+       In some applications, and especially in database applications,
+       data variables may alternate between &quot;good&quot; and &quot;null&quot; or
+       &quot;missing&quot; values.  A format that is used for good values may be
+       inappropriate for null values.  For this reason, the 'null'
+       parameter can be used to specify text to be used for null
+       values.  Null values are defined as values that:
+
+         - Cannot be formatted with the specified format, and
+
+         - Are either the special Python value 'None' or
+           are false and yield an empty string when converted to
+           a string.
+
+       For example, when showing a monitary value retrieved from a
+       database that is either a number or a missing value, the
+       following variable insertion might be used::
+
+           &lt;dtml-var cost fmt=&quot;$%.2d&quot; null='n/a'&gt;
+
+       Missing values are providing for variables which are not
+       present in the name space, rather than raising an NameError,
+       you could do this:
+
+           &lt;dtml-var cost missing=0&gt;
+
+       and in this case, if cost was missing, it would be set to 0.
+       In the case where you want to deal with both at the same time,
+       you can use 'default':
+
+           &lt;dtml-var description default=''&gt;
+
+       In this case, it would use '' if the value was null or if the
+       variable was missing.
+
+    String manipulation
+
+       A number of special attributes are provided to transform the
+       value after formatting has been applied.  These parameters
+       are supplied without arguments.
+
+       'lower' --  cause all upper-case letters to be converted to lower case.
+
+       'upper' --  cause all upper-case letters to be converted to lower case.
+
+       'capitalize' -- cause the first character of the inserted value
+       to be converted to upper case.
+
+       'spacify' -- cause underscores in the inserted value to be
+       converted to spaces.
+
+       'thousands_commas' -- cause commas to be inserted every three
+       digits to the left of a decimal point in values containing
+       numbers.  For example, the value, &quot;12000 widgets&quot; becomes
+       &quot;12,000 widgets&quot;.
+
+       'html_quote' -- convert characters that have special meaning
+       in HTML to HTML character entities.
+
+       'url_quote' -- convert characters that have special meaning
+       in URLS to HTML character entities using decimal values.
+
+       'url_quote_plus' -- like url_quote but also replace blank
+       space characters with '+'. This is needed for building
+       query strings in some cases.
+
+       'sql_quote' -- Convert single quotes to pairs of single
+       quotes. This is needed to safely include values in
+       Standard Query Language (SQL) strings.
+
+       'newline_to_br' -- Convert newlines and carriage-return and
+       newline combinations to break tags.
+
+       'url' -- Get the absolute URL of the object by calling it's
+       'absolute_url' method, if it has one.
+
+    Truncation
+
+       The attributes 'size' and 'etc'  can be used to truncate long
+       strings.  If the 'size' attribute is specified, the string to
+       be inserted is truncated at the given length.  If a space
+       occurs in the second half of the truncated string, then the
+       string is further truncated to the right-most space.  After
+       truncation, the value given for the 'etc' attribute is added to
+       the string.  If the 'etc' attribute is not provided, then '...'
+       is used.  For example, if the value of spam is
+       '&quot;blah blah blah blah&quot;', then the tag       
+       '&lt;!--#var spam size=10--&gt;' inserts '&quot;blah blah ...&quot;'.
+
+
+Evaluating expressions without rendering results
+
+   A 'call' tag is provided for evaluating named objects or expressions
+   without rendering the result.
+
+</pre>
+
+<hr />
+<div class="fields">      <p><strong>Version:</strong>
+        1069
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_Var.Var-class.html" class="summary-name">Var</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_Var.Call-class.html" class="summary-name">Call</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_Var.Comment-class.html" class="summary-name">Comment</a><br />
+      Comments
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="url_quote"></a><span class="summary-sig-name">url_quote</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#url_quote">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="url_quote_plus"></a><span class="summary-sig-name">url_quote_plus</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#url_quote_plus">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="url_unquote"></a><span class="summary-sig-name">url_unquote</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#url_unquote">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="url_unquote_plus"></a><span class="summary-sig-name">url_unquote_plus</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#url_unquote_plus">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="newline_to_br"></a><span class="summary-sig-name">newline_to_br</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#newline_to_br">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="whole_dollars"></a><span class="summary-sig-name">whole_dollars</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#whole_dollars">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="dollars_and_cents"></a><span class="summary-sig-name">dollars_and_cents</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#dollars_and_cents">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="thousands_commas"></a><span class="summary-sig-name">thousands_commas</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>,
+        <span class="summary-sig-arg">thou</span>=<span class="summary-sig-default">&lt;built-in method search of _sre.SRE_Pattern object at 0x16c5f70&gt;</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#thousands_commas">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="whole_dollars_with_commas"></a><span class="summary-sig-name">whole_dollars_with_commas</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#whole_dollars_with_commas">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="dollars_and_cents_with_commas"></a><span class="summary-sig-name">dollars_and_cents_with_commas</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#dollars_and_cents_with_commas">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="len_format"></a><span class="summary-sig-name">len_format</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#len_format">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="len_comma"></a><span class="summary-sig-name">len_comma</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#len_comma">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="structured_text"></a><span class="summary-sig-name">structured_text</span>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#structured_text">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.external.DocumentTemplate.DT_Var-module.html#sql_quote" class="summary-sig-name">sql_quote</a>(<span class="summary-sig-arg">v</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">md</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span><br />
+      Quote single quotes in a string by doubling them.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#sql_quote">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="spacify"></a><span class="summary-sig-name">spacify</span>(<span class="summary-sig-arg">val</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#spacify">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_Var-module.html#__doc__" class="summary-name">__doc__</a> = <code title="'''Variable insertion parameters
+
+    When inserting variables, parameters may be specified to
+    control how the data will be formatted.  In HTML source, the
+    'fmt' parameter is used to specify a C-style or custom format
+    to be used when inserting an object.  In EPFS source, the 'fmt'
+    parameter is only used for custom formats, a C-style format is
+    specified after the closing parenthesis.
+...">'''Variable insertion paramet<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__rcs_id__"></a><span class="summary-name">__rcs_id__</span> = <code title="'$Id: DT_Var.py 1069 2008-11-13 21:55:43Z stefan $'"><code class="variable-quote">'</code><code class="variable-string">$Id: DT_Var.py 1069 2008-11-13 21:55:43Z stefan $</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="StructuredText"></a><span class="summary-name">StructuredText</span> = <code title="None">None</code><br />
+      hash(x)
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_Var-module.html#special_formats" class="summary-name">special_formats</a> = <code title="{'whole-dollars': whole_dollars, 'dollars-and-cents': dollars_and_cent\
+s, 'collection-length': len_format, 'structured-text': structured_text\
+, 'sql-quote': sql_quote, 'html-quote': html_quote, 'url-quote': url_q\
+uote, 'url-quote-plus': url_quote_plus, 'url-unquote': url_unquote, 'u\
+rl-unquote-plus': url_unquote_plus, 'multi-line': newline_to_br, 'comm\
+a-numeric': thousands_commas, 'dollars-with-commas': whole_dollars_wit\
+h_commas, 'dollars-and-cents-with-commas': dollars_and_cents_with_comm\
+as,}">{'whole-dollars': whole_dollars, 'dollars-an<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_Var-module.html#modifiers" class="summary-name">modifiers</a> = <code title="map(lambda f:(f.__name__, f), modifiers)"><code class="variable-group">[</code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">html_quote</code><code class="variable-quote">'</code><code class="variable-op">, </code>&lt;function html_quote at 0x1652398&gt;<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'qm.external.DocumentTemplate'"><code class="variable-quote">'</code><code class="variable-string">qm.external.DocumentTemplate</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="sql_quote"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">sql_quote</span>(<span class="sig-arg">v</span>,
+        <span class="sig-arg">name</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">(Unknown name)</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">md</span>=<span class="sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.external.DocumentTemplate.DT_Var-pysrc.html#sql_quote">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Quote single quotes in a string by doubling them.</p>
+  <p>This is needed to securely insert values into sql string literals in 
+  templates that generate sql.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__doc__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">__doc__</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+'''Variable insertion parameters
+
+    When inserting variables, parameters may be specified to
+    control how the data will be formatted.  In HTML source, the
+    'fmt' parameter is used to specify a C-style or custom format
+    to be used when inserting an object.  In EPFS source, the 'fmt'
+    parameter is only used for custom formats, a C-style format is
+    specified after the closing parenthesis.
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="special_formats"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">special_formats</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+{'whole-dollars': whole_dollars, 'dollars-and-cents': dollars_and_cent<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+s, 'collection-length': len_format, 'structured-text': structured_text<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+, 'sql-quote': sql_quote, 'html-quote': html_quote, 'url-quote': url_q<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+uote, 'url-quote-plus': url_quote_plus, 'url-unquote': url_unquote, 'u<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+rl-unquote-plus': url_unquote_plus, 'multi-line': newline_to_br, 'comm<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+a-numeric': thousands_commas, 'dollars-with-commas': whole_dollars_wit<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+h_commas, 'dollars-and-cents-with-commas': dollars_and_cents_with_comm<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+as,}
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="modifiers"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">modifiers</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+map(lambda f:(f.__name__, f), modifiers)
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:39 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

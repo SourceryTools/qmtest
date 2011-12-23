@@ -1,0 +1,1212 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>random.Random</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        random ::
+        Random ::
+        Class&nbsp;Random
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="random.Random-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Random</h1><p class="nomargin-top"><span class="codelink"><a href="random-pysrc.html#Random">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+    object --+    
+             |    
+_random.Random --+
+                 |
+                <strong class="uidshort">Random</strong>
+</pre>
+
+<dl><dt>Known Subclasses:</dt>
+<dd>
+      <ul class="subclass-list">
+<li><a href="random.SystemRandom-class.html">SystemRandom</a></li><li>, <a href="random.WichmannHill-class.html">WichmannHill</a></li>  </ul>
+</dd></dl>
+
+<hr />
+<p>Random number generator base class used by bound module functions.</p>
+  <p>Used to instantiate instances of Random to get generators that don't 
+  share state.  Especially useful for multi-threaded programs, creating a 
+  different instance of Random for each thread, and using the jumpahead() 
+  method to ensure that the generated sequences seen by each thread don't 
+  overlap.</p>
+  <p>Class Random can also be subclassed if you want to use a different 
+  basic generator of your own devising: in that case, override the 
+  following methods: random(), seed(), getstate(), setstate() and 
+  jumpahead(). Optionally, implement a getrandbits() method so that 
+  randrange() can cover arbitrarily large ranges.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__getstate__"></a><span class="summary-sig-name">__getstate__</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.__getstate__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">x</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Initialize an instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#__reduce__" class="summary-sig-name">__reduce__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      helper for pickle</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.__reduce__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__setstate__"></a><span class="summary-sig-name">__setstate__</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">state</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.__setstate__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#_randbelow" class="summary-sig-name" onclick="show_private();">_randbelow</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">n</span>,
+        <span class="summary-sig-arg">_log</span>=<span class="summary-sig-default">&lt;built-in function log&gt;</span>,
+        <span class="summary-sig-arg">int</span>=<span class="summary-sig-default">&lt;type 'int'&gt;</span>,
+        <span class="summary-sig-arg">_maxwidth</span>=<span class="summary-sig-default">9007199254740992</span>,
+        <span class="summary-sig-arg">_Method</span>=<span class="summary-sig-default">&lt;type 'instancemethod'&gt;</span>,
+        <span class="summary-sig-arg">_BuiltinMethod</span>=<span class="summary-sig-default">&lt;type 'builtin_function_or_method'&gt;</span>)</span><br />
+      Return a random int in the range [0,n)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random._randbelow">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#betavariate" class="summary-sig-name">betavariate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">alpha</span>,
+        <span class="summary-sig-arg">beta</span>)</span><br />
+      Beta distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.betavariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="choice"></a><span class="summary-sig-name">choice</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">seq</span>)</span><br />
+      Choose a random element from a non-empty sequence.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.choice">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#expovariate" class="summary-sig-name">expovariate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">lambd</span>)</span><br />
+      Exponential distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.expovariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#gammavariate" class="summary-sig-name">gammavariate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">alpha</span>,
+        <span class="summary-sig-arg">beta</span>)</span><br />
+      Gamma distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.gammavariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#gauss" class="summary-sig-name">gauss</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">mu</span>,
+        <span class="summary-sig-arg">sigma</span>)</span><br />
+      Gaussian distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.gauss">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">tuple containing the current state.</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#getstate" class="summary-sig-name">getstate</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return internal state; can be passed to setstate() later.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.getstate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">None</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#jumpahead" class="summary-sig-name">jumpahead</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">n</span>)</span><br />
+      Change the internal state to one that is likely far away from the 
+      current state.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.jumpahead">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#lognormvariate" class="summary-sig-name">lognormvariate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">mu</span>,
+        <span class="summary-sig-arg">sigma</span>)</span><br />
+      Log normal distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.lognormvariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#normalvariate" class="summary-sig-name">normalvariate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">mu</span>,
+        <span class="summary-sig-arg">sigma</span>)</span><br />
+      Normal distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.normalvariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#paretovariate" class="summary-sig-name">paretovariate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">alpha</span>)</span><br />
+      Pareto distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.paretovariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="randint"></a><span class="summary-sig-name">randint</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">a</span>,
+        <span class="summary-sig-arg">b</span>)</span><br />
+      Return random integer in range [a, b], including both end points.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.randint">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#randrange" class="summary-sig-name">randrange</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">start</span>,
+        <span class="summary-sig-arg">stop</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">step</span>=<span class="summary-sig-default">1</span>,
+        <span class="summary-sig-arg">int</span>=<span class="summary-sig-default">&lt;type 'int'&gt;</span>,
+        <span class="summary-sig-arg">default</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">maxwidth</span>=<span class="summary-sig-default">9007199254740992</span>)</span><br />
+      Choose a random item from range(start, stop[, step]).</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.randrange">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#sample" class="summary-sig-name">sample</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">population</span>,
+        <span class="summary-sig-arg">k</span>)</span><br />
+      Chooses k unique random elements from a population sequence.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.sample">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">None</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#seed" class="summary-sig-name">seed</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">a</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Initialize internal state from hashable object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.seed">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">None</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#setstate" class="summary-sig-name">setstate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">state</span>)</span><br />
+      Restore internal state from object returned by getstate().</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.setstate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#shuffle" class="summary-sig-name">shuffle</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">x</span>,
+        <span class="summary-sig-arg">random</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">int</span>=<span class="summary-sig-default">&lt;type 'int'&gt;</span>)</span><br />
+      x, random=random.random -&gt; shuffle list x in place; return None.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.shuffle">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#triangular" class="summary-sig-name">triangular</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">low</span>=<span class="summary-sig-default">0.0</span>,
+        <span class="summary-sig-arg">high</span>=<span class="summary-sig-default">1.0</span>,
+        <span class="summary-sig-arg">mode</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Triangular distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.triangular">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="uniform"></a><span class="summary-sig-name">uniform</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">a</span>,
+        <span class="summary-sig-arg">b</span>)</span><br />
+      Get a random number in the range [a, b) or [a, b] depending on 
+      rounding.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.uniform">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#vonmisesvariate" class="summary-sig-name">vonmisesvariate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">mu</span>,
+        <span class="summary-sig-arg">kappa</span>)</span><br />
+      Circular data distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.vonmisesvariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="random.Random-class.html#weibullvariate" class="summary-sig-name">weibullvariate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">alpha</span>,
+        <span class="summary-sig-arg">beta</span>)</span><br />
+      Weibull distribution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="random-pysrc.html#Random.weibullvariate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>_random.Random</code></b>:
+      <code>__getattribute__</code>,
+      <code>__new__</code>,
+      <code>getrandbits</code>,
+      <code>random</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__hash__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VERSION"></a><span class="summary-name">VERSION</span> = <code title="3">3</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">x</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize an instance.</p>
+  <p>Optional argument x controls seeding, as for Random.seed().</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__reduce__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__reduce__</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.__reduce__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>helper for pickle</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__reduce__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_randbelow"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_randbelow</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">n</span>,
+        <span class="sig-arg">_log</span>=<span class="sig-default">&lt;built-in function log&gt;</span>,
+        <span class="sig-arg">int</span>=<span class="sig-default">&lt;type 'int'&gt;</span>,
+        <span class="sig-arg">_maxwidth</span>=<span class="sig-default">9007199254740992</span>,
+        <span class="sig-arg">_Method</span>=<span class="sig-default">&lt;type 'instancemethod'&gt;</span>,
+        <span class="sig-arg">_BuiltinMethod</span>=<span class="sig-default">&lt;type 'builtin_function_or_method'&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random._randbelow">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a random int in the range [0,n)</p>
+  <p>Handles the case where n has more bits than returned by a single call 
+  to the underlying generator.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="betavariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">betavariate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">alpha</span>,
+        <span class="sig-arg">beta</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.betavariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Beta distribution.</p>
+  <p>Conditions on the parameters are alpha &gt; 0 and beta &gt; 0. 
+  Returned values range between 0 and 1.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="expovariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">expovariate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">lambd</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.expovariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Exponential distribution.</p>
+  <p>lambd is 1.0 divided by the desired mean.  It should be nonzero.  (The
+  parameter would be called &quot;lambda&quot;, but that is a reserved word
+  in Python.)  Returned values range from 0 to positive infinity if lambd 
+  is positive, and from negative infinity to 0 if lambd is negative.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="gammavariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">gammavariate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">alpha</span>,
+        <span class="sig-arg">beta</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.gammavariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Gamma distribution.  Not the gamma function!
+
+Conditions on the parameters are alpha &gt; 0 and beta &gt; 0.
+
+The probability distribution function is:
+
+            x ** (alpha - 1) * math.exp(-x / beta)
+  pdf(x) =  --------------------------------------
+              math.gamma(alpha) * beta ** alpha
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="gauss"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">gauss</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">mu</span>,
+        <span class="sig-arg">sigma</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.gauss">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gaussian distribution.</p>
+  <p>mu is the mean, and sigma is the standard deviation.  This is slightly
+  faster than the normalvariate() function.</p>
+  <p>Not thread-safe without a lock around calls.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="getstate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getstate</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.getstate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return internal state; can be passed to setstate() later.</p>
+  <dl class="fields">
+    <dt>Returns: tuple containing the current state.</dt>
+    <dt>Overrides:
+        _random.Random.getstate
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="jumpahead"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">jumpahead</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">n</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.jumpahead">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Change the internal state to one that is likely far away from the 
+  current state.  This method will not be in Py3.x, so it is better to 
+  simply reseed.</p>
+  <dl class="fields">
+    <dt>Returns: None</dt>
+    <dt>Overrides:
+        _random.Random.jumpahead
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="lognormvariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">lognormvariate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">mu</span>,
+        <span class="sig-arg">sigma</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.lognormvariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Log normal distribution.</p>
+  <p>If you take the natural logarithm of this distribution, you'll get a 
+  normal distribution with mean mu and standard deviation sigma. mu can 
+  have any value, and sigma must be greater than zero.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="normalvariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">normalvariate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">mu</span>,
+        <span class="sig-arg">sigma</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.normalvariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Normal distribution.</p>
+  <p>mu is the mean, and sigma is the standard deviation.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="paretovariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">paretovariate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">alpha</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.paretovariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Pareto distribution.  alpha is the shape parameter.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="randrange"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">randrange</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">start</span>,
+        <span class="sig-arg">stop</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">step</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">int</span>=<span class="sig-default">&lt;type 'int'&gt;</span>,
+        <span class="sig-arg">default</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">maxwidth</span>=<span class="sig-default">9007199254740992</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.randrange">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Choose a random item from range(start, stop[, step]).</p>
+  <p>This fixes the problem with randint() which includes the endpoint; in 
+  Python this is usually not what you want. Do not supply the 'int', 
+  'default', and 'maxwidth' arguments.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="sample"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">sample</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">population</span>,
+        <span class="sig-arg">k</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.sample">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Chooses k unique random elements from a population sequence.</p>
+  <p>Returns a new list containing elements from the population while 
+  leaving the original population unchanged.  The resulting list is in 
+  selection order so that all sub-slices will also be valid random samples.
+  This allows raffle winners (the sample) to be partitioned into grand 
+  prize and second place winners (the subslices).</p>
+  <p>Members of the population need not be hashable or unique.  If the 
+  population contains repeats, then each occurrence is a possible selection
+  in the sample.</p>
+  <p>To choose a sample in a range of integers, use xrange as an argument. 
+  This is especially fast and space efficient for sampling from a large 
+  population:   sample(xrange(10000000), 60)</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="seed"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">seed</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">a</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.seed">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize internal state from hashable object.</p>
+  <p>None or no argument seeds from current time or from an operating 
+  system specific randomness source if available.</p>
+  <p>If a is not None or an int or long, hash(a) is used instead.</p>
+  <dl class="fields">
+    <dt>Returns: None</dt>
+    <dt>Overrides:
+        _random.Random.seed
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="setstate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setstate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">state</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.setstate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Restore internal state from object returned by getstate().</p>
+  <dl class="fields">
+    <dt>Returns: None</dt>
+    <dt>Overrides:
+        _random.Random.setstate
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="shuffle"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">shuffle</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">x</span>,
+        <span class="sig-arg">random</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">int</span>=<span class="sig-default">&lt;type 'int'&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.shuffle">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>x, random=random.random -&gt; shuffle list x in place; return 
+  None.</p>
+  <p>Optional arg random is a 0-argument function returning a random float 
+  in [0.0, 1.0); by default, the standard random.random.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="triangular"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">triangular</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">low</span>=<span class="sig-default">0.0</span>,
+        <span class="sig-arg">high</span>=<span class="sig-default">1.0</span>,
+        <span class="sig-arg">mode</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.triangular">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Triangular distribution.</p>
+  <p>Continuous distribution bounded by given lower and upper limits, and 
+  having a given mode value in-between.</p>
+  <p>http://en.wikipedia.org/wiki/Triangular_distribution</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="vonmisesvariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">vonmisesvariate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">mu</span>,
+        <span class="sig-arg">kappa</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.vonmisesvariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Circular data distribution.</p>
+  <p>mu is the mean angle, expressed in radians between 0 and 2*pi, and 
+  kappa is the concentration parameter, which must be greater than or equal
+  to zero.  If kappa is equal to zero, this distribution reduces to a 
+  uniform random angle over the range 0 to 2*pi.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="weibullvariate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">weibullvariate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">alpha</span>,
+        <span class="sig-arg">beta</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="random-pysrc.html#Random.weibullvariate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Weibull distribution.</p>
+  <p>alpha is the scale parameter and beta is the shape parameter.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:42 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

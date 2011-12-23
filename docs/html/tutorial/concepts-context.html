@@ -1,0 +1,33 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>6. Context</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="concepts.html" title="Chapter 1. QMTest Concepts"><link rel="prev" href="concepts-expectation-database.html" title="5. Expectation Database"><link rel="next" href="concepts-resources.html" title="7. Resources"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6. Context</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="concepts-expectation-database.html">Prev</a> </td><th width="60%" align="center">Chapter 1. <span class="application">QMTest</span> Concepts</th><td width="20%" align="right"> <a accesskey="n" href="concepts-resources.html">Next</a></td></tr></table><hr></div><div class="section" title="6. Context"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="concepts-context"></a>6. Context</h2></div></div></div><p>When you create a test, you choose arguments for the test. The test
+    class uses this information to run the test. However, the test class may
+    sometimes need information that is not available when the test is created.
+    For example, if you are writing compiler tests to verify conformance with
+    the C programming language specification, you do not know the location of
+    the C compiler itself. The C compiler may be installed in different
+    locations on different machines.</p><p>A <em class="firstterm"><a name="def-context"></a>context</em> gives users a way
+    of conveying this kind of information to tests. The context is a set of
+    key/value pairs. The keys are always strings. The values of all context
+    properties provided by the user are strings. In general, all tests in a
+    given use of <span class="application">QMTest</span> will have the same context.
+    However, when a resource is set up, it may place additional information in
+    the context of those tests that depend upon it. The values inserted by the
+    resource may have any type, so long as they can be "pickled" by
+    Python.</p><p>All context properties whose names begin with
+    "<code class="literal">qmtest.</code>" are reserved for use by
+    <span class="application">QMTest</span>. The values inserted by
+    <span class="application">QMTest</span> may have any type. Test and resource
+    classes should not depend on the presence or absence of these
+    properites.</p><p>To understand how a context is used during the execution of a test let us
+      start by creating a somewhat less trivial test:</p><pre class="screen">
+<code class="prompt">&gt; </code><strong class="userinput"><code>qmtest create --id compile test 
+    compilation_test.CompilationTest(executable="compile", source_files="['/path/to/compile.cc']")"</code></strong>
+    </pre><p>When run, this test will compile <code class="filename">/path/to/compile.cc</code> and run 
+      the resulting executable. The test passes if compilation succeeds, and the program
+      exit status indicates success.</p><p>The <code class="classname">compilation_test.CompilationTest</code> test class requires that the
+    compiler be available in the context with the key <code class="varname">CompilationTest.compiler_path</code>.
+    You can provide a context variable to QMTest either through a context file or on the
+    command-line using the -c option. For example:</p><pre class="screen">
+<code class="prompt">&gt; </code><strong class="userinput"><code>qmtest run -c CompilationTest.compiler_path=g++ compile</code></strong>
+    </pre><p>will run the test using the <span class="command"><strong>g++</strong></span> compiler, while:</p><pre class="screen">
+<code class="prompt">&gt; </code><strong class="userinput"><code>qmtest run -c CompilationTest.compiler_path=/bin/CC compile</code></strong>
+    </pre><p>will run the test with the <span class="command"><strong>/bin/CC</strong></span> compiler.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="concepts-expectation-database.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="concepts.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="concepts-resources.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">5. Expectation Database </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 7. Resources</td></tr></table></div></body></html>

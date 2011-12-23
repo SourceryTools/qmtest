@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.external.DocumentTemplate.DT_In</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.external-module.html">Package&nbsp;external</a> ::
+        <a href="qm.external.DocumentTemplate-module.html">Package&nbsp;DocumentTemplate</a> ::
+        Module&nbsp;DT_In
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.external.DocumentTemplate.DT_In-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module DT_In</h1><p class="nomargin-top"><span class="codelink"><a href="qm.external.DocumentTemplate.DT_In-pysrc.html">source&nbsp;code</a></span></p>
+<pre class="literalblock">
+Sequence insertion
+
+   A sequence may be inserted using an 'in' command.  The 'in'
+   command specifies the name of a sequence object and text to
+   be inserted for each element in the sequence.
+
+   The EPFS syntax for the in command is::
+
+      %(in name)[
+           text
+      %(in name)]
+
+   The HTML syntax for the in command is::
+
+      &lt;!--#in name--&gt;
+           text
+      &lt;!--#/in name--&gt;
+
+  See the example below that shows how 'if', 'else', and 'in' commands
+  may be combined to display a possibly empty list of objects.
+
+  The text included within an 'in' command will be refered to
+  as an 'in' block.
+
+Synopsis
+
+  If the variable 'sequence' exists as a sequence, a simple case
+  of the 'in' tag is used as follows::
+
+     &lt;!--#in sequence--&gt;some markup&lt;!--#/in--&gt;
+
+  A more complete case is used as follows::
+
+    &lt;!--#in sequence sort=age--&gt;
+      &lt;!--#var sequence-number--&gt;) &lt;!--#var age--&gt;
+    &lt;!--#/in--&gt;
+
+Attributes
+
+  sort -- Define the sort order for sequence items.  Parameter to the
+  attribute is either a sort option, or list of sort options separated
+  by comma.  Every sort option consists of variable name, optional
+  comparison function name (default is cmp) and optional sort order
+  (default is asc).
+      Examples: sort=&quot;date&quot; or sort=&quot;date,time&quot; or
+  sort=&quot;title/locale,date/cmp/desc&quot;. If you want to specify sort order,
+  you cannot omit the function; use cmp for standard comparison.
+      Few predefined comparison functions available: standard cmp,
+  nocase (ignore string case), strcoll (alias &quot;locale&quot;),
+  strcoll_nocase (alias &quot;locale_nocase&quot;). Locale functions are
+  available only if module locale is already imported (you started Zope
+  with -L locale).
+
+  sort_expr -- The &quot;sort&quot; attribute accepts only static list of
+  sort options. This calculated parameter allows you to calculate the
+  list of sort options on the fly.
+
+  sort_expr -- This allows an expression to control sort order.
+
+  reverse -- Reverse the sequence (may be combined with sort).  Note
+  that this can cause a huge memory use in lazy activation instances.
+
+  reverse_expr -- This calculated parameter allows you to calculate the
+  need of reversing on the fly.
+
+  Within an 'in' block, variables are substituted from the
+  elements of the iteration unless the 'no_push_item' optional
+  is specified.  The elements may be either instance or mapping
+  objects.  In addition, the variables:
+
+     'sequence-item' -- The element.
+
+     'sequence-var-nnn' -- The value of a specific named attribute
+       of the item, where 'nnn' is the name.  For example, to get
+       an items 'title' attribute, use 'sequence-var-title'.  This
+       construct is most useful in an 'if' tag to test whether an
+       attribute is present, because the attribute lookup will be
+       extended to the full document template namespace.
+
+     'sequence-key' -- The key associated with the element in an
+       items list. See below.
+
+     'sequence-index' -- The index, starting from 0, of the
+       element within the sequence.
+
+     'sequence-number' -- The index, starting from 1, of the
+       element within the sequence.
+
+     'sequence-letter' -- The index, starting from 'a', of the
+       element within the sequence.
+
+     'sequence-Letter' -- The index, starting from 'A', of the
+       element within the sequence.
+
+     'sequence-roman' -- The index, starting from 'i', of the
+       element within the sequence.
+
+     'sequence-Roman' -- The index, starting from 'I', of the
+       element within the sequence.
+
+     'sequence-start' -- A variable that is true if the element
+       being displayed is the first of the displayed elements,
+       and false otherwise.
+
+     'sequence-end' -- A variable that is true if the element
+       being displayed is the last of the displayed elements,
+       and false otherwise.
+
+  are defined for each element.
+
+  Normally, 'in' blocks are used to iterate over sequences of
+  instances.  If the optional parameter 'mapping' is specified
+  after the sequence name, then the elements of the sequence
+  will be treated as mapping objects.
+
+  An 'in' command may be used to iterate over a sequence of
+  dictionary items.  If the elements of the iteration are
+  two-element tuples, then then the template code given in the
+  'in' block will be applied to the second element of each
+  tuple and may use a variable, 'sequence-key' to access the
+  first element in each tuple.
+
+Batch sequence insertion
+
+  When displaying a large number of objects, it is sometimes
+  desirable to display just a sub-sequence of the data.
+  An 'in' command may have optional parameters,
+  as in::
+
+      &lt;!--#in values start=start_var size=7--&gt;
+
+  The parameter values may be either integer literals or
+  variable names.
+
+  Up to five parameters may be set:
+
+      'start'   -- The number of the first element to be shown,
+                   where elements are numbered from 1.
+
+      'end'     -- The number of the last element to be shown,
+                   where elements are numbered from 1.
+
+      'size'    -- The desired number of elements to be shown at
+                   once.
+
+      'orphan'  -- The desired minimum number of objects to be
+                   displayed.  The default value for this
+                   parameter is 3.
+
+      'overlap' -- The desired overlap between batches. The
+                   default is no overlap.
+
+  Typically, only 'start' and 'size' will be specified.
+
+  When batch insertion is used, several additional variables are
+  defined for use within the sequence insertion text:
+
+      'sequence-query' -- The original query string given in a get
+         request with the form variable named in the 'start'
+         attribute removed.  This is extremely useful when
+         building URLs to fetch another batch.
+
+         To see how this is used, consider the following example::
+
+             &lt;!--#in search_results size=20 start=batch_start--&gt;
+
+                ... display rows
+
+                &lt;!--#if sequence-end--&gt; &lt;!--#if next-sequence--&gt;
+                  &lt;a href=&quot;&lt;!--#var URL--&gt;/&lt;!--#var sequence-query
+                      --&gt;&amp;batch_start=&lt;!--#var
+                      next-sequence-start-number--&gt;&quot;&gt;
+                  (Next &lt;!--#var next-sequence-size--&gt; results)
+                  &lt;/a&gt;
+                &lt;!--#/if--&gt; &lt;!--#/if--&gt;
+
+             &lt;!--#/in--&gt;
+
+         If the original URL is: 'foo/bar?x=1&amp;y=2', then the
+         rendered text (after row data are displayed) will be::
+
+                  &lt;a href=&quot;foo/bar?x=1&amp;amp;y=2&amp;amp;batch_start=20&quot;&gt;
+                  (Next 20 results)
+                  &lt;/a&gt;
+
+         If the original URL is: 'foo/bar?batch_start=10&amp;x=1&amp;y=2',
+         then the rendered text (after row data are displayed)
+         will be::
+
+                  &lt;a href=&quot;foo/bar?x=1&amp;amp;y=2&amp;amp;batch_start=30&quot;&gt;
+                  (Next 20 results)
+                  &lt;/a&gt;
+
+      'sequence-step-start-index' -- The index, starting from 0,
+         of the start of the current batch.
+
+      'sequence-step-end-index' -- The index, starting from 0, of
+         the end of the current batch.
+
+      'sequence-step-size' -- The batch size used.
+
+      'previous-sequence' -- This variable will be true when the
+         first element is displayed and when the first element
+         displayed is not the first element in the sequence.
+
+      'previous-sequence-start-index' -- The index, starting from
+         0, of the start of the batch previous to the current
+         batch.
+
+      'previous-sequence-end-index' -- The index, starting from
+         0, of the end of the batch previous to the current
+         batch.
+
+      'previous-sequence-size' -- The size of the batch previous to
+         the current batch.
+
+      'previous-batches' -- A sequence of mapping objects
+         containing information about all of the batches prior
+         to the batch being displayed.
+
+         Each of these mapping objects include the following
+         variables:
+
+            batch-start-index -- The index, starting from
+               0, of the beginning of the batch.
+
+            batch-end-index -- The index, starting from
+               0, of the end of the batch.
+
+            batch-size -- The size of the batch.
+
+      'next-sequence' -- This variable will be true when the last
+         element is displayed and when the last element
+         displayed is not the last element in the sequence.
+
+      'next-sequence-start-index' -- The index, starting from
+         0, of the start of the batch after the current
+         batch.
+
+      'next-sequence-end-index' -- The index, starting from
+         0, of the end of the batch after the current
+         batch.
+
+      'next-sequence-size' -- The size of the batch after
+         the current batch.
+
+      'next-batches' -- A sequence of mapping objects
+         containing information about all of the batches after
+         the batch being displayed.
+
+         Each of these mapping objects include the following
+         variables:
+
+            batch-start-index -- The index, starting from
+               0, of the beginning of the batch.
+
+            batch-end-index -- The index, starting from
+               0, of the end of the batch.
+
+            batch-size -- The size of the batch.
+
+  For each of the variables listed above with names ending in
+  &quot;-index&quot;, there are variables with names ending in &quot;-number&quot;,
+  &quot;-roman&quot;, &quot;-Roman&quot;, &quot;-letter&quot;, and &quot;-Letter&quot; that are indexed
+  from 1, &quot;i&quot;, &quot;I&quot;, &quot;a&quot;, and &quot;A&quot;, respectively.  In addition,
+  for every one of these variables there are variables with
+  names ending in &quot;-var-xxx&quot;, where &quot;xxx&quot; is an element
+  attribute name or key.
+
+Summary statistics
+
+  When performing sequence insertion, special variables may be
+  used to obtain summary statistics.  To obtain a summary
+  statistic for a variable, use the variable name:
+  'statistic-name', where 'statistic' is a statistic name and
+  'name' is the name of a data variable.
+
+  Currently supported statistic names are:
+
+    total -- The total of numeric values.
+
+    count -- The total number of non-missing values.
+
+    min -- The minimum of non-missing values.
+
+    max -- The maximum of non-missing values.
+
+    median -- The median of non-missing values.
+
+    mean -- The mean of numeric values values.
+
+    variance -- The variance of numeric values computed with a
+      degrees of freedom equal to the count - 1.
+
+    variance-n -- The variance of numeric values computed with a
+      degrees of freedom equal to the count.
+
+    standard-deviation -- The standard deviation of numeric values
+      computed with a degrees of freedom equal to the count - 1.
+
+    standard-deviation-n -- The standard deviation of numeric
+      values computed with a degrees of freedom equal to the count.
+
+  Missing values are either 'None' or the attribute 'Value'
+  of the module 'Missing', if present.
+
+'else' continuation tag within in
+
+  An 'else' tag may be used as a continuation tag in the 'in' tag.
+  The source after the 'else' tag is inserted if:
+
+    - The sequence given to the 'in' tag is of zero length, or
+
+    - The 'previous' attribute was used and their are no
+      previous batches, or
+
+    - The 'next' attribute was used and their are no
+      next batches, or
+
+</pre>
+
+<hr />
+<div class="fields">      <p><strong>Version:</strong>
+        1069
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_In.InFactory-class.html" class="summary-name">InFactory</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.external.DocumentTemplate.DT_In.InClass-class.html" class="summary-name">InClass</a>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">True if D has a key k, else False</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="basic_type"></a><span class="summary-sig-name">basic_type</span>(<span class="summary-sig-arg">D</span>,
+        <span class="summary-sig-arg">k</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_In-pysrc.html#basic_type">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="int_param"></a><span class="summary-sig-name">int_param</span>(<span class="summary-sig-arg">params</span>,
+        <span class="summary-sig-arg">md</span>,
+        <span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">default</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">st</span>=<span class="summary-sig-default">&lt;type 'str'&gt;</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.external.DocumentTemplate.DT_In-pysrc.html#int_param">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__rcs_id__"></a><span class="summary-name">__rcs_id__</span> = <code title="'$Id: DT_In.py 1069 2008-11-13 21:55:43Z stefan $'"><code class="variable-quote">'</code><code class="variable-string">$Id: DT_In.py 1069 2008-11-13 21:55:43Z stefan $</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="In"></a><span class="summary-name">In</span> = <code title="InFactory()">InFactory()</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'qm.external.DocumentTemplate'"><code class="variable-quote">'</code><code class="variable-string">qm.external.DocumentTemplate</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:39 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

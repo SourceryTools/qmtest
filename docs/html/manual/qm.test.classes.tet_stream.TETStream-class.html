@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.classes.tet_stream.TETStream</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.classes-module.html">Package&nbsp;classes</a> ::
+        <a href="qm.test.classes.tet_stream-module.html">Module&nbsp;tet_stream</a> ::
+        Class&nbsp;TETStream
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.classes.tet_stream.TETStream-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class TETStream</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+                 object --+            
+                          |            
+        <a href="qm.extension.Extension-class.html">extension.Extension</a> --+        
+                              |        
+     <a href="qm.test.result_stream.ResultStream-class.html">result_stream.ResultStream</a> --+    
+                                  |    
+<a href="qm.test.file_result_stream.FileResultStream-class.html">file_result_stream.FileResultStream</a> --+
+                                      |
+                                     <strong class="uidshort">TETStream</strong>
+</pre>
+
+<hr />
+<pre class="literalblock">
+A 'TETStream' formats results as a TET journal.
+
+Provides special handling for 'DejaGNUTest' results.
+
+TET: http://tetworks.opengroup.org/
+TET journal format: see appendix C and D of
+   http://tetworks.opengroup.org/documents/3.7/uguide.pdf
+
+For the meaning of TET result codes, we use as guidelines the LSB
+test faq, question Q1.11:
+    * PASS - a test result belonging to this group is considered to
+      be a pass for compliance testing purposes:
+          o Pass - the test has been executed correctly and to
+            completion without any kind of problem
+          o Warning - the functionality is acceptable, but you
+            should be aware that later revisions of the relevant
+            standards or specification may change the requirements
+            in this area.
+          o FIP - additional information is provided which needs to
+            be checked manually.
+          o Unsupported - an optional feature is not available or
+            not supported in the implementation under test.
+          o Not in Use - some tests may not be required in certain
+            test modes or when an interface can be implemented by a
+            macro or function and there are two versions of the test
+            only one is used.
+          o Untested - no test written to check a particular feature
+            or an optional facility needed to perform a test is not
+            available on the system.
+      [There are also &quot;notimp&quot; and &quot;unapproved&quot; cases mentioned in
+      the LSB-FHS README, but they are otherwise undocumented, and
+      don't correspond to any DejaGNU or QMTest outcomes anyway.]
+    * FAIL - a test result belonging to this group is considered to
+      be a fail for compliance testing purposes (unless the failure
+      has been waived by an agreed Problem Report in the
+      Certification Problem Reporting database):
+          o Fail - the interface did not behave as expected.
+          o Uninitiated - the particular test in question did not
+            start to execute.
+          o Unresolved - the test started but did not reach the
+            point where the test was able to report success or
+            failure.
+          o Unreported - a major error occurred during the testset
+            execution.  (The TET manual calls this NORESULT.)
+(From http://www.linuxbase.org/test/lsb-runtime-test-faq.html )
+
+DejaGNU test results are described as:
+    * PASS - A test has succeeded.
+    * FAIL - A test has produced the bug it was intended to
+      capture.
+    * WARNING - Declares detection of a minor error in the test case
+      itself.  Use WARNING rather than ERROR for cases (such as
+      communication failure to be followed by a retry) where the
+      test case can recover from the error.  Note that sufficient
+      warnings will cause a test to go from PASS/FAIL to
+      UNRESOLVED.
+    * ERROR - Declares a severe error in the testing framework
+      itself.  An ERROR also causes a test to go from PASS/FAIL to
+      UNRESOLVED.
+    * UNRESOLVED - A test produced indeterminate results.  Usually,
+      this means the test executed in an unexpected fashion; this
+      outcome requires that a human being go over results, to
+      determine if the test should have passed or failed.  This
+      message is also used for any test that requires human
+      intervention because it is beyond the abilities of the testing
+      framework.  Any unresolved test should be resolved to PASS or
+      FAIL before a test run can be considered finished.
+
+      Examples:
+          - a test's execution is interrupted
+          - a test does not produce a clear result (because of
+            WARNING or ERROR messages)
+          - a test depends on a previous test case which failed
+    * UNTESTED - a test case that isn't run for some technical
+      reason.  (E.g., a dummy test created as a placeholder for a
+      test that is not yet written.)
+    * UNSUPPORTED - Declares that a test case depends on some
+      facility that does not exist in the testing environment; the
+      test is simply meaningless.
+(From a combination of DejaGNU manual sections &quot;Core Internal
+Procedures&quot;, &quot;C Unit Testing API&quot;, and &quot;A POSIX conforming test
+framework&quot;.)
+
+</pre>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension.Type-class.html">Type</a></code>,
+      <code><a href="qm.extension.Extension.Type-class.html">__metaclass__</a></code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.tet_stream.TETStream-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">arguments</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">**args</span>)</span><br />
+      Construct a new 'Extension'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_WriteLine"></a><span class="summary-sig-name">_WriteLine</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">code</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">comment</span>)</span><br />
+      Write a line in TET journal format.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._WriteLine">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_IsDejaGNUResult"></a><span class="summary-sig-name">_IsDejaGNUResult</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Returns 'True' if 'result' has DejaGNU subtests.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._IsDejaGNUResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.tet_stream.TETStream-class.html#_TETFormatTime" class="summary-sig-name" onclick="show_private();">_TETFormatTime</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">time_string</span>)</span><br />
+      Converts an ISO-format date-time to a TET-format date-time.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._TETFormatTime">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_ExtractTime"></a><span class="summary-sig-name">_ExtractTime</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>,
+        <span class="summary-sig-arg">key</span>)</span><br />
+      Extracts the start time from a result.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._ExtractTime">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.tet_stream.TETStream-class.html#WriteAnnotation" class="summary-sig-name">WriteAnnotation</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Output an annotation for this run.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream.WriteAnnotation">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.tet_stream.TETStream-class.html#_WriteInitialStuff" class="summary-sig-name" onclick="show_private();">_WriteInitialStuff</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Print TET header information, but only on first call.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._WriteInitialStuff">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.tet_stream.TETStream-class.html#WriteResult" class="summary-sig-name">WriteResult</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Output a test result.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream.WriteResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_WriteTCStart"></a><span class="summary-sig-name">_WriteTCStart</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Write a TET test case start line.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._WriteTCStart">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.tet_stream.TETStream-class.html#_WriteResultAnnotations" class="summary-sig-name" onclick="show_private();">_WriteResultAnnotations</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>,
+        <span class="summary-sig-arg">purpose</span>,
+        <span class="summary-sig-arg">num_restrict</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">seq_start</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Writes out annotations for a 'result' in TET format.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._WriteResultAnnotations">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_WriteDejaGNUResult"></a><span class="summary-sig-name">_WriteDejaGNUResult</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Write out a result that has DejaGNU subtest information.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._WriteDejaGNUResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_WriteTestResult"></a><span class="summary-sig-name">_WriteTestResult</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Write out a result that does not have DejaGNU annotations.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._WriteTestResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.tet_stream.TETStream-class.html#_WriteResourceResult" class="summary-sig-name" onclick="show_private();">_WriteResourceResult</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Write out information on a resource result.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._WriteResourceResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.tet_stream.TETStream-class.html#Summarize" class="summary-sig-name">Summarize</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Output summary information about the results.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream.Summarize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.result_stream.ResultStream-class.html">result_stream.ResultStream</a></code></b>:
+      <code><a href="qm.test.result_stream.ResultStream-class.html#WriteAllAnnotations">WriteAllAnnotations</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.result_stream.ResultStream-class.html">result_stream.ResultStream</a></code></b> (private):
+      <code><a href="qm.test.result_stream.ResultStream-class.html#_GetExpectedOutcome" onclick="show_private();">_GetExpectedOutcome</a></code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension-class.html#GetClassName">GetClassName</a></code>,
+      <code><a href="qm.extension.Extension-class.html#GetExplicitArguments">GetExplicitArguments</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomDocument">MakeDomDocument</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomElement">MakeDomElement</a></code>,
+      <code><a href="qm.extension.Extension-class.html#Write">Write</a></code>,
+      <code><a href="qm.extension.Extension-class.html#__getattr__">__getattr__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="PASS"></a><span class="summary-name">PASS</span> = <code title="0, &quot;PASS&quot;">0, &quot;PASS&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="WARNING"></a><span class="summary-name">WARNING</span> = <code title="101, &quot;WARNING&quot;">101, &quot;WARNING&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="FIP"></a><span class="summary-name">FIP</span> = <code title="102, &quot;FIP&quot;">102, &quot;FIP&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNSUPPORTED"></a><span class="summary-name">UNSUPPORTED</span> = <code title="4, &quot;UNSUPPORTED&quot;">4, &quot;UNSUPPORTED&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="NOTINUSE"></a><span class="summary-name">NOTINUSE</span> = <code title="3, &quot;NOTINUSE&quot;">3, &quot;NOTINUSE&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNTESTED"></a><span class="summary-name">UNTESTED</span> = <code title="5, &quot;UNTESTED&quot;">5, &quot;UNTESTED&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="FAIL"></a><span class="summary-name">FAIL</span> = <code title="1, &quot;FAIL&quot;">1, &quot;FAIL&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNINITIATED"></a><span class="summary-name">UNINITIATED</span> = <code title="6, &quot;UNINITIATED&quot;">6, &quot;UNINITIATED&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNRESOLVED"></a><span class="summary-name">UNRESOLVED</span> = <code title="2, &quot;UNRESOLVED&quot;">2, &quot;UNRESOLVED&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNREPORTED"></a><span class="summary-name">UNREPORTED</span> = <code title="7, &quot;UNREPORTED&quot;">7, &quot;UNREPORTED&quot;</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.file_result_stream.FileResultStream-class.html">file_result_stream.FileResultStream</a></code></b>:
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#arguments">arguments</a></code>,
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#file">file</a></code>,
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#filename">filename</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.file_result_stream.FileResultStream-class.html">file_result_stream.FileResultStream</a></code></b> (private):
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#_argument_dictionary" onclick="show_private();">_argument_dictionary</a></code>,
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#_argument_list" onclick="show_private();">_argument_list</a></code>,
+      <code><a href="qm.test.file_result_stream.FileResultStream-class.html#_is_binary_file" onclick="show_private();">_is_binary_file</a></code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.result_stream.ResultStream-class.html">result_stream.ResultStream</a></code></b>:
+      <code><a href="qm.test.result_stream.ResultStream-class.html#expected_outcomes">expected_outcomes</a></code>,
+      <code><a href="qm.test.result_stream.ResultStream-class.html#kind">kind</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b> (private):
+      <code><a href="qm.extension.Extension-class.html#_allow_arg_names_matching_class_vars" onclick="show_private();">_allow_arg_names_matching_class_vars</a></code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">arguments</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">**args</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a new 'Extension'.</p>
+  <p>'args': Keyword arguments providing values for Extension parameters. 
+  The values should be appropriate for the corresponding fields. Derived 
+  classes must pass along any unrecognized keyword arguments to this method
+  so that additional arguments can be added in the future without 
+  necessitating changes to derived classes.</p>
+  <p>This method will place all of the arguments into this objects instance
+  dictionary.</p>
+  <p>Derived classes may override this method, but should call this method 
+  during their processing.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_TETFormatTime"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_TETFormatTime</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">time_string</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._TETFormatTime">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Converts an ISO-format date-time to a TET-format date-time.</p>
+  <p>returns -- A 2-tuple whose first element is the time as a string, and 
+  whose second is the date as a string.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="WriteAnnotation"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">WriteAnnotation</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">key</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream.WriteAnnotation">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Output an annotation for this run.</p>
+  <p>Subclasses should override this if they want to store/display 
+  annotations; the default implementation simply discards them.</p>
+  <p>'key' -- the key value as a string.</p>
+  <p>'value' -- the value of this annotation as a string.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.result_stream.ResultStream-class.html#WriteAnnotation">result_stream.ResultStream.WriteAnnotation</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_WriteInitialStuff"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_WriteInitialStuff</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._WriteInitialStuff">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Print TET header information, but only on first call.</p>
+  <p>Second and later calls are no-ops.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="WriteResult"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">WriteResult</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream.WriteResult">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Output a test result.</p>
+  <p>Subclasses must override this method; the default implementation 
+  raises a 'NotImplementedError'.</p>
+  <p>'result' -- A 'Result'.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.result_stream.ResultStream-class.html#WriteResult">result_stream.ResultStream.WriteResult</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_WriteResultAnnotations"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_WriteResultAnnotations</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">result</span>,
+        <span class="sig-arg">purpose</span>,
+        <span class="sig-arg">num_restrict</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">seq_start</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._WriteResultAnnotations">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes out annotations for a 'result' in TET format.</p>
+  <p>Annotations are represented as (sequences of) &quot;test case 
+  information&quot; lines.</p>
+  <p>'result' -- The 'Result' whose annotations should be written.</p>
+  <p>'num_restrict' -- Only write out annotations that end with this 
+  number.  If the number is '1', also writes out all results that don't end
+  in any number, with &quot;INFO: &quot; prefixed.  If 'None', writes out 
+  all annotations.</p>
+  <p>'seq_start' -- The TET test case information sequence number to start 
+  with.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_WriteResourceResult"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_WriteResourceResult</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream._WriteResourceResult">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Write out information on a resource result.</p>
+  <p>TET has no concept of resources, so we ignore successful resources, 
+  and print out &quot;test case controller messages&quot; for ERRORs and 
+  FAILUREs.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Summarize"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Summarize</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.tet_stream-pysrc.html#TETStream.Summarize">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Output summary information about the results.</p>
+  <p>When this method is called, the test run is complete.  Summary 
+  information should be displayed for the user, if appropriate. Any 
+  finalization, such as the closing of open files, should also be performed
+  at this point.</p>
+  <p>Derived class methods may override this method.  They should, however,
+  invoke this version before returning.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.result_stream.ResultStream-class.html#Summarize">result_stream.ResultStream.Summarize</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:41 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

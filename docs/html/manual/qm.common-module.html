@@ -1,0 +1,1263 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.common</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        Module&nbsp;common
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.common-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module common</h1><p class="nomargin-top"><span class="codelink"><a href="qm.common-pysrc.html">source&nbsp;code</a></span></p>
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.common.QMException-class.html" class="summary-name">QMException</a><br />
+      An exception generated directly by QM.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.common.Timeout-class.html" class="summary-name">Timeout</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.common.UserError-class.html" class="summary-name">UserError</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.common.PythonException-class.html" class="summary-name">PythonException</a><br />
+      A 'PythonException' is a wrapper around a Python exception.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.common.RcConfiguration-class.html" class="summary-name">RcConfiguration</a><br />
+      Interface object to QM configuration files.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_lib_directory"></a><span class="summary-sig-name">get_lib_directory</span>(<span class="summary-sig-arg">*components</span>)</span><br />
+      Return the path to a file in the QM library directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#get_lib_directory">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_share_directory"></a><span class="summary-sig-name">get_share_directory</span>(<span class="summary-sig-arg">*components</span>)</span><br />
+      Return the path to a file in the QM data file directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#get_share_directory">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_doc_directory"></a><span class="summary-sig-name">get_doc_directory</span>(<span class="summary-sig-arg">*components</span>)</span><br />
+      Return a path to a file in the QM documentation file directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#get_doc_directory">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#format_exception" class="summary-sig-name">format_exception</a>(<span class="summary-sig-arg">exc_info</span>)</span><br />
+      Format an exception as structured text.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#format_exception">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#format_traceback" class="summary-sig-name">format_traceback</a>(<span class="summary-sig-arg">exc_info</span>)</span><br />
+      Format an exception traceback as structured text.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#format_traceback">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="convert_from_dos_text"></a><span class="summary-sig-name">convert_from_dos_text</span>(<span class="summary-sig-arg">text</span>)</span><br />
+      Replace CRLF with LF in 'text'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#convert_from_dos_text">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#load_module" class="summary-sig-name">load_module</a>(<span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">search_path</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">/home/stefan/work/qmtest</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/bin</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/local/lib64/pyt</code><code class="variable-ellipsis">...</code></span>,
+        <span class="summary-sig-arg">load_path</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">/home/stefan/work/qmtest</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/bin</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/local/lib64/pyt</code><code class="variable-ellipsis">...</code></span>)</span><br />
+      Load a Python module.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#load_module">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#load_class" class="summary-sig-name">load_class</a>(<span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">search_path</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">/home/stefan/work/qmtest</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/bin</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/local/lib64/pyt</code><code class="variable-ellipsis">...</code></span>,
+        <span class="summary-sig-arg">load_path</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">/home/stefan/work/qmtest</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/bin</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/local/lib64/pyt</code><code class="variable-ellipsis">...</code></span>)</span><br />
+      Load a Python class.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#load_class">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#split_path_fully" class="summary-sig-name">split_path_fully</a>(<span class="summary-sig-arg">path</span>)</span><br />
+      Split 'path' into components.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#split_path_fully">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#open_temporary_file_fd" class="summary-sig-name">open_temporary_file_fd</a>(<span class="summary-sig-arg">suffix</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span><br />
+      Create and open a temporary file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#open_temporary_file_fd">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#open_temporary_file" class="summary-sig-name">open_temporary_file</a>(<span class="summary-sig-arg">mode</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">w+b</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">suffix</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span><br />
+      Create and open a temporary file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#open_temporary_file">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#close_file_on_exec" class="summary-sig-name">close_file_on_exec</a>(<span class="summary-sig-arg">fd</span>)</span><br />
+      Prevent 'fd' from being inherited across 'exec'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#close_file_on_exec">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#copy" class="summary-sig-name">copy</a>(<span class="summary-sig-arg">object</span>)</span><br />
+      Make a best-effort attempt to copy 'object'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#copy">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#wrap_lines" class="summary-sig-name">wrap_lines</a>(<span class="summary-sig-arg">text</span>,
+        <span class="summary-sig-arg">columns</span>=<span class="summary-sig-default">72</span>,
+        <span class="summary-sig-arg">break_delimiter</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">\\</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">indent</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span><br />
+      Wrap lines in 'text' to 'columns' columns.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#wrap_lines">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#format_time" class="summary-sig-name">format_time</a>(<span class="summary-sig-arg">time_secs</span>,
+        <span class="summary-sig-arg">local_time_zone</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Generate a text format representing a date and time.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#format_time">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#format_time_iso" class="summary-sig-name">format_time_iso</a>(<span class="summary-sig-arg">time_secs</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Generate a ISO8601-compliant formatted date and time.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#format_time_iso">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#parse_time_iso" class="summary-sig-name">parse_time_iso</a>(<span class="summary-sig-arg">time_string</span>)</span><br />
+      Parse a ISO8601-compliant formatted date and time.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#parse_time_iso">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="make_unique_tag"></a><span class="summary-sig-name">make_unique_tag</span>()</span><br />
+      Return a unique tag string.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#make_unique_tag">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#split_argument_list" class="summary-sig-name">split_argument_list</a>(<span class="summary-sig-arg">command</span>)</span><br />
+      Split a command into an argument list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#split_argument_list">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#parse_boolean" class="summary-sig-name">parse_boolean</a>(<span class="summary-sig-arg">value</span>)</span><br />
+      Parse a boolean string.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#parse_boolean">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#parse_string_list" class="summary-sig-name">parse_string_list</a>(<span class="summary-sig-arg">value</span>)</span><br />
+      Parse a string list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#parse_string_list">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#parse_time" class="summary-sig-name">parse_time</a>(<span class="summary-sig-arg">time_string</span>,
+        <span class="summary-sig-arg">default_local_time_zone</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Parse a date and/or time string.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#parse_time">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#parse_assignment" class="summary-sig-name">parse_assignment</a>(<span class="summary-sig-arg">assignment</span>)</span><br />
+      Parse an 'assignment' of the form 'name=value'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#parse_assignment">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#read_assignments" class="summary-sig-name">read_assignments</a>(<span class="summary-sig-arg">file</span>)</span><br />
+      Read assignments from a 'file'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#read_assignments">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#get_username" class="summary-sig-name">get_username</a>()</span><br />
+      Returns the current username as a string.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#get_username">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#get_userid" class="summary-sig-name">get_userid</a>()</span><br />
+      Returns the current user id as an integer.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#get_userid">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common-module.html#html_to_text" class="summary-sig-name">html_to_text</a>(<span class="summary-sig-arg">html</span>,
+        <span class="summary-sig-arg">width</span>=<span class="summary-sig-default">72</span>)</span><br />
+      Renders HTML to text in a simple way.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#html_to_text">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="program_name"></a><span class="summary-name">program_name</span> = <code title="None">None</code><br />
+      The name of the application program.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__load_module_lock"></a><span class="summary-name">__load_module_lock</span> = <code title="&lt;_RLock owner=None count=0&gt;">&lt;_RLock owner=None count=0&gt;</code><br />
+      A lock used by load_module.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="rc"></a><span class="summary-name">rc</span> = <code title="RcConfiguration()">RcConfiguration()</code><br />
+      The configuration stored in system and user rc files.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_unique_tag"></a><span class="summary-name">_unique_tag</span> = <code title="0">0</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'qm'"><code class="variable-quote">'</code><code class="variable-string">qm</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="format_exception"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">format_exception</span>(<span class="sig-arg">exc_info</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#format_exception">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Format an exception as structured text.</p>
+  <p>'exc_info' -- A three-element tuple containing exception info, of the 
+  form '(type, value, traceback)'.</p>
+  <p>returns -- A string containing a the formatted exception.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="format_traceback"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">format_traceback</span>(<span class="sig-arg">exc_info</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#format_traceback">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Format an exception traceback as structured text.</p>
+  <p>'exc_info' -- A three-element tuple containing exception info, of the 
+  form '(type, value, traceback)'.</p>
+  <p>returns -- A string containing a the formatted traceback.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="load_module"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">load_module</span>(<span class="sig-arg">name</span>,
+        <span class="sig-arg">search_path</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">/home/stefan/work/qmtest</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/bin</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/local/lib64/pyt</code><code class="variable-ellipsis">...</code></span>,
+        <span class="sig-arg">load_path</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">/home/stefan/work/qmtest</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/bin</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/local/lib64/pyt</code><code class="variable-ellipsis">...</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#load_module">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Load a Python module.</p>
+  <p>'name' -- The fully-qualified name of the module to load, for instance
+  'package.subpackage.module'.</p>
+  <p>'search_path' -- A sequence of directories.  These directories are 
+  searched to find the module.</p>
+  <p>'load_path' -- The setting of 'sys.path' when the module is 
+  loaded.</p>
+  <p>returns -- A module object.</p>
+  <p>raises -- 'ImportError' if the module cannot be found.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="load_class"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">load_class</span>(<span class="sig-arg">name</span>,
+        <span class="sig-arg">search_path</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">/home/stefan/work/qmtest</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/bin</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/local/lib64/pyt</code><code class="variable-ellipsis">...</code></span>,
+        <span class="sig-arg">load_path</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">/home/stefan/work/qmtest</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/bin</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">/usr/local/lib64/pyt</code><code class="variable-ellipsis">...</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#load_class">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Load a Python class.</p>
+  <p>'name' -- The fully-qualified (including package and module names) 
+  class name, for instance 'package.subpackage.module.MyClass'.  The class 
+  must be at the top level of the module's namespace, i.e. not nested in 
+  another class.</p>
+  <p>'search_path' -- A sequence of directories.  These directories are 
+  searched to find the module.</p>
+  <p>'load_path' -- The setting of 'sys.path' when the module is 
+  loaded.</p>
+  <p>returns -- A class object.</p>
+  <p>raises -- 'ImportError' if the module containing the class can't be 
+  imported, or if there is no class with the specified name in that module,
+  or if 'name' doesn't correspond to a class.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="split_path_fully"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">split_path_fully</span>(<span class="sig-arg">path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#split_path_fully">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Split 'path' into components.</p>
+  <p>Uses 'os.path.split' recursively on the directory components of 'path'
+  to separate all path components.</p>
+  <p>'path' -- The path to split.</p>
+  <p>returns -- A list of path componets.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="open_temporary_file_fd"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">open_temporary_file_fd</span>(<span class="sig-arg">suffix</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#open_temporary_file_fd">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create and open a temporary file.</p>
+  <p>'suffix' -- The last part of the temporary file name, as for Python's 
+  'mktemp' function.</p>
+  <p>The file is open for reading and writing.  The caller is responsible 
+  for deleting the file when finished with it.</p>
+  <p>returns -- A pair '(file_name, file_descriptor)' for the temporary 
+  file.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="open_temporary_file"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">open_temporary_file</span>(<span class="sig-arg">mode</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">w+b</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">suffix</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#open_temporary_file">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create and open a temporary file.</p>
+  <p>'mode' -- The mode argument to pass to 'fopen'.</p>
+  <p>'suffix' -- The last part of the temporary file name, as for Python's 
+  'mktemp' function.</p>
+  <p>Like 'open_temporary_file_fd', except that the second element of the 
+  return value is a file object.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="close_file_on_exec"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">close_file_on_exec</span>(<span class="sig-arg">fd</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#close_file_on_exec">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prevent 'fd' from being inherited across 'exec'.</p>
+  <p>'fd' -- A file descriptor, or object providing a 'fileno()' 
+  method.</p>
+  <p>This function has no effect on Windows.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="copy"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">copy</span>(<span class="sig-arg">object</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#copy">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Make a best-effort attempt to copy 'object'.</p>
+  <p>returns -- A copy of 'object', if feasible, or otherwise 'object'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="wrap_lines"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">wrap_lines</span>(<span class="sig-arg">text</span>,
+        <span class="sig-arg">columns</span>=<span class="sig-default">72</span>,
+        <span class="sig-arg">break_delimiter</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">\\</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">indent</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#wrap_lines">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Wrap lines in 'text' to 'columns' columns.</p>
+  <p>'text' -- The text to wrap.</p>
+  <p>'columns' -- The maximum number of columns of text.</p>
+  <p>'break_delimiter' -- Text to place at the end of each broken line (may
+  be an empty string).</p>
+  <p>'indent' -- Text to place at the start of each line.  The length of 
+  'indent' does not count towards 'columns'.</p>
+  <p>returns -- The wrapped text.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="format_time"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">format_time</span>(<span class="sig-arg">time_secs</span>,
+        <span class="sig-arg">local_time_zone</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#format_time">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate a text format representing a date and time.</p>
+  <p>The output is in the format &quot;YYYY-MM-DD HH:MM ZZZ&quot;.</p>
+  <p>'time_secs' -- The number of seconds since the start of the UNIX 
+  epoch, UTC.</p>
+  <p>'local_time_zone' -- If true, format the time in the local time zone.
+  Otherwise, format it as UTC.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="format_time_iso"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">format_time_iso</span>(<span class="sig-arg">time_secs</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#format_time_iso">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate a ISO8601-compliant formatted date and time.</p>
+  <p>The output is in the format &quot;YYYY-MM-DDThh:mm:ss+TZ&quot;, where 
+  TZ is a timezone specifier.  We always normalize to UTC (and hence always
+  use the special timezone specifier &quot;Z&quot;), to get proper sorting 
+  behaviour.</p>
+  <p>'time_secs' -- The time to be formatted, as returned by e.g. 
+  'time.time()'.  If 'None' (the default), uses the current time.</p>
+  <p>returns -- The formatted time as a string.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="parse_time_iso"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_time_iso</span>(<span class="sig-arg">time_string</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#parse_time_iso">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parse a ISO8601-compliant formatted date and time.</p>
+  <p>See also 'format_time_iso'.</p>
+  <p>'time_string' -- The string to be parsed, as returned by e.g. 
+  'format_time_iso'.</p>
+  <p>returns -- The time as a float, like that returned by 'time.time'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="split_argument_list"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">split_argument_list</span>(<span class="sig-arg">command</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#split_argument_list">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Split a command into an argument list.</p>
+  <p>'command' -- A string containing a shell or similar command.</p>
+  <p>returns -- An argument list obtained by splitting the command.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="parse_boolean"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_boolean</span>(<span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#parse_boolean">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parse a boolean string.</p>
+  <p>'value' -- A string.</p>
+  <p>returns -- True if 'value' is a true string, false if 'value' is a 
+  false string.</p>
+  <p>raises -- 'ValueError' if 'value' is neither a true string, nor a 
+  false string.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="parse_string_list"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_string_list</span>(<span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#parse_string_list">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parse a string list.</p>
+  <p>'value' -- A string.</p>
+  <p>returns -- A list of strings.</p>
+  <p>raises -- 'ValueError' if 'value' contains unbalanced quotes.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="parse_time"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_time</span>(<span class="sig-arg">time_string</span>,
+        <span class="sig-arg">default_local_time_zone</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#parse_time">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parse a date and/or time string.</p>
+  <p>'time_string' -- A string representing a date and time in the format 
+  returned by 'format_time'.  This function makes a best-effort attempt to 
+  parse incomplete strings as well.</p>
+  <p>'default_local_time_zone' -- If the time zone is not specified in 
+  'time_string' and this parameter is true, assume the time is in the local
+  time zone.  If this parameter is false, assume the time is UTC.</p>
+  <p>returns -- An integer number of seconds since the start of the UNIX 
+  epoch, UTC.</p>
+  <p>Only UTC and the current local time zone may be specified explicitly 
+  in 'time_string'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="parse_assignment"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_assignment</span>(<span class="sig-arg">assignment</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#parse_assignment">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parse an 'assignment' of the form 'name=value'.</p>
+  <p>'aassignment' -- A string.  The string should have the form 
+  'name=value'.</p>
+  <p>returns -- A pair '(name, value)'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="read_assignments"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">read_assignments</span>(<span class="sig-arg">file</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#read_assignments">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Read assignments from a 'file'.</p>
+  <p>'file' -- A file object containing the context.  When the file is 
+  read, leading and trailing whitespace is discarded from each line in the 
+  file.  Then, lines that begin with a '#' and lines that contain no 
+  characters are discarded.  All other lines must be of the form 
+  'NAME=VALUE' and indicate an assignment to the context variable 'NAME' of
+  the indicated 'VALUE'.</p>
+  <p>returns -- A dictionary mapping each of the indicated 'NAME's to its 
+  corresponding 'VALUE'.  If multiple assignments to the same 'NAME' are 
+  present, only the 'VALUE' from the last assignment is stored.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_username"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_username</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#get_username">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the current username as a string.</p>
+  <p>This is our best guess as to the username of the user who is actually 
+  logged in, as opposed to the effective user id used for running 
+  tests.</p>
+  <p>If the username cannot be found, raises a 'QMException'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_userid"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_userid</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#get_userid">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the current user id as an integer.</p>
+  <p>This is the real user id, not the effective user id, to better track 
+  who is actually running the tests.</p>
+  <p>If the user id cannot be found or is not defined, raises a 
+  'QMException'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="html_to_text"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">html_to_text</span>(<span class="sig-arg">html</span>,
+        <span class="sig-arg">width</span>=<span class="sig-default">72</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#html_to_text">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Renders HTML to text in a simple way.</p>
+  <p>'html' -- A string containing the HTML code to be rendered.</p>
+  <p>'width' -- Column at which to word-wrap.  Default 72.</p>
+  <p>returns -- A string containing a plain text rendering of the HTML.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:39 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,1096 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.web.WebServer</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.web-module.html">Module&nbsp;web</a> ::
+        Class&nbsp;WebServer
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.web.WebServer-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class WebServer</h1><p class="nomargin-top"><span class="codelink"><a href="qm.web-pysrc.html#WebServer">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+SocketServer.BaseServer --+            
+                          |            
+     SocketServer.TCPServer --+        
+                              |        
+      BaseHTTPServer.HTTPServer --+    
+                                  |    
+                         <a href="qm.web.HTTPServer-class.html">HTTPServer</a> --+
+                                      |
+                                     <strong class="uidshort">WebServer</strong>
+</pre>
+
+<hr />
+<pre class="literalblock">
+A web server that serves ordinary files and dynamic content.
+
+To configure the server to serve ordinary files, register the
+directories containing those files with
+'RegisterPathTranslations'.  An arbitrary number of directories
+may  be specified, and all files in each directory and under it
+are made available.
+
+To congifure the server to serve dynamic content, register dynamic
+URLs with 'RegisterScript'.  A request matching the URL exactly
+will cause the server to invoke the provided function.
+
+The web server resolves request URLs in a two-step process.
+
+1. The server checks if the URL matches exactly a script URL.  If
+   a match is found, the corresponding function is invoked, and
+   its return value is sent to the client.
+
+2. The server checks whether any registered path translation is a
+   prefix of the reqest URL.  If it is, the path is translated
+   into a file system path, and the corresponding file is
+   returned.
+
+The server also provides a rudimentary manual caching mechanism for
+generated pages.  The application may insert a generated page into
+the page cache, if it is expected not to change.  The application
+can use this mechanism:
+
+  - to supress duplicate generation of the same page,
+
+  - or to pre-generate a page that may be requested later.  This is
+    particularly handy if generating the page requires state
+    information that would be difficult to reconstruct later.
+
+Pages may be shared across sessions, or may be specific to a
+particular session.
+
+</pre>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">port</span>,
+        <span class="summary-sig-arg">address</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">log_file</span>=<span class="summary-sig-default">sys.stdout</span>)</span><br />
+      Create a new web server.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#RegisterScript" class="summary-sig-name">RegisterScript</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">script_path</span>,
+        <span class="summary-sig-arg">script</span>)</span><br />
+      Register a dynamic URL.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.RegisterScript">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#RegisterPathTranslation" class="summary-sig-name">RegisterPathTranslation</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">url_path</span>,
+        <span class="summary-sig-arg">file_path</span>)</span><br />
+      Register a path translation.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.RegisterPathTranslation">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="IsScript"></a><span class="summary-sig-name">IsScript</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Return a true value if 'request' corresponds to a script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.IsScript">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#ProcessScript" class="summary-sig-name">ProcessScript</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Process 'request' as a script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.ProcessScript">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#TranslateRequest" class="summary-sig-name">TranslateRequest</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Translate the URL in 'request' to a file system path.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.TranslateRequest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#Bind" class="summary-sig-name">Bind</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Bind the server to the specified address and port.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.Bind">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#Run" class="summary-sig-name">Run</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Start the web server.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.Run">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="RequestShutdown"></a><span class="summary-sig-name">RequestShutdown</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Shut the server down after processing the current request.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.RequestShutdown">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="LogMessage"></a><span class="summary-sig-name">LogMessage</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">message</span>)</span><br />
+      Log a message.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.LogMessage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#GetServerAddress" class="summary-sig-name">GetServerAddress</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the host address on which this server is running.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.GetServerAddress">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#GetTemporaryAttachmentStore" class="summary-sig-name">GetTemporaryAttachmentStore</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the 'AttachmentStore' used for new 'Attachment's.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.GetTemporaryAttachmentStore">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#MakeButtonForCachedPopup" class="summary-sig-name">MakeButtonForCachedPopup</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">label</span>,
+        <span class="summary-sig-arg">html_text</span>,
+        <span class="summary-sig-arg">request</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">window_width</span>=<span class="summary-sig-default">480</span>,
+        <span class="summary-sig-arg">window_height</span>=<span class="summary-sig-default">240</span>)</span><br />
+      Construct a button for displaying a cached popup page.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.MakeButtonForCachedPopup">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#MakeConfirmationDialog" class="summary-sig-name">MakeConfirmationDialog</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">message</span>,
+        <span class="summary-sig-arg">url</span>)</span><br />
+      Generate JavaScript for a confirmation dialog box.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.MakeConfirmationDialog">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#MakePopupDialog" class="summary-sig-name">MakePopupDialog</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">message</span>,
+        <span class="summary-sig-arg">buttons</span>,
+        <span class="summary-sig-arg">title</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span><br />
+      Generate JavaScript to show a popup dialog box.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.MakePopupDialog">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#CachePage" class="summary-sig-name">CachePage</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">page_text</span>,
+        <span class="summary-sig-arg">session_id</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Cache an HTML page.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.CachePage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#GetCachedPage" class="summary-sig-name">GetCachedPage</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">session_id</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Retrieve a page from the page cache.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.GetCachedPage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#__GetPathForCachedPage" class="summary-sig-name" onclick="show_private();">__GetPathForCachedPage</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">session_id</span>)</span><br />
+      Return the path for a cached page.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.__GetPathForCachedPage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="HandleNoSessionError"></a><span class="summary-sig-name">HandleNoSessionError</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">message</span>)</span><br />
+      Handler when session is absent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.HandleNoSessionError">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_HandleProblems"></a><span class="summary-sig-name">_HandleProblems</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle internal errors.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer._HandleProblems">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_HandleRoot"></a><span class="summary-sig-name">_HandleRoot</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>)</span><br />
+      Handle the '/' URL.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer._HandleRoot">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web.WebServer-class.html#handle_error" class="summary-sig-name">handle_error</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">client_address</span>)</span><br />
+      Handle an error gracefully.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#WebServer.handle_error">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.web.HTTPServer-class.html">HTTPServer</a></code></b>:
+      <code><a href="qm.web.HTTPServer-class.html#server_bind">server_bind</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>SocketServer.TCPServer</code></b>:
+      <code>close_request</code>,
+      <code>fileno</code>,
+      <code>get_request</code>,
+      <code>server_activate</code>,
+      <code>server_close</code>,
+      <code>shutdown_request</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>SocketServer.BaseServer</code></b>:
+      <code>finish_request</code>,
+      <code>handle_request</code>,
+      <code>handle_timeout</code>,
+      <code>process_request</code>,
+      <code>serve_forever</code>,
+      <code>shutdown</code>,
+      <code>verify_request</code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>SocketServer.BaseServer</code></b> (private):
+      <code>_handle_request_noblock</code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>BaseHTTPServer.HTTPServer</code></b>:
+      <code>allow_reuse_address</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>SocketServer.TCPServer</code></b>:
+      <code>address_family</code>,
+      <code>request_queue_size</code>,
+      <code>socket_type</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>SocketServer.BaseServer</code></b>:
+      <code>timeout</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">port</span>,
+        <span class="sig-arg">address</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">log_file</span>=<span class="sig-default">sys.stdout</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create a new web server.</p>
+  <p>'port' -- The port on which to accept connections.  If 'port' is '0', 
+  then any port will do.</p>
+  <p>'address' -- The local address to which to bind.  An empty string 
+  means bind to all local addresses.</p>
+  <p>'log_file' -- A file object to which to write log messages. If it's 
+  'None', no logging.</p>
+  <p>The server is not started until the 'Bind' and 'Run' methods are 
+  invoked.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        SocketServer.BaseServer.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="RegisterScript"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">RegisterScript</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">script_path</span>,
+        <span class="sig-arg">script</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.RegisterScript">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Register a dynamic URL.
+
+'script_path' -- The URL for this script.  A request must
+match this path exactly.
+
+'script' -- A callable to invoke to generate the page
+content.  
+
+If you register
+
+  web_server.RegisterScript('/cgi-bin/myscript', make_page)
+
+then the URL 'http://my.server.com/cgi-bin/myscript' will
+respond with the output of calling 'make_page'.
+
+The script is passed a single argument, a 'WebRequest'
+instance.  It returns the HTML source, as a string, of the
+page it generates.  If it returns a tuple instead, the first
+element is taken to be a MIME type and the second is the data.
+
+The script may instead raise an 'HttpRedirect' instance,
+indicating an HTTP redirect response should be sent to the
+client.
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="RegisterPathTranslation"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">RegisterPathTranslation</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">url_path</span>,
+        <span class="sig-arg">file_path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.RegisterPathTranslation">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+Register a path translation.
+
+'url_path' -- The path in URL-space to map from.  URLs of
+which 'url_path' is a prefix can be translated.
+
+'file_path' -- The file system path corresponding to
+'url_path'.
+
+For example, if you register
+
+  web_server.RegisterPathTranslation('/images', '/path/to/pictures')
+
+the URL 'http://my.server.com/images/big/tree.gif' will be
+mapped to the file path '/path/to/pictures/big/tree.gif'.
+
+</pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="ProcessScript"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">ProcessScript</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.ProcessScript">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Process 'request' as a script.</p>
+  <p>'request' -- A 'WebRequest' object.</p>
+  <p>returns -- The output of the script.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="TranslateRequest"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">TranslateRequest</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.TranslateRequest">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Translate the URL in 'request' to a file system path.</p>
+  <p>'request' -- A 'WebRequest' object.</p>
+  <p>returns -- A path to the corresponding file, or 'None' if the request 
+  URL didn't match any translations.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Bind"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Bind</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.Bind">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Bind the server to the specified address and port.</p>
+  <p>Does not start serving.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Run"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Run</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.Run">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Start the web server.</p>
+  <p>preconditions -- The server must be bound.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetServerAddress"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetServerAddress</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.GetServerAddress">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the host address on which this server is running.</p>
+  <p>returns -- A pair '(hostname, port)'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetTemporaryAttachmentStore"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetTemporaryAttachmentStore</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.GetTemporaryAttachmentStore">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'AttachmentStore' used for new 'Attachment's.</p>
+  <p>returns -- The 'AttachmentStore' used for new 'Attachment's.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="MakeButtonForCachedPopup"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MakeButtonForCachedPopup</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">label</span>,
+        <span class="sig-arg">html_text</span>,
+        <span class="sig-arg">request</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">window_width</span>=<span class="sig-default">480</span>,
+        <span class="sig-arg">window_height</span>=<span class="sig-default">240</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.MakeButtonForCachedPopup">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a button for displaying a cached popup page.</p>
+  <p>'label' -- The button label.</p>
+  <p>'html_text' -- The HTML source for the popup page.</p>
+  <p>'window_width' -- The width, in pixels, of the popup window.</p>
+  <p>'window_height' -- The height, in pixels, of the popup window.</p>
+  <p>returns -- HTML source for the button.  The button must be placed 
+  within a form element.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="MakeConfirmationDialog"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MakeConfirmationDialog</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">message</span>,
+        <span class="sig-arg">url</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.MakeConfirmationDialog">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate JavaScript for a confirmation dialog box.</p>
+  <p>'url' -- The location in the main browser window is set to the URL if 
+  the user confirms the action.</p>
+  <p>See 'make_popup_dialog_script' for a description of 'function_name' 
+  and 'message' and information on how to use the return value.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="MakePopupDialog"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MakePopupDialog</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">message</span>,
+        <span class="sig-arg">buttons</span>,
+        <span class="sig-arg">title</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.MakePopupDialog">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate JavaScript to show a popup dialog box.</p>
+  <p>The popup dialog box displays a message and one or more buttons. Each 
+  button can have a JavaScript statement (or statements) associated with 
+  it; if the button is clicked, the statement is invoked.  After any button
+  is clicked, the popup window is closed as well.</p>
+  <p>'message' -- HTML source of the message to display in the popup 
+  window.</p>
+  <p>'buttons' -- A sequence of button specifications.  Each is a pair 
+  '(caption, script)'.  'caption' is the button caption.  'script' is the 
+  JavaScript statement to invoke when the button is clicked, or 'None'.</p>
+  <p>'title' -- The popup window title.</p>
+  <p>returns -- JavaScript statements to show the dialog box, suiteable for
+  use as an event handler.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="CachePage"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">CachePage</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">page_text</span>,
+        <span class="sig-arg">session_id</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.CachePage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Cache an HTML page.</p>
+  <p>'page_text' -- The text of the page.</p>
+  <p>'session_id' -- The session ID for this page, or 'None'.</p>
+  <p>returns -- A 'WebRequest' object with which the cached page can be 
+  retrieved later.</p>
+  <p>If 'session_id' is 'None', the page is placed in the global page 
+  cache.  Otherwise, it is placed in the session page cache for that 
+  session.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetCachedPage"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetCachedPage</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>,
+        <span class="sig-arg">session_id</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.GetCachedPage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Retrieve a page from the page cache.</p>
+  <p>'request' -- The URL requesting the page from the cache.</p>
+  <p>'session_id' -- The session ID for the request, or 'None'.</p>
+  <p>returns -- The cached page, or a placeholder page if the page was not 
+  found in the cache.</p>
+  <p>If 'session_id' is 'None', the page is retrieved from the global page 
+  cache.  Otherwise, it is retrieved from the session page cache for that 
+  session.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__GetPathForCachedPage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__GetPathForCachedPage</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>,
+        <span class="sig-arg">session_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.__GetPathForCachedPage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the path for a cached page.</p>
+  <p>'request' -- The URL requesting the page from the cache.</p>
+  <p>'session_id' -- The session ID for the request, or 'None'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="handle_error"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_error</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">request</span>,
+        <span class="sig-arg">client_address</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#WebServer.handle_error">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle an error gracefully.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        SocketServer.BaseServer.handle_error
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:42 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.executable.Executable</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.executable-module.html">Module&nbsp;executable</a> ::
+        Class&nbsp;Executable
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.executable.Executable-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Executable</h1><p class="nomargin-top"><span class="codelink"><a href="qm.executable-pysrc.html#Executable">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">Executable</strong>
+</pre>
+
+<hr />
+<p>An 'Executable' is a program that the operating system can run.</p>
+  <p>'Exectuable' (and classes derived from it) create child processes. The
+  'Spawn' function creates child processes that execute asynchronously.  
+  The 'Run' function creates child processes that execute synchrounously, 
+  i.e,. the 'Run' function does not return until the child process has 
+  completed its execution.</p>
+  <p>It is safe to reuse a particular 'Executable' instance (by calling 
+  'Spawn' or 'Run' more than once), so long as the uses are not 
+  interleaved.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.Executable-class.html#Spawn" class="summary-sig-name">Spawn</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">arguments</span>=<span class="summary-sig-default">[]</span>,
+        <span class="summary-sig-arg">environment</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">dir</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">path</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">exception_pipe</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Spawn the program.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#Executable.Spawn">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.Executable-class.html#Run" class="summary-sig-name">Run</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">arguments</span>=<span class="summary-sig-default">[]</span>,
+        <span class="summary-sig-arg">environment</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">dir</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">path</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Spawn the program and wait for it to finish.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#Executable.Run">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.Executable-class.html#_InitializeParent" class="summary-sig-name" onclick="show_private();">_InitializeParent</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Initialize the parent process.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#Executable._InitializeParent">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.Executable-class.html#Kill" class="summary-sig-name">Kill</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Kill the child process.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#Executable.Kill">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.Executable-class.html#_HandleChild" class="summary-sig-name" onclick="show_private();">_HandleChild</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Run in the parent process after the child has been created.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#Executable._HandleChild">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.Executable-class.html#_InitializeChild" class="summary-sig-name" onclick="show_private();">_InitializeChild</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Initialize the child process.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#Executable._InitializeChild">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_DoParent"></a><span class="summary-sig-name">_DoParent</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Perform actions required in the parent after 'Spawn'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#Executable._DoParent">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.Executable-class.html#_GetChildPID" class="summary-sig-name" onclick="show_private();">_GetChildPID</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the process ID for the child process.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#Executable._GetChildPID">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.Executable-class.html#_CreateCommandLine" class="summary-sig-name" onclick="show_private();">_CreateCommandLine</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">arguments</span>)</span><br />
+      Return a string giving the process command line.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#Executable._CreateCommandLine">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__init__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="Spawn"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Spawn</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">arguments</span>=<span class="sig-default">[]</span>,
+        <span class="sig-arg">environment</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">dir</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">path</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">exception_pipe</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#Executable.Spawn">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Spawn the program.</p>
+  <p>'arguments' -- The sequence of arguments that should be passed to the 
+  executable.  The first argument provided in this sequence will be 
+  'argv[0]'; that is also the value used for the path to the 
+  executable.</p>
+  <p>'environment' -- If not 'None', a dictionary giving the environment 
+  that should be provided to the child.</p>
+  <p>'dir' -- If not 'None', the directory in which the child should begin 
+  execution.  If 'None', the child will execute in the same directory as 
+  the parent.</p>
+  <p>'path' -- If not 'None', the path to the program to run.  If 'None', 
+  'arguments[0]' is used.</p>
+  <p>'exception_pipe' -- If not 'None', a pipe that the child can use to 
+  communicate an exception to the parent.  This pipe is only used on UNIX 
+  systems.  The write end of the pipe will be closed by this function.</p>
+  <p>returns -- The PID of the child.</p>
+  <p>Before creating the child, the parent will call 
+  'self._InitializeParent'.  On UNIX systems, the child will call 
+  'self._InitializeChild' after 'fork', but before 'exec'. On non-UNIX 
+  systems, 'self._InitializeChild' will never be called.</p>
+  <p>After creating the child, 'self._HandleChild' is called in the parent.
+  This hook should be used to handle tasks that must be performed after the
+  child is running.</p>
+  <p>If the path to the program is absolute, or contains no separator 
+  characters, it is not modified.  Otherwise the path to the program is 
+  relative, it is transformed into an absolute path using 'dir' as the 
+  base, or the current directory if 'dir' is not set.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Run"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Run</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">arguments</span>=<span class="sig-default">[]</span>,
+        <span class="sig-arg">environment</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">dir</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">path</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#Executable.Run">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Spawn the program and wait for it to finish.</p>
+  <p>'arguments' -- The sequence of arguments that should be passed to the 
+  executable.  The first argument provided in this sequence will be 
+  'argv[0]'.</p>
+  <p>'environment' -- If not 'None', a dictionary giving the environment 
+  that should be provided to the child.  If 'None', the child will inherit 
+  the parents environment.</p>
+  <p>'dir' -- If not 'None', the directory in which the child should begin 
+  execution.  If 'None', the child will execute in the same directory as 
+  the parent.</p>
+  <p>'path' -- If not 'None', the path to the program to run.  If 'None', 
+  'arguments[0]' is used.</p>
+  <p>returns -- The status returned by the program.  Under UNIX, this is 
+  the value returned by 'waitpid'; under Windows, it is the value returned 
+  by 'GetExitCodeProcess'.</p>
+  <p>After invoking 'Spawn', this function invokes '_DoParent' to allow the
+  parent process to perform whatever actions are required.  After that 
+  function returns, the parent waits for the child process to exit.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_InitializeParent"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_InitializeParent</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#Executable._InitializeParent">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize the parent process.</p>
+  <p>Before spawning the child, this method is invoked to give the parent a
+  chance to initialize itself.</p>
+  <p>returns -- Under Windows, a 'PySTARTUPINFO' structure explaining how 
+  the child should be initialized.  On other systems, the return value is 
+  ignored.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Kill"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Kill</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#Executable.Kill">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Kill the child process.</p>
+  <p>The child process is killed in a way that does not permit an orderly 
+  shutdown.  In other words, 'SIGKILL' is used under UNIX, not 'SIGTERM'.  
+  On Windows, 'TerminateProcess' is used, and the exit code from the child 
+  process will be '1'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_HandleChild"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_HandleChild</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#Executable._HandleChild">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run in the parent process after the child has been created.</p>
+  <p>The child process has been spawned; its PID is avialable via 
+  '_GetChildPID'.  Take any actions in the parent that are required now 
+  that the child exists.</p>
+  <p>Derived class versions must call this method.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_InitializeChild"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_InitializeChild</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#Executable._InitializeChild">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize the child process.</p>
+  <p>After 'fork' is called this method is invoked to give the child a 
+  chance to initialize itself.  '_InitializeParent' will already have been 
+  called in the parent process.</p>
+  <p>This method is not used under Windows.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_GetChildPID"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_GetChildPID</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#Executable._GetChildPID">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the process ID for the child process.</p>
+  <p>returns -- The process ID for the child process.  (On Windows, the 
+  value returned is the process handle.)  Returns 'None' if the child has 
+  not yet been created, or if something went awry when creating it.  For 
+  example, if 'os.fork' throws an exception, this value will return 
+  'None'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_CreateCommandLine"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_CreateCommandLine</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">arguments</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#Executable._CreateCommandLine">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a string giving the process command line.</p>
+  <p>arguments -- A sequence of arguments (including argv[0]) indicating 
+  the command to be run.</p>
+  <p>returns -- A string that could be provided to the shell in order to 
+  run the command.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

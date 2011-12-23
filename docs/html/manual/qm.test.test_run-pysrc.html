@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.test_run</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        Module&nbsp;test_run
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.test_run-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.test.test_run-module.html">Module qm.test.test_run</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># File:   test_run.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Mark Mitchell</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   2005-08-08</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#   QMTest TestRun class.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2005 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># For license terms see the file COPYING.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment"># Imports</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package qm=qm-module.html"><a title="qm" class="py-name" href="#" onclick="return doclink('link-0', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.test()=qm.external.DocumentTemplate.DT_Util-module.html#test,Package qm.test=qm.test-module.html,Module qm.test.test=qm.test.test-module.html"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-1', 'test', 'link-1');">test</a></tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Module qm.test.result=qm.test.result-module.html"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-2', 'result', 'link-2');">result</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Class qm.test.result.Result=qm.test.result.Result-class.html"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-3', 'Result', 'link-3');">Result</a></tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-comment"># Classes</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"> </tt>
+<a name="TestRun"></a><div id="TestRun-def"><a name="L26"></a><tt class="py-lineno"> 26</tt> <a class="py-toggle" href="#" id="TestRun-toggle" onclick="return toggle('TestRun');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.test.test_run.TestRun-class.html">TestRun</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TestRun-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="TestRun-expanded"><a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line">    <tt class="py-docstring">"""A 'TestRun' stores the 'Result's from a single test run.</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-docstring">    The primary contents of a 'TestRun' are the the 'Result's of the</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-docstring">    run.  In addition, each 'TestRun' has an associated set of</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-docstring">    annotations, which are used to store global information about the</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-docstring">    'TestRun'."""</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
+<a name="TestRun.GetResult"></a><div id="TestRun.GetResult-def"><a name="L34"></a><tt class="py-lineno"> 34</tt> <a class="py-toggle" href="#" id="TestRun.GetResult-toggle" onclick="return toggle('TestRun.GetResult');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.test_run.TestRun-class.html#GetResult">GetResult</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">id</tt><tt class="py-op">,</tt> <tt class="py-param">kind</tt> <tt class="py-op">=</tt> <tt id="link-4" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-4', 'Result', 'link-3');">Result</a></tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Variable qm.test.database.Database.TEST=qm.test.database.Database-class.html#TEST,Variable qm.test.result.Result.TEST=qm.test.result.Result-class.html#TEST"><a title="qm.test.database.Database.TEST
+qm.test.result.Result.TEST" class="py-name" href="#" onclick="return doclink('link-5', 'TEST', 'link-5');">TEST</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TestRun.GetResult-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TestRun.GetResult-expanded"><a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the 'Result' for the indicated test.</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-docstring">        'id' -- The name of a test or resource.</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-docstring">        'kind' -- The kind of result to retrieve.  See 'Result' for a</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-docstring">        list of the available result kinds.</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- The 'Result' corresponding to 'test_id'.</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-docstring">        raises -- 'KeyError' if there is no result of the given 'kind'</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-docstring">        for 'id' in the test run."""</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">NotImplementedError</tt> </tt>
+</div><a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">     </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"> </tt>
+<a name="TestRun.GetAnnotation"></a><div id="TestRun.GetAnnotation-def"><a name="L50"></a><tt class="py-lineno"> 50</tt> <a class="py-toggle" href="#" id="TestRun.GetAnnotation-toggle" onclick="return toggle('TestRun.GetAnnotation');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.test_run.TestRun-class.html#GetAnnotation">GetAnnotation</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">key</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TestRun.GetAnnotation-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TestRun.GetAnnotation-expanded"><a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the annotation associated with 'key'.</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-docstring">        'key' -- A string giving the name of an annotation.</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A string giving the value of the annotation, or</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-docstring">        'None' if there is no such annotation."""</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">NotImplementedError</tt> </tt>
+</div><a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"> </tt>
+<a name="TestRun.GetAnnotations"></a><div id="TestRun.GetAnnotations-def"><a name="L61"></a><tt class="py-lineno"> 61</tt> <a class="py-toggle" href="#" id="TestRun.GetAnnotations-toggle" onclick="return toggle('TestRun.GetAnnotations');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.test_run.TestRun-class.html#GetAnnotations">GetAnnotations</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TestRun.GetAnnotations-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TestRun.GetAnnotations-expanded"><a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return this run's dictionary of annotations.</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A dictionary mapping annotation names (strings) to values</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-docstring">        (also strings)."""</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">NotImplementedError</tt> </tt>
+</div><a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"> </tt>
+<a name="TestRun.GetAllResults"></a><div id="TestRun.GetAllResults-def"><a name="L70"></a><tt class="py-lineno"> 70</tt> <a class="py-toggle" href="#" id="TestRun.GetAllResults-toggle" onclick="return toggle('TestRun.GetAllResults');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.test_run.TestRun-class.html#GetAllResults">GetAllResults</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">directory</tt> <tt class="py-op">=</tt> <tt class="py-string">""</tt><tt class="py-op">,</tt> <tt class="py-param">kind</tt> <tt class="py-op">=</tt> <tt id="link-6" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-6', 'Result', 'link-3');">Result</a></tt><tt class="py-op">.</tt><tt id="link-7" class="py-name"><a title="qm.test.database.Database.TEST
+qm.test.result.Result.TEST" class="py-name" href="#" onclick="return doclink('link-7', 'TEST', 'link-5');">TEST</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TestRun.GetAllResults-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TestRun.GetAllResults-expanded"><a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return 'Result's from the given directory..</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-docstring">        'directory' -- A path to a directory in the test database.</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-docstring">        'kind' -- The kind of results to return.</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- All the results within 'directory' (including its</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-docstring">        subdirectories)."""</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">NotImplementedError</tt> </tt>
+</div><a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">     </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line"> </tt>
+<a name="TestRun.GetResultsByOutcome"></a><div id="TestRun.GetResultsByOutcome-def"><a name="L83"></a><tt class="py-lineno"> 83</tt> <a class="py-toggle" href="#" id="TestRun.GetResultsByOutcome-toggle" onclick="return toggle('TestRun.GetResultsByOutcome');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.test_run.TestRun-class.html#GetResultsByOutcome">GetResultsByOutcome</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">outcome</tt> <tt class="py-op">=</tt> <tt id="link-8" class="py-name" targets="Variable qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#None"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-8', 'None', 'link-8');">None</a></tt><tt class="py-op">,</tt> <tt class="py-param">directory</tt> <tt class="py-op">=</tt> <tt class="py-string">""</tt><tt class="py-op">,</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">                            <tt class="py-param">kind</tt> <tt class="py-op">=</tt> <tt id="link-9" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-9', 'Result', 'link-3');">Result</a></tt><tt class="py-op">.</tt><tt id="link-10" class="py-name"><a title="qm.test.database.Database.TEST
+qm.test.result.Result.TEST" class="py-name" href="#" onclick="return doclink('link-10', 'TEST', 'link-5');">TEST</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TestRun.GetResultsByOutcome-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TestRun.GetResultsByOutcome-expanded"><a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return 'Result's with a particular outcome.</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"><tt class="py-docstring">        'outcome' -- One of the 'Result.outcomes', or 'None'.</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line"><tt class="py-docstring">        'directory' -- A path to a directory in the test database.</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"><tt class="py-docstring">        'kind' -- The kind of results to return.</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- All the results within 'directory' (including its</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"><tt class="py-docstring">        subdirectories) that have the indicated 'outcome', or, if</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"><tt class="py-docstring">        'outcome' is 'None', all test results from 'directory'."""</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">        <tt class="py-name">results</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt id="link-11" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-11', 'result', 'link-2');">result</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Method qm.test.reader_test_run.ReaderTestRun.GetAllResults()=qm.test.reader_test_run.ReaderTestRun-class.html#GetAllResults,Method qm.test.test_run.TestRun.GetAllResults()=qm.test.test_run.TestRun-class.html#GetAllResults"><a title="qm.test.reader_test_run.ReaderTestRun.GetAllResults
+qm.test.test_run.TestRun.GetAllResults" class="py-name" href="#" onclick="return doclink('link-12', 'GetAllResults', 'link-12');">GetAllResults</a></tt><tt class="py-op">(</tt><tt class="py-name">directory</tt><tt class="py-op">,</tt> <tt id="link-13" class="py-name" targets="Variable qm.extension.Extension.kind=qm.extension.Extension-class.html#kind,Variable qm.host.Host.kind=qm.host.Host-class.html#kind,Variable qm.test.database.Database.kind=qm.test.database.Database-class.html#kind,Variable qm.test.expectation_database.ExpectationDatabase.kind=qm.test.expectation_database.ExpectationDatabase-class.html#kind,Variable qm.test.resource.Resource.kind=qm.test.resource.Resource-class.html#kind,Variable qm.test.result_reader.ResultReader.kind=qm.test.result_reader.ResultReader-class.html#kind,Variable qm.test.result_stream.ResultStream.kind=qm.test.result_stream.ResultStream-class.html#kind,Variable qm.test.suite.Suite.kind=qm.test.suite.Suite-class.html#kind,Variable qm.test.target.Target.kind=qm.test.target.Target-class.html#kind,Variable qm.test.test.Test.kind=qm.test.test.Test-class.html#kind"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-13', 'kind', 'link-13');">kind</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">            <tt class="py-comment"># Check the outcome.</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">outcome</tt> <tt class="py-keyword">and</tt> <tt id="link-14" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-14', 'result', 'link-2');">result</a></tt><tt class="py-op">.</tt><tt id="link-15" class="py-name" targets="Method qm.test.result.Result.GetOutcome()=qm.test.result.Result-class.html#GetOutcome"><a title="qm.test.result.Result.GetOutcome" class="py-name" href="#" onclick="return doclink('link-15', 'GetOutcome', 'link-15');">GetOutcome</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt class="py-name">outcome</tt><tt class="py-op">:</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">            <tt class="py-name">results</tt><tt class="py-op">.</tt><tt id="link-16" class="py-name" targets="Method qm.user.Group.append()=qm.user.Group-class.html#append"><a title="qm.user.Group.append" class="py-name" href="#" onclick="return doclink('link-16', 'append', 'link-16');">append</a></tt><tt class="py-op">(</tt><tt id="link-17" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-17', 'result', 'link-2');">result</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">results</tt> </tt>
+</div><a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">         </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"> </tt>
+<a name="TestRun.CountOutcomes"></a><div id="TestRun.CountOutcomes-def"><a name="L106"></a><tt class="py-lineno">106</tt> <a class="py-toggle" href="#" id="TestRun.CountOutcomes-toggle" onclick="return toggle('TestRun.CountOutcomes');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.test_run.TestRun-class.html#CountOutcomes">CountOutcomes</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">directory</tt> <tt class="py-op">=</tt> <tt class="py-string">""</tt><tt class="py-op">,</tt> <tt class="py-param">outcome</tt> <tt class="py-op">=</tt> <tt id="link-18" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-18', 'None', 'link-8');">None</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TestRun.CountOutcomes-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TestRun.CountOutcomes-expanded"><a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return statistics about the outcomes of tests.</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line"><tt class="py-docstring">        'directory' -- A path to a directory in the test database.</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line"><tt class="py-docstring">        'outcome' -- If not 'None', one of the 'Result.outcomes'.</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A dictionary mapping outcomes to the number of test</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line"><tt class="py-docstring">        results with that outcome located within 'directory' and its</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line"><tt class="py-docstring">        subdirectories.  If 'outcome' is not 'None', the dictionary</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line"><tt class="py-docstring">        will have an entry only for the 'outcome' specified."""</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line"> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">outcome</tt><tt class="py-op">:</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">            <tt id="link-19" class="py-name" targets="Variable qm.test.result.Result.outcomes=qm.test.result.Result-class.html#outcomes,Variable qm.test.web.web.DefaultDtmlPage.outcomes=qm.test.web.web.DefaultDtmlPage-class.html#outcomes"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-19', 'outcomes', 'link-19');">outcomes</a></tt> <tt class="py-op">=</tt> <tt id="link-20" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-20', 'Result', 'link-3');">Result</a></tt><tt class="py-op">.</tt><tt id="link-21" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-21', 'outcomes', 'link-19');">outcomes</a></tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">            <tt id="link-22" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-22', 'outcomes', 'link-19');">outcomes</a></tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-name">outcome</tt><tt class="py-op">,</tt><tt class="py-op">)</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">        <tt class="py-name">counts</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">o</tt> <tt class="py-keyword">in</tt> <tt id="link-23" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-23', 'outcomes', 'link-19');">outcomes</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">            <tt class="py-name">counts</tt><tt class="py-op">[</tt><tt class="py-name">o</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt id="link-24" class="py-name" targets="Method qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len()=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#len"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-24', 'len', 'link-24');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-25" class="py-name" targets="Method qm.test.test_run.TestRun.GetResultsByOutcome()=qm.test.test_run.TestRun-class.html#GetResultsByOutcome,Method qm.test.web.web.DefaultDtmlPage.GetResultsByOutcome()=qm.test.web.web.DefaultDtmlPage-class.html#GetResultsByOutcome"><a title="qm.test.test_run.TestRun.GetResultsByOutcome
+qm.test.web.web.DefaultDtmlPage.GetResultsByOutcome" class="py-name" href="#" onclick="return doclink('link-25', 'GetResultsByOutcome', 'link-25');">GetResultsByOutcome</a></tt><tt class="py-op">(</tt><tt class="py-name">o</tt><tt class="py-op">,</tt> <tt class="py-name">directory</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">counts</tt> </tt>
+</div></div><a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:42 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

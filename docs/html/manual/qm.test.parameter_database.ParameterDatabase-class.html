@@ -1,0 +1,1210 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.parameter_database.ParameterDatabase</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.parameter_database-module.html">Module&nbsp;parameter_database</a> ::
+        Class&nbsp;ParameterDatabase
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.parameter_database.ParameterDatabase-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class ParameterDatabase</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+         object --+        
+                  |        
+<a href="qm.extension.Extension-class.html">extension.Extension</a> --+    
+                      |    
+      <a href="qm.test.database.Database-class.html">database.Database</a> --+
+                          |
+                         <strong class="uidshort">ParameterDatabase</strong>
+</pre>
+
+<hr />
+<p>A database that parametrizes another database. 'Parameter' in this 
+  context refers to any name that is used as a label, and which stands for 
+  a specific set of arguments passed to tests.</p>
+  <p>The 'ParameterDatabase' class is abstract. Subclasses need to 
+  implement the '_GetParametersForTest' as well as the 
+  '_GetArgumentsForParameter' method.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.parameter_database.ParameterDatabase.ImplicitSuite-class.html" class="summary-name">ImplicitSuite</a><br />
+      ImplicitSuite represents a suite obtained from a test and a set of 
+        parameters applied to it.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.parameter_database.ParameterDatabase.WrapperSuite-class.html" class="summary-name">WrapperSuite</a><br />
+      As tests from the wrapped Database are mapped to suites, suites 
+        from the wrapped Database have to be recreated with all tests 
+        replaced by ImplicitSuite instances.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.parameter_database.ParameterDatabase.ParameterSuite-class.html" class="summary-name">ParameterSuite</a><br />
+      ParameterSuite represents a suite obtained from applying a given 
+        parameter to a suite from the wrapped DB.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension.Type-class.html">Type</a></code>,
+      <code><a href="qm.extension.Extension.Type-class.html">__metaclass__</a></code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">database</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">arguments</span>)</span><br />
+      Construct a 'Database'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetWrappedDatabase"></a><span class="summary-sig-name">GetWrappedDatabase</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetWrappedDatabase">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_GetParametersForTest"></a><span class="summary-sig-name">_GetParametersForTest</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">test_id</span>)</span><br />
+      Return a list of parameters that can be applied to the test 
+      'test_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase._GetParametersForTest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#_GetArgumentsForParameter" class="summary-sig-name" onclick="show_private();">_GetArgumentsForParameter</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">test_id</span>,
+        <span class="summary-sig-arg">parameter</span>)</span><br />
+      Return the set of arguments for this parameter.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase._GetArgumentsForParameter">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetTest" class="summary-sig-name">GetTest</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">test_id</span>)</span><br />
+      Return the 'TestDescriptor' for the test named 'test_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetTest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#HasTest" class="summary-sig-name">HasTest</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">test_id</span>)</span><br />
+      Check whether or not the database has a test named 'test_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.HasTest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetTestIds" class="summary-sig-name">GetTestIds</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">directory</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">scan_subdirs</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Return all test IDs that begin with 'directory'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetTestIds">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetSuite" class="summary-sig-name">GetSuite</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">suite_id</span>)</span><br />
+      Return the 'Suite' for the suite named 'suite_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetSuite">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#HasSuite" class="summary-sig-name">HasSuite</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">suite_id</span>)</span><br />
+      Check whether or not the database has a suite named 'suite_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.HasSuite">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetSuiteIds" class="summary-sig-name">GetSuiteIds</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">directory</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">scan_subdirs</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Return all suite IDs that begin with 'directory'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetSuiteIds">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetResource" class="summary-sig-name">GetResource</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">resource_id</span>)</span><br />
+      Return the 'ResourceDescriptor' for the resource 'resouce_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetResource">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#HasResource" class="summary-sig-name">HasResource</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">resource_id</span>)</span><br />
+      Check whether or not the database has a resource named 'resource_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.HasResource">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetResourceIds" class="summary-sig-name">GetResourceIds</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">directory</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">scan_subdirs</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Return all resource IDs that begin with 'directory'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetResourceIds">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetIds" class="summary-sig-name">GetIds</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">kind</span>,
+        <span class="summary-sig-arg">directory</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">scan_subdirs</span>=<span class="summary-sig-default">1</span>)</span><br />
+      Return all IDs of the indicated 'kind' that begin with 'directory'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetIds">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetSubdirectories" class="summary-sig-name">GetSubdirectories</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">directory</span>)</span><br />
+      Return the immediate subdirectories of 'directory'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetSubdirectories">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetAttachmentStore" class="summary-sig-name">GetAttachmentStore</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns the 'AttachmentStore' associated with the database.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetAttachmentStore">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="GetClassPath"></a><span class="summary-sig-name">GetClassPath</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetClassPath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetTestClassNames" class="summary-sig-name">GetTestClassNames</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the kinds of tests that the database can store.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetTestClassNames">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.parameter_database.ParameterDatabase-class.html#GetResourceClassNames" class="summary-sig-name">GetResourceClassNames</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the kinds of resources that the database can store.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetResourceClassNames">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.database.Database-class.html">database.Database</a></code></b>:
+      <code><a href="qm.test.database.Database-class.html#ExpandIds">ExpandIds</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetClassPaths">GetClassPaths</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetConfigurationDirectory">GetConfigurationDirectory</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetExtension">GetExtension</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetExtensions">GetExtensions</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetItem">GetItem</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetLabelComponents">GetLabelComponents</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetPath">GetPath</a></code>,
+      <code><a href="qm.test.database.Database-class.html#IsModifiable">IsModifiable</a></code>,
+      <code><a href="qm.test.database.Database-class.html#IsValidLabel">IsValidLabel</a></code>,
+      <code><a href="qm.test.database.Database-class.html#JoinLabels">JoinLabels</a></code>,
+      <code><a href="qm.test.database.Database-class.html#RemoveExtension">RemoveExtension</a></code>,
+      <code><a href="qm.test.database.Database-class.html#SplitLabel">SplitLabel</a></code>,
+      <code><a href="qm.test.database.Database-class.html#SplitLabelLeft">SplitLabelLeft</a></code>,
+      <code><a href="qm.test.database.Database-class.html#WriteExtension">WriteExtension</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension-class.html#GetClassName">GetClassName</a></code>,
+      <code><a href="qm.extension.Extension-class.html#GetExplicitArguments">GetExplicitArguments</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomDocument">MakeDomDocument</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomElement">MakeDomElement</a></code>,
+      <code><a href="qm.extension.Extension-class.html#Write">Write</a></code>,
+      <code><a href="qm.extension.Extension-class.html#__getattr__">__getattr__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.parameter_database.ParameterDatabase-class.html#_argument_list" class="summary-name" onclick="show_private();">_argument_list</a> = <code title="[&lt;&lt;class 'qm.fields.TextField'&gt; label_class&gt;,
+ &lt;&lt;class 'qm.fields.BooleanField'&gt; modifiable&gt;]"><code class="variable-group">[</code>&lt;&lt;class 'qm.fields.TextField'&gt; label_class&gt;<code class="variable-op">,</code><code class="variable-ellipsis">...</code></code><br />
+      A list of all the 'Field's in this class.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.database.Database-class.html">database.Database</a></code></b>:
+      <code><a href="qm.test.database.Database-class.html#ITEM_KINDS">ITEM_KINDS</a></code>,
+      <code><a href="qm.test.database.Database-class.html#RESOURCE">RESOURCE</a></code>,
+      <code><a href="qm.test.database.Database-class.html#SUITE">SUITE</a></code>,
+      <code><a href="qm.test.database.Database-class.html#TEST">TEST</a></code>,
+      <code><a href="qm.test.database.Database-class.html#arguments">arguments</a></code>,
+      <code><a href="qm.test.database.Database-class.html#kind">kind</a></code>,
+      <code><a href="qm.test.database.Database-class.html#label_class">label_class</a></code>,
+      <code><a href="qm.test.database.Database-class.html#modifiable">modifiable</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.database.Database-class.html">database.Database</a></code></b> (private):
+      <code><a href="qm.test.database.Database-class.html#_argument_dictionary" onclick="show_private();">_argument_dictionary</a></code>,
+      <code><a href="qm.test.database.Database-class.html#_is_generic_database" onclick="show_private();">_is_generic_database</a></code>,
+      <code><a href="qm.test.database.Database-class.html#_item_exceptions" onclick="show_private();">_item_exceptions</a></code>
+      </p></div>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b> (private):
+      <code><a href="qm.extension.Extension-class.html#_allow_arg_names_matching_class_vars" onclick="show_private();">_allow_arg_names_matching_class_vars</a></code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">database</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">arguments</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a 'Database'.</p>
+  <p>'path' -- A string containing the absolute path to the directory 
+  containing the database.</p>
+  <p>'arguments' -- A dictionary mapping attribute names to values. The use
+  of this parameter is deprecated. Use keyword arguments instead.</p>
+  <p>Derived classes must call this method from their own '__init__' 
+  methods.  Every derived class must have an '__init__' method that takes 
+  the path to the directory containing the database as its only argument.  
+  The path provided to the derived class '__init__' function will always be
+  an absolute path.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_GetArgumentsForParameter"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_GetArgumentsForParameter</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">test_id</span>,
+        <span class="sig-arg">parameter</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase._GetArgumentsForParameter">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the set of arguments for this parameter.</p>
+  <p>'test_id' -- The test id to which the parameter belongs.</p>
+  <p>'parameter' -- The parameter for which the arguments are queried.</p>
+  <p>returns -- A dictionary containing the argument as name/value 
+  pairs.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetTest"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetTest</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">test_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetTest">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'TestDescriptor' for the test named 'test_id'.</p>
+  <p>'test_id' -- A label naming the test.</p>
+  <p>returns -- A 'TestDescriptor' corresponding to 'test_id'.</p>
+  <p>raises -- 'NoSuchTestError' if there is no test in the database named 
+  'test_id'.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetTest">database.Database.GetTest</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="HasTest"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HasTest</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">test_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.HasTest">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Check whether or not the database has a test named 'test_id'.</p>
+  <p>'test_id' -- A label naming the test.</p>
+  <p>returns -- True if and only if the database contains a test named 
+  'test_id'.  If this function returns true, 'GetTest' will usually 
+  succeed.  However, they may be circumstances where 'HasTest' returns true
+  and 'GetTest' does not succeed.  For example, someone might remove a 
+  critical file from the database between the time that 'HasTest' is called
+  and the time that 'GetTest' is called.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#HasTest">database.Database.HasTest</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetTestIds"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetTestIds</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">directory</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">scan_subdirs</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetTestIds">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return all test IDs that begin with 'directory'.</p>
+  <p>'directory' -- A label indicating the directory in which to begin the 
+  search.</p>
+  <p>'scan_subdirs' -- True if (and only if) subdirectories of 'directory' 
+  should be scanned.</p>
+  <p>'returns' -- A list of all tests located within 'directory', as 
+  absolute labels.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetTestIds">database.Database.GetTestIds</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetSuite"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetSuite</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">suite_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetSuite">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'Suite' for the suite named 'suite_id'.</p>
+  <p>'suite_id' -- A label naming the suite.</p>
+  <p>returns -- An instance of 'Suite' (or a derived class of 'Suite') 
+  corresponding to 'suite_id'.</p>
+  <p>raises -- 'NoSuchSuiteError' if there is no test in the database named
+  'test_id'.</p>
+  <p>All databases must have an implicit suite called '' that contains all 
+  tests in the database.  More generally, for each directory in the 
+  database, there must be a corresponding suite that contains all tests in 
+  that directory and its subdirectories.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetSuite">database.Database.GetSuite</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="HasSuite"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HasSuite</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">suite_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.HasSuite">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Check whether or not the database has a suite named 'suite_id'.</p>
+  <p>'suite_id' -- A label naming the suite.</p>
+  <p>returns -- True if and only if the database contains a suite named 
+  'suite_id'.  If this function returns true, 'GetSuite' will usually 
+  succeed.  However, they may be circumstances where 'HasSuite' returns 
+  true and 'GetSuite' does not succeed.  For example, someone might remove 
+  a critical file from the database between the time that 'HasSuite' is 
+  called and the time that 'GetSuite' is called.</p>
+  <p>All databases must have an implicit suite called &quot;&quot; that 
+  contains all tests in the database.  More generally, for each directory 
+  in the database, there must be a corresponding suite that contains all 
+  tests in that directory and its subdirectories.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#HasSuite">database.Database.HasSuite</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetSuiteIds"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetSuiteIds</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">directory</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">scan_subdirs</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetSuiteIds">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return all suite IDs that begin with 'directory'.</p>
+  <p>'directory' -- A label indicating the directory in which to begin the 
+  search.</p>
+  <p>'scan_subdirs' -- True if (and only if) subdirectories of 'directory' 
+  should be scanned.</p>
+  <p>'returns' -- A list of all suites located within 'directory', as 
+  absolute labels.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetSuiteIds">database.Database.GetSuiteIds</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetResource"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetResource</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">resource_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetResource">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'ResourceDescriptor' for the resource 'resouce_id'.</p>
+  <p>'resource_id' -- A label naming the resource.</p>
+  <p>returns -- A 'ResourceDescriptor' corresponding to 'resource_id'.</p>
+  <p>raises -- 'NoSuchResourceError' if there is no resource in the 
+  database named 'resource_id'.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetResource">database.Database.GetResource</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="HasResource"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">HasResource</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">resource_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.HasResource">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Check whether or not the database has a resource named 
+  'resource_id'.</p>
+  <p>'resource_id' -- A label naming the resource.</p>
+  <p>returns -- True if and only if the database contains a resource named 
+  'resource_id'.  If this function returns true, 'GetResource' will usually
+  succeed.  However, they may be circumstances where 'HasResource' returns 
+  true and 'GetResource' does not succeed.  For example, someone might 
+  remove a critical file from the database between the time that 
+  'HasResource' is called and the time that 'GetResource' is called.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#HasResource">database.Database.HasResource</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetResourceIds"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetResourceIds</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">directory</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">scan_subdirs</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetResourceIds">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return all resource IDs that begin with 'directory'.</p>
+  <p>'directory' -- A label indicating the directory in which to begin the 
+  search.</p>
+  <p>'scan_subdirs' -- True if (and only if) subdirectories of 'directory' 
+  should be scanned.</p>
+  <p>'returns' -- A list of all resources located within 'directory', as 
+  absolute labels.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetResourceIds">database.Database.GetResourceIds</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetIds"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetIds</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">kind</span>,
+        <span class="sig-arg">directory</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">scan_subdirs</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetIds">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return all IDs of the indicated 'kind' that begin with 
+  'directory'.</p>
+  <p>'kind' -- One of the 'ITEM_KINDS'.</p>
+  <p>'directory' -- A label indicating the directory in which to begin the 
+  search.</p>
+  <p>'scan_subdirs' -- True if (and only if) subdirectories of 'directory' 
+  should be scanned.</p>
+  <p>returns -- A list of all items of the indicated 'kind' located within 
+  'directory', as absolute labels.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetIds">database.Database.GetIds</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetSubdirectories"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetSubdirectories</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">directory</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetSubdirectories">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the immediate subdirectories of 'directory'.</p>
+  <p>'directory' -- A label indicating a directory in the database.</p>
+  <p>returns -- A sequence of (relative) labels indictating the immediate 
+  subdirectories of 'directory'.  For example, if &quot;a.b&quot; and 
+  &quot;a.c&quot; are directories in the database, this method will return 
+  &quot;b&quot; and &quot;c&quot; given &quot;a&quot; as 'directory'.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetSubdirectories">database.Database.GetSubdirectories</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetAttachmentStore"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetAttachmentStore</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetAttachmentStore">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the 'AttachmentStore' associated with the database.</p>
+  <p>returns -- The 'AttachmentStore' containing the attachments associated
+  with tests and resources in this database.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetAttachmentStore">database.Database.GetAttachmentStore</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetTestClassNames"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetTestClassNames</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetTestClassNames">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the kinds of tests that the database can store.</p>
+  <p>returns -- A sequence of strings.  Each string names a class, 
+  including the containing module.  Only classes of these types can be 
+  stored in the database.</p>
+  <p>Derived classes may override this method.  The default implementation 
+  allows all available test classes, but the derived class may allow only a
+  subset.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetTestClassNames">database.Database.GetTestClassNames</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetResourceClassNames"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetResourceClassNames</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.parameter_database-pysrc.html#ParameterDatabase.GetResourceClassNames">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the kinds of resources that the database can store.</p>
+  <p>returns -- A sequence of strings.  Each string names a class, 
+  including the containing module.  Only resources of these types can be 
+  stored in the database.</p>
+  <p>Derived classes may override this method.  The default implementation 
+  allows all available resource classes, but the derived class may allow 
+  only a subset.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.database.Database-class.html#GetResourceClassNames">database.Database.GetResourceClassNames</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="_argument_list"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">_argument_list</h3>
+  <p>A list of all the 'Field's in this class.</p>
+  <p>This list combines the complete list of 'arguments'.  'Field's appear 
+  in the order reached by a pre-order breadth-first traversal of the 
+  hierarchy, starting from the most derived class.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code>&lt;&lt;class 'qm.fields.TextField'&gt; label_class&gt;<code class="variable-op">,</code>
+ &lt;&lt;class 'qm.fields.BooleanField'&gt; modifiable&gt;<code class="variable-group">]</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:41 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

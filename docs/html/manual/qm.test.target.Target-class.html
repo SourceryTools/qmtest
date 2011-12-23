@@ -1,0 +1,1036 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.target.Target</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.target-module.html">Module&nbsp;target</a> ::
+        Class&nbsp;Target
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.target.Target-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Target</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.target-pysrc.html#Target">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+         object --+    
+                  |    
+<a href="qm.extension.Extension-class.html">extension.Extension</a> --+
+                      |
+                     <strong class="uidshort">Target</strong>
+</pre>
+
+<hr />
+<p>Base class for target implementations.</p>
+  <p>A 'Target' is an entity that can run tests.  QMTest can spread the 
+  workload from multiple tests across multiple targets.  In addition, a 
+  single target can run more than one test at once.</p>
+  <p>'Target' is an abstract class.</p>
+  <p>You can extend QMTest by providing your own target class 
+  implementation.</p>
+  <p>To create your own target class, you must create a Python class 
+  derived (directly or indirectly) from 'Target'.  The documentation for 
+  each method of 'Target' indicates whether you must override it in your 
+  target class implementation.  Some methods may be overridden, but do not 
+  need to be.  You might want to override such a method to provide a more 
+  efficient implementation, but QMTest will work fine if you just use the 
+  default version.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.target.Target.__ResourceSetUpException-class.html" class="summary-name" onclick="show_private();">__ResourceSetUpException</a><br />
+      An exception indicating that a resource could not be set up.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension.Type-class.html">Type</a></code>,
+      <code><a href="qm.extension.Extension.Type-class.html">__metaclass__</a></code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">database</span>,
+        <span class="summary-sig-arg">arguments</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">**args</span>)</span><br />
+      Construct a 'Target'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#GetName" class="summary-sig-name">GetName</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the name of the target.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target.GetName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#GetGroup" class="summary-sig-name">GetGroup</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the group of which the target is a member.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target.GetGroup">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#GetDatabase" class="summary-sig-name">GetDatabase</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the 'Database' containing the tests this target will run.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target.GetDatabase">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#IsIdle" class="summary-sig-name">IsIdle</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return true if the target is idle.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target.IsIdle">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#IsInGroup" class="summary-sig-name">IsInGroup</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">group_pattern</span>)</span><br />
+      Returns true if this 'Target' is in a particular group.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target.IsInGroup">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#Start" class="summary-sig-name">Start</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">response_queue</span>,
+        <span class="summary-sig-arg">engine</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Start the target.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target.Start">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#Stop" class="summary-sig-name">Stop</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Stop the target.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target.Stop">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#RunTest" class="summary-sig-name">RunTest</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">descriptor</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Run the test given by 'test_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target.RunTest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#_RecordResult" class="summary-sig-name" onclick="show_private();">_RecordResult</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Record the 'result'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target._RecordResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#_BeginResourceSetUp" class="summary-sig-name" onclick="show_private();">_BeginResourceSetUp</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">resource_name</span>)</span><br />
+      Begin setting up the indicated resource.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target._BeginResourceSetUp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#_FinishResourceSetUp" class="summary-sig-name" onclick="show_private();">_FinishResourceSetUp</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">resource</span>,
+        <span class="summary-sig-arg">result</span>,
+        <span class="summary-sig-arg">properties</span>)</span><br />
+      Finish setting up a resource.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target._FinishResourceSetUp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#__SetUpResources" class="summary-sig-name" onclick="show_private();">__SetUpResources</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">descriptor</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Set up all the resources associated with 'descriptor'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target.__SetUpResources">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#_SetUpResource" class="summary-sig-name" onclick="show_private();">_SetUpResource</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">resource_name</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Set up the resource given by 'resource_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target._SetUpResource">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#_CleanUpResource" class="summary-sig-name" onclick="show_private();">_CleanUpResource</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">resource</span>)</span><br />
+      Clean up the 'resource'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target._CleanUpResource">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.target.Target-class.html#_GetTemporaryDirectory" class="summary-sig-name" onclick="show_private();">_GetTemporaryDirectory</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the path to a temporary directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.target-pysrc.html#Target._GetTemporaryDirectory">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension-class.html#GetClassName">GetClassName</a></code>,
+      <code><a href="qm.extension.Extension-class.html#GetExplicitArguments">GetExplicitArguments</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomDocument">MakeDomDocument</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomElement">MakeDomElement</a></code>,
+      <code><a href="qm.extension.Extension-class.html#Write">Write</a></code>,
+      <code><a href="qm.extension.Extension-class.html#__getattr__">__getattr__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.target.Target-class.html#arguments" class="summary-name">arguments</a> = <code title="[qm.fields.TextField(name= &quot;name&quot;, title= &quot;Name&quot;, description= &quot;&quot;&quot;The \
+name of this target.
+
+            The name of the target.  The target name will be recorded
+            in any tests executed on that target so that you can see
+            where the test was run.&quot;&quot;&quot;, default_value= &quot;&quot;), qm.fields.\
+TextField(name= &quot;group&quot;, title= &quot;Group&quot;, description= &quot;&quot;&quot;The group ass\
+ociated with this target.
+...">[qm.fields.TextField(name= &quot;name&quot;, title= &quot;Name&quot;, <code class="variable-ellipsis">...</code></code><br />
+      A list of the arguments to the extension class.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="kind"></a><span class="summary-name">kind</span> = <code title="&quot;target&quot;">&quot;target&quot;</code><br />
+      A string giving kind of extension is implemented by the class.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b> (private):
+      <code><a href="qm.extension.Extension-class.html#_allow_arg_names_matching_class_vars" onclick="show_private();">_allow_arg_names_matching_class_vars</a></code>,
+      <code><a href="qm.extension.Extension-class.html#_argument_dictionary" onclick="show_private();">_argument_dictionary</a></code>,
+      <code><a href="qm.extension.Extension-class.html#_argument_list" onclick="show_private();">_argument_list</a></code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">database</span>,
+        <span class="sig-arg">arguments</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">**args</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a 'Target'.</p>
+  <p>'database' -- The 'Database' containing the tests that will be 
+  run.</p>
+  <p>'arguments' -- As for 'Extension.__init__'.</p>
+  <p>'args' -- As for 'Extension.__init__'.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetName"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetName</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target.GetName">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the name of the target.</p>
+  <p>Derived classes must not override this method.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetGroup"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetGroup</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target.GetGroup">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the group of which the target is a member.</p>
+  <p>Derived classes must not override this method.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetDatabase"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetDatabase</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target.GetDatabase">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'Database' containing the tests this target will run.</p>
+  <p>returns -- The 'Database' containing the tests this target will 
+  run.</p>
+  <p>Derived classes must not override this method.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="IsIdle"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">IsIdle</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target.IsIdle">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return true if the target is idle.</p>
+  <p>returns -- True if the target is idle.  If the target is idle, 
+  additional tasks may be assigned to it.</p>
+  <p>Derived classes must override this method.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="IsInGroup"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">IsInGroup</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">group_pattern</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target.IsInGroup">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns true if this 'Target' is in a particular group.</p>
+  <p>'group_pattern' -- A string giving a regular expression.</p>
+  <p>returns -- Returns true if the 'group_pattern' denotes a regular 
+  expression that matches the group for this 'Target', false otherwise.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Start"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Start</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">response_queue</span>,
+        <span class="sig-arg">engine</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target.Start">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Start the target.</p>
+  <p>'response_queue' -- The 'Queue' in which the results of test 
+  executions are placed.</p>
+  <p>'engine' -- The 'ExecutionEngine' that is starting the target, or 
+  'None' if this target is being started without an 'ExecutionEngine'.</p>
+  <p>Derived classes may override this method, but the overriding method 
+  must call this method at some point during its execution.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Stop"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Stop</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target.Stop">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Stop the target.</p>
+  <p>Clean up all resources that have been set up on this target and take 
+  whatever other actions are required to stop the target.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="RunTest"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">RunTest</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">descriptor</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target.RunTest">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run the test given by 'test_id'.</p>
+  <p>'descriptor' -- The 'TestDescriptor' for the test.</p>
+  <p>'context' -- The 'Context' in which to run the test.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_RecordResult"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_RecordResult</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target._RecordResult">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Record the 'result'.</p>
+  <p>'result' -- A 'Result' of a test or resource execution.</p>
+  <p>Derived classes may override this method, but the overriding method 
+  must call this method at some point during its execution.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_BeginResourceSetUp"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_BeginResourceSetUp</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">resource_name</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target._BeginResourceSetUp">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Begin setting up the indicated resource.</p>
+  <p>'resource_name' -- A string naming a resource.</p>
+  <p>returns -- If at attempt to set up the resource has already been made,
+  returns a tuple '(resource, outcome, properties)'. The 'resource' is the 
+  'Resource' object itself, but may be 'None' if the resource could not be 
+  set up.  The 'outcome' indicates the outcome that resulted when the 
+  resource was set up.  The 'properties' are a map from strings to strings 
+  indicating properties added by this resource.</p>
+  <p>If the resource has not been set up, but _BeginResourceSetUp has 
+  already been called for the resource, then the contents of the tuple will
+  all be 'None'.</p>
+  <p>If this is the first time _BeginResourceSetUp has been called for this
+  resource, then 'None' is returned, but the resource is marked as in the 
+  process of being set up.  It is the caller's responsibility to finish 
+  setting it up by calling '_FinishResourceSetUp'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_FinishResourceSetUp"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_FinishResourceSetUp</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">resource</span>,
+        <span class="sig-arg">result</span>,
+        <span class="sig-arg">properties</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target._FinishResourceSetUp">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Finish setting up a resource.</p>
+  <p>'resource' -- The 'Resource' itself.</p>
+  <p>'result' -- The 'Result' associated with setting up the resource.</p>
+  <p>'properties' -- A dictionary of additional context properties that 
+  should be provided to tests that depend on this resource.</p>
+  <p>returns -- A tuple of the same form as is returned by 
+  '_BeginResourceSetUp' when the resource has already been set up.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__SetUpResources"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__SetUpResources</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">descriptor</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target.__SetUpResources">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set up all the resources associated with 'descriptor'.</p>
+  <p>'descriptor' -- The 'TestDescriptor' or 'ResourceDescriptor' 
+  indicating the test or resource that is about to be run.</p>
+  <p>'context' -- The 'Context' in which the resources will be 
+  executed.</p>
+  <p>returns -- A tuple of the same form as is returned by 
+  '_BeginResourceSetUp' when the resource has already been set up.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_SetUpResource"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_SetUpResource</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">resource_name</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target._SetUpResource">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set up the resource given by 'resource_id'.</p>
+  <p>'resource_name' -- The name of the resource to be set up.</p>
+  <p>'context' -- The 'Context' in which to run the resource.</p>
+  <p>returns -- A map from strings to strings indicating additional 
+  properties added by this resource.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_CleanUpResource"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_CleanUpResource</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">name</span>,
+        <span class="sig-arg">resource</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target._CleanUpResource">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Clean up the 'resource'.</p>
+  <p>'resource' -- The 'Resource' that should be cleaned up.</p>
+  <p>'name' -- The name of the resource itself.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_GetTemporaryDirectory"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_GetTemporaryDirectory</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.target-pysrc.html#Target._GetTemporaryDirectory">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the path to a temporary directory.</p>
+  <p>returns -- The path to a temporary directory to pass along to tests 
+  and resources via the 'TMPDIR_CONTEXT_PROPERTY'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="arguments"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">arguments</h3>
+  <p>A list of the arguments to the extension class.</p>
+  <p>Each element of this list should be an instance of 'Field'.  The 
+  'Field' instance describes the argument.</p>
+  <p>Derived classes may redefine this class variable.  However, derived 
+  classes should not explicitly include the arguments from base classes; 
+  QMTest will automatically combine all the arguments found throughout the 
+  class hierarchy.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+[qm.fields.TextField(name= &quot;name&quot;, title= &quot;Name&quot;, description= &quot;&quot;&quot;The <span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+name of this target.
+
+            The name of the target.  The target name will be recorded
+            in any tests executed on that target so that you can see
+            where the test was run.&quot;&quot;&quot;, default_value= &quot;&quot;), qm.fields.<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+TextField(name= &quot;group&quot;, title= &quot;Group&quot;, description= &quot;&quot;&quot;The group ass<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ociated with this target.
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:42 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.host.Host</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.host-module.html">Module&nbsp;host</a> ::
+        Class&nbsp;Host
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.host.Host-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Host</h1><p class="nomargin-top"><span class="codelink"><a href="qm.host-pysrc.html#Host">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+         object --+    
+                  |    
+<a href="qm.extension.Extension-class.html">extension.Extension</a> --+
+                      |
+                     <strong class="uidshort">Host</strong>
+</pre>
+
+<hr />
+<p>A 'Host' is a logical machine.</p>
+  <p>Each logical machine has a default directory.  When a file is uploaded
+  to or downloaded from the machine, and a relative path is specified, the 
+  patch is relative to the default directory. Similarly, when a program is 
+  run on the remote machine, its initial working directory is the default 
+  directory.</p>
+  <p>The interface presented by 'Host' is a lowest common denominator.  The
+  objective is not to expose all the functionality of any host; rather it 
+  is to provide an interface that can be used on many hosts.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.host.Host.Executable-class.html" class="summary-name">Executable</a><br />
+      An 'Executable' is a simple redirected executable.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension.Type-class.html">Type</a></code>,
+      <code><a href="qm.extension.Extension.Type-class.html">__metaclass__</a></code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.host.Host-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">arguments</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">**args</span>)</span><br />
+      Construct a new 'Extension'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.host-pysrc.html#Host.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.host.Host-class.html#Run" class="summary-sig-name">Run</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">arguments</span>,
+        <span class="summary-sig-arg">environment</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">timeout</span>=<span class="summary-sig-default">-1</span>,
+        <span class="summary-sig-arg">relative</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Run a program on the remote host.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.host-pysrc.html#Host.Run">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.host.Host-class.html#UploadFile" class="summary-sig-name">UploadFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">local_file</span>,
+        <span class="summary-sig-arg">remote_file</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Copy 'local_file' to 'remote_file'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.host-pysrc.html#Host.UploadFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.host.Host-class.html#DownloadFile" class="summary-sig-name">DownloadFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">remote_file</span>,
+        <span class="summary-sig-arg">local_file</span>)</span><br />
+      Copy 'remote_file' to 'local_file'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.host-pysrc.html#Host.DownloadFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.host.Host-class.html#UploadAndRun" class="summary-sig-name">UploadAndRun</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">arguments</span>,
+        <span class="summary-sig-arg">environment</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">timeout</span>=<span class="summary-sig-default">-1</span>)</span><br />
+      Run a program on the remote host.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.host-pysrc.html#Host.UploadAndRun">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.host.Host-class.html#DeleteFile" class="summary-sig-name">DeleteFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">remote_file</span>)</span><br />
+      Delete the 'remote_file'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.host-pysrc.html#Host.DeleteFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension-class.html#GetClassName">GetClassName</a></code>,
+      <code><a href="qm.extension.Extension-class.html#GetExplicitArguments">GetExplicitArguments</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomDocument">MakeDomDocument</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomElement">MakeDomElement</a></code>,
+      <code><a href="qm.extension.Extension-class.html#Write">Write</a></code>,
+      <code><a href="qm.extension.Extension-class.html#__getattr__">__getattr__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="kind"></a><span class="summary-name">kind</span> = <code title="&quot;host&quot;">&quot;host&quot;</code><br />
+      A string giving kind of extension is implemented by the class.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension-class.html#arguments">arguments</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b> (private):
+      <code><a href="qm.extension.Extension-class.html#_allow_arg_names_matching_class_vars" onclick="show_private();">_allow_arg_names_matching_class_vars</a></code>,
+      <code><a href="qm.extension.Extension-class.html#_argument_dictionary" onclick="show_private();">_argument_dictionary</a></code>,
+      <code><a href="qm.extension.Extension-class.html#_argument_list" onclick="show_private();">_argument_list</a></code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">arguments</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">**args</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.host-pysrc.html#Host.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a new 'Extension'.</p>
+  <p>'args': Keyword arguments providing values for Extension parameters. 
+  The values should be appropriate for the corresponding fields. Derived 
+  classes must pass along any unrecognized keyword arguments to this method
+  so that additional arguments can be added in the future without 
+  necessitating changes to derived classes.</p>
+  <p>This method will place all of the arguments into this objects instance
+  dictionary.</p>
+  <p>Derived classes may override this method, but should call this method 
+  during their processing.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="Run"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Run</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">arguments</span>,
+        <span class="sig-arg">environment</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">timeout</span>=<span class="sig-default">-1</span>,
+        <span class="sig-arg">relative</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.host-pysrc.html#Host.Run">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run a program on the remote host.</p>
+  <p>'path' -- The name of the program to run, on the remote host. If 
+  'relative' is true, or if 'path' is not an absolute path but does contain
+  at least one directory separator, then 'path' is interpreted relative to 
+  the default directory.  Otherwise, 'path' is used unmodified.</p>
+  <p>'arguments' -- The sequence of arguments that should be passed to the 
+  program.</p>
+  <p>'environment' -- If not 'None', a dictionary of pairs of strings to 
+  add to the environment of the running program.</p>
+  <p>'timeout' -- The number of seconds the program is permitted to 
+  execute.  After the 'timeout' expires, the program will be terminated.  
+  However, in some cases (such as when using 'rsh') it will be the local 
+  side of the connection that is closed. The remote side of the connection 
+  may or may not continue to operate, depending on the vagaries of the 
+  remote operating system.</p>
+  <p>returns -- A pair '(status, output)'.  The 'status' is the exit status
+  returned by the program, or 'None' if the exit status is not available.  
+  The 'output' is a string giving the combined standard output and standard
+  error output from the program.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="UploadFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">UploadFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">local_file</span>,
+        <span class="sig-arg">remote_file</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.host-pysrc.html#Host.UploadFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Copy 'local_file' to 'remote_file'.</p>
+  <p>'local_file' -- The name of the file on the local machine.</p>
+  <p>'remote_file' -- The name of the file on the remote machine. The 
+  'remote_file' must be a relative path.  It is interpreted relative to the
+  default directory.  If 'None', the 'remote_file' is placed in the default
+  directory using the basename of the 'local_file'.</p>
+  <p>If the 'local_file' and 'remote_file' are the same, then this function
+  succeeds, but takes no action.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="DownloadFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">DownloadFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">remote_file</span>,
+        <span class="sig-arg">local_file</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.host-pysrc.html#Host.DownloadFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Copy 'remote_file' to 'local_file'.</p>
+  <p>'remote_file' -- The name of the file on the remote machine. The 
+  'remote_file' must be a relative path.  It is interpreted relative to the
+  default directory.</p>
+  <p>'local_file' -- The name of the file on the local machine.  If 'None',
+  the 'local_file' is placed in the current directory using the basename of
+  the 'remote_file'.</p>
+  <p>If the 'local_file' and 'remote_file' are the same, then this function
+  succeeds, but takes no action.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="UploadAndRun"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">UploadAndRun</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">arguments</span>,
+        <span class="sig-arg">environment</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">timeout</span>=<span class="sig-default">-1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.host-pysrc.html#Host.UploadAndRun">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run a program on the remote host.</p>
+  <p>'path' -- The name of the program to run, as a path on the local 
+  machine.</p>
+  <p>'arguments' -- As for 'Run'.</p>
+  <p>'environment' -- As for 'Run'.</p>
+  <p>'timeout' -- As for 'Run'.</p>
+  <p>returns -- As for 'Run'.</p>
+  <p>The program is uploaded to the default directory on the remote host, 
+  run, and then deleted.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="DeleteFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">DeleteFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">remote_file</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.host-pysrc.html#Host.DeleteFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Delete the 'remote_file'.</p>
+  <p>'remote_file' -- A relative path to the file to be deleted.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

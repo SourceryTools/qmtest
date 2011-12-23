@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.executable.TimeoutExecutable</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.executable-module.html">Module&nbsp;executable</a> ::
+        Class&nbsp;TimeoutExecutable
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.executable.TimeoutExecutable-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class TimeoutExecutable</h1><p class="nomargin-top"><span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+    
+         |    
+<a href="qm.executable.Executable-class.html">Executable</a> --+
+             |
+            <strong class="uidshort">TimeoutExecutable</strong>
+</pre>
+
+<hr />
+<p>A 'TimeoutExecutable' runs for a limited time.</p>
+  <p>If the timer expires, the child process is killed and a Timeout 
+  exception is raised.</p>
+  <p>In order to implement this functionality under UNIX, the child process
+  is placed into its own process group.  An additional monitoring process 
+  is created whose sole job is to kill the primary child's process group if
+  the timeout expires.  Process groups are used so that if the child 
+  process spawns additional processes they are killed too.  A separate 
+  monitoring process is used so as not to block the parent.</p>
+  <p>Under Windows, a monitoring thread is created.  When the timer 
+  expires, the child process is terminated.  However, the child process is 
+  not placed into a separate process group, so granchildren kare not 
+  terminated.  In the future, when Python provides access to 
+  'CreateJobObject' and related functions, jobs will be used to provide 
+  functionality similar to UNIX process groups.</p>
+  <p>The 'Run' method will automatically start the monitoring process. The 
+  'Spawn' method does not start the monitoring process.  User's of 'Spawn' 
+  should invoke '_DoParent' in order to start the monitoring process.  
+  Derived class '_DoParent' functions should call the version defined in 
+  this class.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.TimeoutExecutable-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">timeout</span>=<span class="summary-sig-default">-1</span>)</span><br />
+      Construct a new 'TimeoutExecutable'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.TimeoutExecutable-class.html#_InitializeChild" class="summary-sig-name" onclick="show_private();">_InitializeChild</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Initialize the child process.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable._InitializeChild">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.TimeoutExecutable-class.html#_HandleChild" class="summary-sig-name" onclick="show_private();">_HandleChild</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Run in the parent process after the child has been created.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable._HandleChild">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.TimeoutExecutable-class.html#Run" class="summary-sig-name">Run</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">arguments</span>=<span class="summary-sig-default">[]</span>,
+        <span class="summary-sig-arg">environment</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">dir</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">path</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Spawn the program and wait for it to finish.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable.Run">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.TimeoutExecutable-class.html#__UseSeparateProcessGroupForChild" class="summary-sig-name" onclick="show_private();">__UseSeparateProcessGroupForChild</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns true if the child wil be placed in its own process group.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable.__UseSeparateProcessGroupForChild">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.executable.TimeoutExecutable-class.html#__Monitor" class="summary-sig-name" onclick="show_private();">__Monitor</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Kill the child if the timeout expires.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable.__Monitor">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.executable.Executable-class.html">Executable</a></code></b>:
+      <code><a href="qm.executable.Executable-class.html#Kill">Kill</a></code>,
+      <code><a href="qm.executable.Executable-class.html#Spawn">Spawn</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.executable.Executable-class.html">Executable</a></code></b> (private):
+      <code><a href="qm.executable.Executable-class.html#_CreateCommandLine" onclick="show_private();">_CreateCommandLine</a></code>,
+      <code><a href="qm.executable.Executable-class.html#_DoParent" onclick="show_private();">_DoParent</a></code>,
+      <code><a href="qm.executable.Executable-class.html#_GetChildPID" onclick="show_private();">_GetChildPID</a></code>,
+      <code><a href="qm.executable.Executable-class.html#_InitializeParent" onclick="show_private();">_InitializeParent</a></code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">timeout</span>=<span class="sig-default">-1</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a new 'TimeoutExecutable'.</p>
+  <p>'timeout' -- The number of seconds that the child is permitted to run.
+  This value may be a floating-point value.  However, the value may be 
+  rounded to an integral value on some systems. Once the timeout expires, 
+  the child and its entire process group is killed.  (The processes in the 
+  process group are sent the 'SIGKILL' signal.)  If the 'timeout' is -2, 
+  the child is allowed to run forever, but when it terminates the child's 
+  process group is killed.</p>
+  <p>If the 'timeout' is -1, this class behaves exactly like 
+  'Executable'.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_InitializeChild"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_InitializeChild</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable._InitializeChild">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize the child process.</p>
+  <p>After 'fork' is called this method is invoked to give the child a 
+  chance to initialize itself.  '_InitializeParent' will already have been 
+  called in the parent process.</p>
+  <p>This method is not used under Windows.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.executable.Executable-class.html#_InitializeChild" onclick="show_private();">Executable._InitializeChild</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_HandleChild"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_HandleChild</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable._HandleChild">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run in the parent process after the child has been created.</p>
+  <p>The child process has been spawned; its PID is avialable via 
+  '_GetChildPID'.  Take any actions in the parent that are required now 
+  that the child exists.</p>
+  <p>Derived class versions must call this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.executable.Executable-class.html#_HandleChild" onclick="show_private();">Executable._HandleChild</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="Run"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Run</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">arguments</span>=<span class="sig-default">[]</span>,
+        <span class="sig-arg">environment</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">dir</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">path</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable.Run">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Spawn the program and wait for it to finish.</p>
+  <p>'arguments' -- The sequence of arguments that should be passed to the 
+  executable.  The first argument provided in this sequence will be 
+  'argv[0]'.</p>
+  <p>'environment' -- If not 'None', a dictionary giving the environment 
+  that should be provided to the child.  If 'None', the child will inherit 
+  the parents environment.</p>
+  <p>'dir' -- If not 'None', the directory in which the child should begin 
+  execution.  If 'None', the child will execute in the same directory as 
+  the parent.</p>
+  <p>'path' -- If not 'None', the path to the program to run.  If 'None', 
+  'arguments[0]' is used.</p>
+  <p>returns -- The status returned by the program.  Under UNIX, this is 
+  the value returned by 'waitpid'; under Windows, it is the value returned 
+  by 'GetExitCodeProcess'.</p>
+  <p>After invoking 'Spawn', this function invokes '_DoParent' to allow the
+  parent process to perform whatever actions are required.  After that 
+  function returns, the parent waits for the child process to exit.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.executable.Executable-class.html#Run">Executable.Run</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__UseSeparateProcessGroupForChild"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__UseSeparateProcessGroupForChild</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable.__UseSeparateProcessGroupForChild">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns true if the child wil be placed in its own process group.</p>
+  <p>returns -- True if the child will be placed in its own process group.
+  In that case, a separate monitoring process will also be created.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__Monitor"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__Monitor</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.executable-pysrc.html#TimeoutExecutable.__Monitor">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Kill the child if the timeout expires.</p>
+  <p>This function is run in the monitoring thread.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

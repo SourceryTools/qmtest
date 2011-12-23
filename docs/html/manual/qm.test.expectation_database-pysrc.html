@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.expectation_database</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        Module&nbsp;expectation_database
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.expectation_database-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.test.expectation_database-module.html">Module qm.test.expectation_database</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-comment"># File:   expectation_database.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Stefan Seefeld</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   2006-11-05</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-comment">#   QMTest ExpectationDatabase class.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2006 by CodeSourcery, Inc.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"><tt class="py-comment"># For license terms see the file COPYING.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"><tt class="py-comment"># Imports</tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package qm=qm-module.html"><a title="qm" class="py-name" href="#" onclick="return doclink('link-0', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module qm.extension=qm.extension-module.html"><a title="qm.extension" class="py-name" href="#" onclick="return doclink('link-1', 'extension', 'link-1');">extension</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Class qm.extension.Extension=qm.extension.Extension-class.html"><a title="qm.extension.Extension" class="py-name" href="#" onclick="return doclink('link-2', 'Extension', 'link-2');">Extension</a></tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-3" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-3', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Module qm.fields=qm.fields-module.html"><a title="qm.fields" class="py-name" href="#" onclick="return doclink('link-4', 'fields', 'link-4');">fields</a></tt> <tt class="py-keyword">import</tt> <tt id="link-5" class="py-name" targets="Class qm.fields.PythonField=qm.fields.PythonField-class.html"><a title="qm.fields.PythonField" class="py-name" href="#" onclick="return doclink('link-5', 'PythonField', 'link-5');">PythonField</a></tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-6" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-6', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-7" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.test()=qm.external.DocumentTemplate.DT_Util-module.html#test,Package qm.test=qm.test-module.html,Module qm.test.test=qm.test.test-module.html"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-7', 'test', 'link-7');">test</a></tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Module qm.test.result=qm.test.result-module.html"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-8', 'result', 'link-8');">result</a></tt> <tt class="py-keyword">import</tt> <tt id="link-9" class="py-name" targets="Class qm.test.result.Result=qm.test.result.Result-class.html"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-9', 'Result', 'link-9');">Result</a></tt> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line"> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line"><tt class="py-comment"># Classes</tt> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line"> </tt>
+<a name="ExpectationDatabase"></a><div id="ExpectationDatabase-def"><a name="L28"></a><tt class="py-lineno">28</tt> <a class="py-toggle" href="#" id="ExpectationDatabase-toggle" onclick="return toggle('ExpectationDatabase');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.test.expectation_database.ExpectationDatabase-class.html">ExpectationDatabase</a><tt class="py-op">(</tt><tt class="py-base-class">Extension</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ExpectationDatabase-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="ExpectationDatabase-expanded"><a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line">    <tt class="py-docstring">"""An 'ExpectationDatabase' stores result expectations.</tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line"><tt class="py-docstring">    An 'ExpectationDatabase' provides a mechanism to store and make</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line"><tt class="py-docstring">    accessible expectations for test outcomes.</tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line"><tt class="py-docstring">    By default, all tests are expected to pass.</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line"> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line"> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">    <tt id="link-10" class="py-name" targets="Variable qm.extension.Extension.kind=qm.extension.Extension-class.html#kind,Variable qm.host.Host.kind=qm.host.Host-class.html#kind,Variable qm.test.database.Database.kind=qm.test.database.Database-class.html#kind,Variable qm.test.expectation_database.ExpectationDatabase.kind=qm.test.expectation_database.ExpectationDatabase-class.html#kind,Variable qm.test.resource.Resource.kind=qm.test.resource.Resource-class.html#kind,Variable qm.test.result_reader.ResultReader.kind=qm.test.result_reader.ResultReader-class.html#kind,Variable qm.test.result_stream.ResultStream.kind=qm.test.result_stream.ResultStream-class.html#kind,Variable qm.test.suite.Suite.kind=qm.test.suite.Suite-class.html#kind,Variable qm.test.target.Target.kind=qm.test.target.Target-class.html#kind,Variable qm.test.test.Test.kind=qm.test.test.Test-class.html#kind"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-10', 'kind', 'link-10');">kind</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'expectation_database'</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line"> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line"> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">    <tt id="link-11" class="py-name" targets="Variable qm.test.expectation_database.ExpectationDatabase.test_database=qm.test.expectation_database.ExpectationDatabase-class.html#test_database"><a title="qm.test.expectation_database.ExpectationDatabase.test_database" class="py-name" href="#" onclick="return doclink('link-11', 'test_database', 'link-11');">test_database</a></tt> <tt class="py-op">=</tt> <tt id="link-12" class="py-name"><a title="qm.fields.PythonField" class="py-name" href="#" onclick="return doclink('link-12', 'PythonField', 'link-5');">PythonField</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line">    <tt id="link-13" class="py-name" targets="Variable qm.test.expectation_database.ExpectationDatabase.testrun_parameters=qm.test.expectation_database.ExpectationDatabase-class.html#testrun_parameters"><a title="qm.test.expectation_database.ExpectationDatabase.testrun_parameters" class="py-name" href="#" onclick="return doclink('link-13', 'testrun_parameters', 'link-13');">testrun_parameters</a></tt> <tt class="py-op">=</tt> <tt id="link-14" class="py-name"><a title="qm.fields.PythonField" class="py-name" href="#" onclick="return doclink('link-14', 'PythonField', 'link-5');">PythonField</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line"> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line"> </tt>
+<a name="ExpectationDatabase.Lookup"></a><div id="ExpectationDatabase.Lookup-def"><a name="L44"></a><tt class="py-lineno">44</tt> <a class="py-toggle" href="#" id="ExpectationDatabase.Lookup-toggle" onclick="return toggle('ExpectationDatabase.Lookup');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.expectation_database.ExpectationDatabase-class.html#Lookup">Lookup</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">test_id</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ExpectationDatabase.Lookup-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="ExpectationDatabase.Lookup-expanded"><a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">        <tt class="py-docstring">"""Look up the expected outcome for the given test.</tt> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line"><tt class="py-docstring">        'test_id' -- test-id for which the outcome is queried.</tt> </tt>
+<a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- a Result object associated with this test_id."""</tt> </tt>
+<a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line"> </tt>
+<a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-15" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-15', 'Result', 'link-9');">Result</a></tt><tt class="py-op">(</tt><tt id="link-16" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-16', 'Result', 'link-9');">Result</a></tt><tt class="py-op">.</tt><tt id="link-17" class="py-name" targets="Variable qm.test.database.Database.TEST=qm.test.database.Database-class.html#TEST,Variable qm.test.result.Result.TEST=qm.test.result.Result-class.html#TEST"><a title="qm.test.database.Database.TEST
+qm.test.result.Result.TEST" class="py-name" href="#" onclick="return doclink('link-17', 'TEST', 'link-17');">TEST</a></tt><tt class="py-op">,</tt> <tt class="py-name">test_id</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line"> </tt>
+<a name="L53"></a><tt class="py-lineno">53</tt>  <tt class="py-line"> </tt>
+<a name="ExpectationDatabase.GetExpectedOutcomes"></a><div id="ExpectationDatabase.GetExpectedOutcomes-def"><a name="L54"></a><tt class="py-lineno">54</tt> <a class="py-toggle" href="#" id="ExpectationDatabase.GetExpectedOutcomes-toggle" onclick="return toggle('ExpectationDatabase.GetExpectedOutcomes');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.expectation_database.ExpectationDatabase-class.html#GetExpectedOutcomes">GetExpectedOutcomes</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ExpectationDatabase.GetExpectedOutcomes-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="ExpectationDatabase.GetExpectedOutcomes-expanded"><a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return a dict object mapping test ids to expected outcomes."""</tt> </tt>
+<a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line"> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">        <tt id="link-18" class="py-name" targets="Variable qm.test.result.Result.outcomes=qm.test.result.Result-class.html#outcomes,Variable qm.test.web.web.DefaultDtmlPage.outcomes=qm.test.web.web.DefaultDtmlPage-class.html#outcomes"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-18', 'outcomes', 'link-18');">outcomes</a></tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name"><a title="qm.test.expectation_database.ExpectationDatabase.test_database" class="py-name" href="#" onclick="return doclink('link-19', 'test_database', 'link-11');">test_database</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">test_id</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name"><a title="qm.test.expectation_database.ExpectationDatabase.test_database" class="py-name" href="#" onclick="return doclink('link-20', 'test_database', 'link-11');">test_database</a></tt><tt class="py-op">.</tt><tt id="link-21" class="py-name" targets="Method qm.test.classes.explicit_suite.ExplicitSuite.GetTestIds()=qm.test.classes.explicit_suite.ExplicitSuite-class.html#GetTestIds,Method qm.test.classes.mount_database.MountDatabase.MountedSuite.GetTestIds()=qm.test.classes.mount_database.MountDatabase.MountedSuite-class.html#GetTestIds,Method qm.test.database.Database.GetTestIds()=qm.test.database.Database-class.html#GetTestIds,Method qm.test.directory_suite.DirectorySuite.GetTestIds()=qm.test.directory_suite.DirectorySuite-class.html#GetTestIds,Method qm.test.parameter_database.ParameterDatabase.GetTestIds()=qm.test.parameter_database.ParameterDatabase-class.html#GetTestIds,Method qm.test.parameter_database.ParameterDatabase.ImplicitSuite.GetTestIds()=qm.test.parameter_database.ParameterDatabase.ImplicitSuite-class.html#GetTestIds,Method qm.test.parameter_database.ParameterDatabase.ParameterSuite.GetTestIds()=qm.test.parameter_database.ParameterDatabase.ParameterSuite-class.html#GetTestIds,Method qm.test.parameter_database.ParameterDatabase.WrapperSuite.GetTestIds()=qm.test.parameter_database.ParameterDatabase.WrapperSuite-class.html#GetTestIds,Method qm.test.suite.Suite.GetTestIds()=qm.test.suite.Suite-class.html#GetTestIds"><a title="qm.test.classes.explicit_suite.ExplicitSuite.GetTestIds
+qm.test.classes.mount_database.MountDatabase.MountedSuite.GetTestIds
+qm.test.database.Database.GetTestIds
+qm.test.directory_suite.DirectorySuite.GetTestIds
+qm.test.parameter_database.ParameterDatabase.GetTestIds
+qm.test.parameter_database.ParameterDatabase.ImplicitSuite.GetTestIds
+qm.test.parameter_database.ParameterDatabase.ParameterSuite.GetTestIds
+qm.test.parameter_database.ParameterDatabase.WrapperSuite.GetTestIds
+qm.test.suite.Suite.GetTestIds" class="py-name" href="#" onclick="return doclink('link-21', 'GetTestIds', 'link-21');">GetTestIds</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">                <tt id="link-22" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-22', 'outcomes', 'link-18');">outcomes</a></tt><tt class="py-op">[</tt><tt class="py-name">test_id</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-23" class="py-name" targets="Method qm.test.classes.previous_testrun.PreviousTestRun.Lookup()=qm.test.classes.previous_testrun.PreviousTestRun-class.html#Lookup,Method qm.test.classes.xml_expectation_database.XMLExpectationDatabase.Lookup()=qm.test.classes.xml_expectation_database.XMLExpectationDatabase-class.html#Lookup,Method qm.test.expectation_database.ExpectationDatabase.Lookup()=qm.test.expectation_database.ExpectationDatabase-class.html#Lookup"><a title="qm.test.classes.previous_testrun.PreviousTestRun.Lookup
+qm.test.classes.xml_expectation_database.XMLExpectationDatabase.Lookup
+qm.test.expectation_database.ExpectationDatabase.Lookup" class="py-name" href="#" onclick="return doclink('link-23', 'Lookup', 'link-23');">Lookup</a></tt><tt class="py-op">(</tt><tt class="py-name">test_id</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-24" class="py-name" targets="Method qm.test.result.Result.GetOutcome()=qm.test.result.Result-class.html#GetOutcome"><a title="qm.test.result.Result.GetOutcome" class="py-name" href="#" onclick="return doclink('link-24', 'GetOutcome', 'link-24');">GetOutcome</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-25" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-25', 'outcomes', 'link-18');">outcomes</a></tt> </tt>
+</div></div><a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:47 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

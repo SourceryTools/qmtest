@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.common.RcConfiguration</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.common-module.html">Module&nbsp;common</a> ::
+        Class&nbsp;RcConfiguration
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.common.RcConfiguration-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class RcConfiguration</h1><p class="nomargin-top"><span class="codelink"><a href="qm.common-pysrc.html#RcConfiguration">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+ConfigParser.RawConfigParser --+    
+                               |    
+       ConfigParser.ConfigParser --+
+                                   |
+                                  <strong class="uidshort">RcConfiguration</strong>
+</pre>
+
+<hr />
+<p>Interface object to QM configuration files.</p>
+  <p>Configuration files are in the format parsed by the standard 
+  'ConfigParser' module, namely 'win.ini'--style files.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common.RcConfiguration-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Create a new configuration instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#RcConfiguration.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common.RcConfiguration-class.html#Load" class="summary-sig-name">Load</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">section</span>)</span><br />
+      Load configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#RcConfiguration.Load">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common.RcConfiguration-class.html#Get" class="summary-sig-name">Get</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">option</span>,
+        <span class="summary-sig-arg">default</span>,
+        <span class="summary-sig-arg">section</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Retrieve a configuration variable.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#RcConfiguration.Get">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.common.RcConfiguration-class.html#GetOptions" class="summary-sig-name">GetOptions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">section</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Return a sequence of options.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.common-pysrc.html#RcConfiguration.GetOptions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>ConfigParser.ConfigParser</code></b>:
+      <code>get</code>,
+      <code>items</code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>ConfigParser.ConfigParser</code></b> (private):
+      <code>_interpolate</code>,
+      <code>_interpolation_replace</code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>ConfigParser.RawConfigParser</code></b>:
+      <code>add_section</code>,
+      <code>defaults</code>,
+      <code>getboolean</code>,
+      <code>getfloat</code>,
+      <code>getint</code>,
+      <code>has_option</code>,
+      <code>has_section</code>,
+      <code>options</code>,
+      <code>optionxform</code>,
+      <code>read</code>,
+      <code>readfp</code>,
+      <code>remove_option</code>,
+      <code>remove_section</code>,
+      <code>sections</code>,
+      <code>set</code>,
+      <code>write</code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>ConfigParser.RawConfigParser</code></b> (private):
+      <code>_get</code>,
+      <code>_read</code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="user_rc_file_name"></a><span class="summary-name">user_rc_file_name</span> = <code title="'.qmrc'"><code class="variable-quote">'</code><code class="variable-string">.qmrc</code><code class="variable-quote">'</code></code><br />
+      The name of the user configuration file.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>ConfigParser.ConfigParser</code></b> (private):
+      <code>_KEYCRE</code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>ConfigParser.RawConfigParser</code></b>:
+      <code>OPTCRE</code>,
+      <code>OPTCRE_NV</code>,
+      <code>SECTCRE</code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>ConfigParser.RawConfigParser</code></b> (private):
+      <code>_boolean_states</code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#RcConfiguration.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create a new configuration instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        ConfigParser.RawConfigParser.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="Load"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Load</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">section</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#RcConfiguration.Load">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Load configuration.</p>
+  <p>'section' -- The configuration section from which subsequent variables
+  are loaded.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Get"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Get</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">option</span>,
+        <span class="sig-arg">default</span>,
+        <span class="sig-arg">section</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#RcConfiguration.Get">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Retrieve a configuration variable.</p>
+  <p>'option' -- The name of the option to retrieve.</p>
+  <p>'default' -- The default value to return if the option is not 
+  found.</p>
+  <p>'section' -- The section from which to retrieve the option. 'None' 
+  indicates the section specified to the 'Load' method for this 
+  instance.</p>
+  <p>precondition -- The RC configuration must be loaded.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetOptions"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetOptions</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">section</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.common-pysrc.html#RcConfiguration.GetOptions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a sequence of options.</p>
+  <p>'section' -- The section for which to list options, or 'None' for the 
+  section specified to 'Load'.</p>
+  <p>precondition -- The RC configuration must be loaded.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

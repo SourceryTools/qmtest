@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.fields.EnumerationField</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        qm ::
+        fields ::
+        EnumerationField ::
+        Class&nbsp;EnumerationField
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.fields.EnumerationField-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class EnumerationField</h1><p class="nomargin-top"><span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+            
+         |            
+     <a href="qm.fields.Field-class.html">Field</a> --+        
+             |        
+     <a href="qm.fields.TextField-class.html">TextField</a> --+    
+                 |    
+       <a href="qm.fields.ChoiceField-class.html">ChoiceField</a> --+
+                     |
+                    <strong class="uidshort">EnumerationField</strong>
+</pre>
+
+<dl><dt>Known Subclasses:</dt>
+<dd>
+      <ul class="subclass-list">
+<li><a href="qm.fields.BooleanField-class.html">BooleanField</a></li><li>, <a href="qm.test.test.Test.OutcomeField-class.html">test.test.Test.OutcomeField</a></li>  </ul>
+</dd></dl>
+
+<hr />
+<p>A field that contains an enumeral value.</p>
+  <p>The enumeral value is selected from an enumerated set of values. An 
+  enumeral field uses the following properties:</p>
+  <p>enumeration -- A mapping from enumeral names to enumeral values. Names
+  are converted to strings, and values are stored as integers.</p>
+  <p>ordered -- If non-zero, the enumerals are presented to the user 
+  ordered by value.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.EnumerationField-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">default_value</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">enumerals</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
+        <span class="summary-sig-arg">**properties</span>)</span><br />
+      Create an enumeration field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.EnumerationField-class.html#GetItems" class="summary-sig-name">GetItems</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return a sequence of enumerals.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField.GetItems">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.EnumerationField-class.html#GetHelp" class="summary-sig-name">GetHelp</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Generate help text about this field in structured text format.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField.GetHelp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.EnumerationField-class.html#MakeDomNodeForValue" class="summary-sig-name">MakeDomNodeForValue</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>,
+        <span class="summary-sig-arg">document</span>)</span><br />
+      Generate a DOM element node for a value of this field.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField.MakeDomNodeForValue">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.fields.EnumerationField-class.html#GetValueFromDomNode" class="summary-sig-name">GetValueFromDomNode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>,
+        <span class="summary-sig-arg">attachment_store</span>)</span><br />
+      Return a value for this field represented by DOM 'node'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField.GetValueFromDomNode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.fields.ChoiceField-class.html">ChoiceField</a></code></b>:
+      <code><a href="qm.fields.ChoiceField-class.html#FormatValueAsHtml">FormatValueAsHtml</a></code>,
+      <code><a href="qm.fields.ChoiceField-class.html#Validate">Validate</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.fields.TextField-class.html">TextField</a></code></b>:
+      <code><a href="qm.fields.TextField-class.html#FormatValueAsText">FormatValueAsText</a></code>,
+      <code><a href="qm.fields.TextField-class.html#ParseFormValue">ParseFormValue</a></code>,
+      <code><a href="qm.fields.TextField-class.html#ParseTextValue">ParseTextValue</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.fields.Field-class.html">Field</a></code></b>:
+      <code><a href="qm.fields.Field-class.html#GetBriefDescription">GetBriefDescription</a></code>,
+      <code><a href="qm.fields.Field-class.html#GetDefaultValue">GetDefaultValue</a></code>,
+      <code><a href="qm.fields.Field-class.html#GetDescription">GetDescription</a></code>,
+      <code><a href="qm.fields.Field-class.html#GetHtmlFormFieldName">GetHtmlFormFieldName</a></code>,
+      <code><a href="qm.fields.Field-class.html#GetHtmlHelp">GetHtmlHelp</a></code>,
+      <code><a href="qm.fields.Field-class.html#GetName">GetName</a></code>,
+      <code><a href="qm.fields.Field-class.html#GetSubfields">GetSubfields</a></code>,
+      <code><a href="qm.fields.Field-class.html#GetTitle">GetTitle</a></code>,
+      <code><a href="qm.fields.Field-class.html#IsComputed">IsComputed</a></code>,
+      <code><a href="qm.fields.Field-class.html#IsHidden">IsHidden</a></code>,
+      <code><a href="qm.fields.Field-class.html#IsReadOnly">IsReadOnly</a></code>,
+      <code><a href="qm.fields.Field-class.html#SetName">SetName</a></code>,
+      <code><a href="qm.fields.Field-class.html#__repr__">__repr__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.fields.Field-class.html">Field</a></code></b>:
+      <code><a href="qm.fields.Field-class.html#form_field_prefix">form_field_prefix</a></code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">name</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">default_value</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">enumerals</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
+        <span class="sig-arg">**properties</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create an enumeration field.</p>
+  <p>'enumerals' -- A sequence of strings of available enumerals.</p>
+  <p>'default_value' -- The default value for this enumeration.  If 'None',
+  the first enumeral is used.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetItems"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetItems</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField.GetItems">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a sequence of enumerals.</p>
+  <p>returns -- A sequence consisting of string enumerals objects, in the 
+  appropriate order.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.fields.ChoiceField-class.html#GetItems">ChoiceField.GetItems</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetHelp"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetHelp</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField.GetHelp">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate help text about this field in structured text format.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.fields.Field-class.html#GetHelp">Field.GetHelp</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="MakeDomNodeForValue"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MakeDomNodeForValue</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>,
+        <span class="sig-arg">document</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField.MakeDomNodeForValue">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate a DOM element node for a value of this field.</p>
+  <p>'value' -- The value to represent.</p>
+  <p>'document' -- The containing DOM document node.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.fields.Field-class.html#MakeDomNodeForValue">Field.MakeDomNodeForValue</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetValueFromDomNode"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetValueFromDomNode</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">node</span>,
+        <span class="sig-arg">attachment_store</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.fields-pysrc.html#EnumerationField.GetValueFromDomNode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a value for this field represented by DOM 'node'.</p>
+  <p>This method does not validate the value for this particular instance; 
+  it only makes sure the node is well-formed, and returns a value of the 
+  correct Python type.</p>
+  <p>'node' -- The DOM node that is being evaluated.</p>
+  <p>'attachment_store' -- For attachments, the store that should be 
+  used.</p>
+  <p>If the 'node' is incorrectly formed, this method should raise an 
+  exception.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.fields.Field-class.html#GetValueFromDomNode">Field.GetValueFromDomNode</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

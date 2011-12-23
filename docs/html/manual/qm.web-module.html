@@ -1,0 +1,1596 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.web</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        Module&nbsp;web
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.web-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module web</h1><p class="nomargin-top"><span class="codelink"><a href="qm.web-pysrc.html">source&nbsp;code</a></span></p>
+<p>Common code for implementing web user interfaces.</p>
+
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.AddressInUseError-class.html" class="summary-name">AddressInUseError</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.PrivilegedPortError-class.html" class="summary-name">PrivilegedPortError</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.NoSessionError-class.html" class="summary-name">NoSessionError</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.InvalidSessionError-class.html" class="summary-name">InvalidSessionError</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.DtmlPage-class.html" class="summary-name">DtmlPage</a><br />
+      Base class for classes to generate web pages from DTML.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.HttpRedirect-class.html" class="summary-name">HttpRedirect</a><br />
+      Exception signalling an HTTP redirect response.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.WebRequestHandler-class.html" class="summary-name">WebRequestHandler</a><br />
+      Handler for HTTP requests.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.HTTPServer-class.html" class="summary-name">HTTPServer</a><br />
+      Workaround for problems in 'BaseHTTPServer.HTTPServer'.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.WebServer-class.html" class="summary-name">WebServer</a><br />
+      A web server that serves ordinary files and dynamic content.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.WebRequest-class.html" class="summary-name">WebRequest</a><br />
+      An object representing a request from the web server.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.CGIWebRequest-class.html" class="summary-name">CGIWebRequest</a><br />
+      A 'WebRequest' object initialized from the CGI environment.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.web.Session-class.html" class="summary-name">Session</a><br />
+      A persistent user session.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_create_session_id"></a><span class="summary-sig-name">_create_session_id</span>()</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#_create_session_id">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#parse_url_query" class="summary-sig-name">parse_url_query</a>(<span class="summary-sig-arg">url</span>)</span><br />
+      Parse a URL-encoded query.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#parse_url_query">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#http_return_html" class="summary-sig-name">http_return_html</a>(<span class="summary-sig-arg">html_text</span>,
+        <span class="summary-sig-arg">stream</span>=<span class="summary-sig-default">sys.stdout</span>)</span><br />
+      Generate an HTTP response consisting of HTML text.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#http_return_html">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#http_return_exception" class="summary-sig-name">http_return_exception</a>(<span class="summary-sig-arg">exc_info</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">stream</span>=<span class="summary-sig-default">sys.stdout</span>)</span><br />
+      Generate an HTTP response for an exception.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#http_return_exception">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#format_exception" class="summary-sig-name">format_exception</a>(<span class="summary-sig-arg">exc_info</span>)</span><br />
+      Format an exception as HTML.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#format_exception">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="escape"></a><span class="summary-sig-name">escape</span>(<span class="summary-sig-arg">text</span>)</span><br />
+      Escape special characters in 'text' for formatting as HTML.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#escape">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__replacement_for_entity"></a><span class="summary-sig-name">__replacement_for_entity</span>(<span class="summary-sig-arg">match</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#__replacement_for_entity">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="unescape"></a><span class="summary-sig-name">unescape</span>(<span class="summary-sig-arg">text</span>)</span><br />
+      Undo 'escape' by replacing entities with ordinary characters.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#unescape">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="format_structured_text"></a><span class="summary-sig-name">format_structured_text</span>(<span class="summary-sig-arg">text</span>)</span><br />
+      Render 'text' as HTML.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#format_structured_text">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_url" class="summary-sig-name">make_url</a>(<span class="summary-sig-arg">script_name</span>,
+        <span class="summary-sig-arg">base_request</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">**fields</span>)</span><br />
+      Create a request and return a URL for it.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_url">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_button_for_request" class="summary-sig-name">make_button_for_request</a>(<span class="summary-sig-arg">title</span>,
+        <span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">css_class</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Generate HTML for a button.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_button_for_request">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_button_for_url" class="summary-sig-name">make_button_for_url</a>(<span class="summary-sig-arg">title</span>,
+        <span class="summary-sig-arg">url</span>,
+        <span class="summary-sig-arg">css_class</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Generate HTML for a button.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_button_for_url">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#get_session" class="summary-sig-name">get_session</a>(<span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">session_id</span>)</span><br />
+      Retrieve the session corresponding to 'session_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#get_session">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__clean_up_expired_sessions"></a><span class="summary-sig-name">__clean_up_expired_sessions</span>()</span><br />
+      Remove any sessions that are expired.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#__clean_up_expired_sessions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#handle_login" class="summary-sig-name">handle_login</a>(<span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">default_redirect_url</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">/</code><code class="variable-quote">'</code></span>)</span><br />
+      Handle a login request.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#handle_login">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#handle_logout" class="summary-sig-name">handle_logout</a>(<span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">default_redirect_url</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">/</code><code class="variable-quote">'</code></span>)</span><br />
+      Handle a logout request.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#handle_logout">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#generate_error_page" class="summary-sig-name">generate_error_page</a>(<span class="summary-sig-arg">request</span>,
+        <span class="summary-sig-arg">error_text</span>)</span><br />
+      Generate a page to indicate a user error.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#generate_error_page">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#generate_login_form" class="summary-sig-name">generate_login_form</a>(<span class="summary-sig-arg">redirect_request</span>,
+        <span class="summary-sig-arg">message</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Show a form for user login.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#generate_login_form">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_set_control" class="summary-sig-name">make_set_control</a>(<span class="summary-sig-arg">form_name</span>,
+        <span class="summary-sig-arg">field_name</span>,
+        <span class="summary-sig-arg">add_page</span>,
+        <span class="summary-sig-arg">select_name</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">initial_elements</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
+        <span class="summary-sig-arg">request</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">rows</span>=<span class="summary-sig-default">6</span>,
+        <span class="summary-sig-arg">width</span>=<span class="summary-sig-default">200</span>,
+        <span class="summary-sig-arg">window_width</span>=<span class="summary-sig-default">480</span>,
+        <span class="summary-sig-arg">window_height</span>=<span class="summary-sig-default">240</span>,
+        <span class="summary-sig-arg">ordered</span>=<span class="summary-sig-default">0</span>)</span><br />
+      Construct a control for representing a set of items.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_set_control">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#encode_set_control_contents" class="summary-sig-name">encode_set_control_contents</a>(<span class="summary-sig-arg">values</span>)</span><br />
+      Encode 'values' for a set control.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#encode_set_control_contents">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#decode_set_control_contents" class="summary-sig-name">decode_set_control_contents</a>(<span class="summary-sig-arg">content_string</span>)</span><br />
+      Decode the contents of a set control.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#decode_set_control_contents">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_properties_control" class="summary-sig-name">make_properties_control</a>(<span class="summary-sig-arg">form_name</span>,
+        <span class="summary-sig-arg">field_name</span>,
+        <span class="summary-sig-arg">properties</span>,
+        <span class="summary-sig-arg">select_name</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Construct a control for representing a set of properties.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_properties_control">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#encode_properties" class="summary-sig-name">encode_properties</a>(<span class="summary-sig-arg">properties</span>)</span><br />
+      Construct a URL-encoded representation of a set of properties.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#encode_properties">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#decode_properties" class="summary-sig-name">decode_properties</a>(<span class="summary-sig-arg">properties</span>)</span><br />
+      Decode a URL-encoded representation of a set of properties.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#decode_properties">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="make_javascript_string"></a><span class="summary-sig-name">make_javascript_string</span>(<span class="summary-sig-arg">text</span>)</span><br />
+      Return 'text' represented as a JavaScript string literal.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_javascript_string">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_help_link" class="summary-sig-name">make_help_link</a>(<span class="summary-sig-arg">help_text_tag</span>,
+        <span class="summary-sig-arg">label</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">Help</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">**substitutions</span>)</span><br />
+      Make a link to pop up help text.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_help_link">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_help_link_html" class="summary-sig-name">make_help_link_html</a>(<span class="summary-sig-arg">help_text</span>,
+        <span class="summary-sig-arg">label</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">Help</code><code class="variable-quote">'</code></span>)</span><br />
+      Make a link to pop up help text.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_help_link_html">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_popup_page" class="summary-sig-name">make_popup_page</a>(<span class="summary-sig-arg">message</span>,
+        <span class="summary-sig-arg">buttons</span>,
+        <span class="summary-sig-arg">title</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span><br />
+      Generate a popup dialog box page.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_popup_page">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_choose_control" class="summary-sig-name">make_choose_control</a>(<span class="summary-sig-arg">field_name</span>,
+        <span class="summary-sig-arg">included_label</span>,
+        <span class="summary-sig-arg">included_items</span>,
+        <span class="summary-sig-arg">excluded_label</span>,
+        <span class="summary-sig-arg">excluded_items</span>,
+        <span class="summary-sig-arg">item_to_text</span>=<span class="summary-sig-default">&lt;type 'str'&gt;</span>,
+        <span class="summary-sig-arg">item_to_value</span>=<span class="summary-sig-default">&lt;type 'str'&gt;</span>,
+        <span class="summary-sig-arg">ordered</span>=<span class="summary-sig-default">0</span>)</span><br />
+      Construct HTML controls for selecting a subset.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_choose_control">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_button_for_popup" class="summary-sig-name">make_button_for_popup</a>(<span class="summary-sig-arg">label</span>,
+        <span class="summary-sig-arg">url</span>,
+        <span class="summary-sig-arg">window_width</span>=<span class="summary-sig-default">480</span>,
+        <span class="summary-sig-arg">window_height</span>=<span class="summary-sig-default">240</span>)</span><br />
+      Construct a button for displaying a popup page.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_button_for_popup">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#format_color" class="summary-sig-name">format_color</a>(<span class="summary-sig-arg">red</span>,
+        <span class="summary-sig-arg">green</span>,
+        <span class="summary-sig-arg">blue</span>)</span><br />
+      Format an RGB color value for HTML.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#format_color">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="javascript_escape"></a><span class="summary-sig-name">javascript_escape</span>(<span class="summary-sig-arg">text</span>)</span><br />
+      Equivalent to the JavaScript 'escape' built-in function.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#javascript_escape">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="javascript_unescape"></a><span class="summary-sig-name">javascript_unescape</span>(<span class="summary-sig-arg">text</span>)</span><br />
+      Equivalent to the JavaScript 'unescape' built-in function.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#javascript_unescape">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.web-module.html#make_submit_button" class="summary-sig-name">make_submit_button</a>(<span class="summary-sig-arg">title</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">OK</code><code class="variable-quote">'</code></span>)</span><br />
+      Generate HTML for a button to submit the current form.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.web-pysrc.html#make_submit_button">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="session_id_field"></a><span class="summary-name">session_id_field</span> = <code title="'session'"><code class="variable-quote">'</code><code class="variable-string">session</code><code class="variable-quote">'</code></code><br />
+      The name of the form field used to store the session ID.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__entity_regex"></a><span class="summary-name">__entity_regex</span> = <code title="re.compile(r'&amp;(\w+);')">re.compile(r'&amp;<code class="re-group">(</code>\w<code class="re-op">+</code><code class="re-group">)</code>;')</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="sessions"></a><span class="summary-name">sessions</span> = <code title="{}"><code class="variable-group">{</code><code class="variable-group">}</code></code><br />
+      A mapping from session IDs to 'Session' instances.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_counter"></a><span class="summary-name">_counter</span> = <code title="0">0</code><br />
+      A counter for generating somewhat-unique names.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_page_cache_name"></a><span class="summary-name">_page_cache_name</span> = <code title="'page-cache'"><code class="variable-quote">'</code><code class="variable-string">page-cache</code><code class="variable-quote">'</code></code><br />
+      The URL prefix for the global page cache.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_session_cache_name"></a><span class="summary-name">_session_cache_name</span> = <code title="'session-cache'"><code class="variable-quote">'</code><code class="variable-string">session-cache</code><code class="variable-quote">'</code></code><br />
+      The URL prefix for the session page cache.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'qm'"><code class="variable-quote">'</code><code class="variable-string">qm</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="parse_url_query"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parse_url_query</span>(<span class="sig-arg">url</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#parse_url_query">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parse a URL-encoded query.</p>
+  <p>This function parses query strings encoded in URLs, such as 
+  '/script.cgi?key1=val1&amp;key2=val2'.  For this example, it would return
+  '(&quot;/script.cgi&quot;, {&quot;key1&quot; : &quot;val1&quot;, 
+  &quot;key2&quot; : &quot;val2&quot;})'</p>
+  <p>'url' -- The URL to parse.</p>
+  <p>returns -- A pair containing the the base script path and a mapping of
+  query field names to values.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="http_return_html"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">http_return_html</span>(<span class="sig-arg">html_text</span>,
+        <span class="sig-arg">stream</span>=<span class="sig-default">sys.stdout</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#http_return_html">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate an HTTP response consisting of HTML text.</p>
+  <p>'html_text' -- The HTML souce text to return.</p>
+  <p>'stream' -- The stream to write the response, by default 
+  'sys.stdout.'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="http_return_exception"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">http_return_exception</span>(<span class="sig-arg">exc_info</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">stream</span>=<span class="sig-default">sys.stdout</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#http_return_exception">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate an HTTP response for an exception.</p>
+  <p>'exc_info' -- A three-element tuple containing exception info, of the 
+  form '(type, value, traceback)'.  If 'None', use the exception currently 
+  being handled.</p>
+  <p>'stream' -- The stream to write the response, by default 
+  'sys.stdout.'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="format_exception"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">format_exception</span>(<span class="sig-arg">exc_info</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#format_exception">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Format an exception as HTML.</p>
+  <p>'exc_info' -- A three-element tuple containing exception info, of the 
+  form '(type, value, traceback)'.</p>
+  <p>returns -- A string containing a complete HTML file displaying the 
+  exception.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_url"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_url</span>(<span class="sig-arg">script_name</span>,
+        <span class="sig-arg">base_request</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">**fields</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_url">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Create a request and return a URL for it.</p>
+  <p>'script_name' -- The script name for the request.</p>
+  <p>'base_request' -- If not 'None', the base request for the generated 
+  request.</p>
+  <p>'fields' -- Additional fields to include in the request.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_button_for_request"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_button_for_request</span>(<span class="sig-arg">title</span>,
+        <span class="sig-arg">request</span>,
+        <span class="sig-arg">css_class</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_button_for_request">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate HTML for a button.</p>
+  <p>Note that the caller is responsible for making sure the resulting 
+  button is placed within a form element.</p>
+  <p>'title' -- The button label.</p>
+  <p>'request' -- A 'WebRequest' object to be invoked when the button is 
+  clicked.</p>
+  <p>'css_class' -- The CSS class to use for the button, or 'None'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_button_for_url"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_button_for_url</span>(<span class="sig-arg">title</span>,
+        <span class="sig-arg">url</span>,
+        <span class="sig-arg">css_class</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_button_for_url">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate HTML for a button.</p>
+  <p>Note that the caller is responsible for making sure the resulting 
+  button is placed within a form element.</p>
+  <p>'title' -- The button label.</p>
+  <p>'url' -- The URL to load when the button is clicked..</p>
+  <p>'css_class' -- The CSS class to use for the button, or 'None'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_session"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_session</span>(<span class="sig-arg">request</span>,
+        <span class="sig-arg">session_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#get_session">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Retrieve the session corresponding to 'session_id'.</p>
+  <p>'request' -- A 'WebRequest' object for which to get the session.</p>
+  <p>raises -- 'InvalidSessionError' if the session ID is invalid, or is 
+  invalid for this 'request'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="handle_login"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_login</span>(<span class="sig-arg">request</span>,
+        <span class="sig-arg">default_redirect_url</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">/</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#handle_login">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a login request.</p>
+  <p>Authenticate the login using the user name and password stored in the 
+  '_login_user_name' and '_login_password' request fields, 
+  respectively.</p>
+  <p>If authentication succeeds, redirect to the URL stored in the 
+  '_redirect_url' request field by raising an 'HttpRedirect', passing all 
+  other request fields along as well.</p>
+  <p>If '_redirect_url' is not specified in the request, the value of 
+  'default_redirect_url' is used instead.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="handle_logout"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_logout</span>(<span class="sig-arg">request</span>,
+        <span class="sig-arg">default_redirect_url</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">/</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#handle_logout">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Handle a logout request.</p>
+  <p>prerequisite -- 'request' must be in a valid session, which is 
+  ended.</p>
+  <p>After ending the session, redirect to the URL specified by the 
+  '_redirect_url' field of 'request'.  If '_redirect_url' is not specified 
+  in the request, the value of 'default_redirect_url' is used instead.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="generate_error_page"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">generate_error_page</span>(<span class="sig-arg">request</span>,
+        <span class="sig-arg">error_text</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#generate_error_page">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate a page to indicate a user error.</p>
+  <p>'request' -- The request that was being processed when the error was 
+  encountered.</p>
+  <p>'error_text' -- A description of the error, as structured text.</p>
+  <p>returns -- The generated HTML source for the page.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="generate_login_form"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">generate_login_form</span>(<span class="sig-arg">redirect_request</span>,
+        <span class="sig-arg">message</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#generate_login_form">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Show a form for user login.</p>
+  <p>'message' -- If not 'None', a message to display to the user.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_set_control"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_set_control</span>(<span class="sig-arg">form_name</span>,
+        <span class="sig-arg">field_name</span>,
+        <span class="sig-arg">add_page</span>,
+        <span class="sig-arg">select_name</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">initial_elements</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
+        <span class="sig-arg">request</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">rows</span>=<span class="sig-default">6</span>,
+        <span class="sig-arg">width</span>=<span class="sig-default">200</span>,
+        <span class="sig-arg">window_width</span>=<span class="sig-default">480</span>,
+        <span class="sig-arg">window_height</span>=<span class="sig-default">240</span>,
+        <span class="sig-arg">ordered</span>=<span class="sig-default">0</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_set_control">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a control for representing a set of items.</p>
+  <p>'form_name' -- The name of form in which the control is included.</p>
+  <p>'field_name' -- The name of the input control that contains an encoded
+  representation of the set's elements.  See 'encode_set_control_contents' 
+  and 'decode_set_control_contents'.</p>
+  <p>'select_name' -- The name of the select control that displays the 
+  elements of the set.  If 'None', a control name is generated 
+  automatically.</p>
+  <p>'add_page' -- The URL for a popup web page that is displayed in 
+  response to the &quot;Add...&quot; button.</p>
+  <p>'initial_elements' -- The initial elements of the set.</p>
+  <p>'rows' -- The number of rows for the select control.</p>
+  <p>'width' -- The width of the select control.</p>
+  <p>'window_width', 'window_height' -- The width and height of the popup 
+  window for adding a new element.</p>
+  <p>'ordered' -- If true, controls are included for specifying the order 
+  of elements in the set.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="encode_set_control_contents"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">encode_set_control_contents</span>(<span class="sig-arg">values</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#encode_set_control_contents">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Encode 'values' for a set control.</p>
+  <p>'values' -- A sequence of values of elements of the set.</p>
+  <p>returns -- The encoded value for the control field.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="decode_set_control_contents"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">decode_set_control_contents</span>(<span class="sig-arg">content_string</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#decode_set_control_contents">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Decode the contents of a set control.</p>
+  <p>'content_string' -- The text of the form field containing the encoded 
+  set contents.</p>
+  <p>returns -- A sequence of the values of the elements of the set.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_properties_control"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_properties_control</span>(<span class="sig-arg">form_name</span>,
+        <span class="sig-arg">field_name</span>,
+        <span class="sig-arg">properties</span>,
+        <span class="sig-arg">select_name</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_properties_control">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a control for representing a set of properties.</p>
+  <p>'form_name' -- The name of form in which the control is included.</p>
+  <p>'field_name' -- The name of the input control that contains an encoded
+  representation of the properties.  See 'encode_properties' and 
+  'decode_properties'.</p>
+  <p>'properties' -- A map from property names to values of the properties 
+  to include in the control initially.</p>
+  <p>'select_name' -- The name of the select control that displays the 
+  elements of the set.  If 'None', a control name is generated 
+  automatically.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="encode_properties"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">encode_properties</span>(<span class="sig-arg">properties</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#encode_properties">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a URL-encoded representation of a set of properties.</p>
+  <p>'properties' -- A map from property names to values.  Names must be 
+  URL-safe strings.  Values are arbitrary strings.</p>
+  <p>returns -- A URL-encoded string representation of 'properties'.</p>
+  <p>This function is the inverse of 'decode_properties'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="decode_properties"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">decode_properties</span>(<span class="sig-arg">properties</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#decode_properties">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Decode a URL-encoded representation of a set of properties.</p>
+  <p>'properties' -- A string containing URL-encoded properties.</p>
+  <p>returns -- A map from names to values.</p>
+  <p>This function is the inverse of 'encode_properties'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_help_link"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_help_link</span>(<span class="sig-arg">help_text_tag</span>,
+        <span class="sig-arg">label</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">Help</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">**substitutions</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_help_link">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Make a link to pop up help text.</p>
+  <p>'help_text_tag' -- A message tag for the help diagnostic.</p>
+  <p>'label' -- The help link label.</p>
+  <p>'substitutions' -- Substitutions to the help diagnostic.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_help_link_html"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_help_link_html</span>(<span class="sig-arg">help_text</span>,
+        <span class="sig-arg">label</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">Help</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_help_link_html">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Make a link to pop up help text.</p>
+  <p>'help_text' -- HTML source for the help text.</p>
+  <p>'label' -- The help link label.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_popup_page"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_popup_page</span>(<span class="sig-arg">message</span>,
+        <span class="sig-arg">buttons</span>,
+        <span class="sig-arg">title</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_popup_page">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate a popup dialog box page.</p>
+  <p>See 'make_popup_dialog_script' for an explanation of the 
+  parameters.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_choose_control"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_choose_control</span>(<span class="sig-arg">field_name</span>,
+        <span class="sig-arg">included_label</span>,
+        <span class="sig-arg">included_items</span>,
+        <span class="sig-arg">excluded_label</span>,
+        <span class="sig-arg">excluded_items</span>,
+        <span class="sig-arg">item_to_text</span>=<span class="sig-default">&lt;type 'str'&gt;</span>,
+        <span class="sig-arg">item_to_value</span>=<span class="sig-default">&lt;type 'str'&gt;</span>,
+        <span class="sig-arg">ordered</span>=<span class="sig-default">0</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_choose_control">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct HTML controls for selecting a subset.</p>
+  <p>The user is presented with two list boxes next to each other.  The box
+  on the left lists items included in the subset.  The box on the right 
+  lists items excluded from the subset but available for inclusion.  
+  Between the boxes are buttons for adding and removing items from the 
+  subset.</p>
+  <p>If 'ordered' is true, buttons are also shown for reordering items in 
+  the included list.</p>
+  <p>'field_name' -- The name of an HTML hidden form field that will 
+  contain an encoding of the items included in the subset.  The encoding 
+  consists of the values corresponding to included items, in a 
+  comma-separated list.</p>
+  <p>'included_label' -- HTML source for the label for the left box, which 
+  displays the included items.</p>
+  <p>'included_items' -- Items initially included in the subset.  This is a
+  sequence of arbitrary objects or values.</p>
+  <p>'excluded_label' -- HTML source for the label for the right box, which
+  displays the items available for inclusion but not currently 
+  included.</p>
+  <p>'excluded_items' -- Items not initially included but available for 
+  inclusion.  This is a sequence of arbitrary objects or values.</p>
+  <p>'item_to_text' -- A function that produces a user-visible text 
+  description of an item.</p>
+  <p>'item_to_value' -- A function that produces a value for an item, used 
+  as the value for an HTML option object.</p>
+  <p>'ordered' -- If true, additional controls are displayed to allow the 
+  user to manipulate the order of items in the included set.</p>
+  <p>returns -- HTML source for the items.  Must be placed in a form.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_button_for_popup"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_button_for_popup</span>(<span class="sig-arg">label</span>,
+        <span class="sig-arg">url</span>,
+        <span class="sig-arg">window_width</span>=<span class="sig-default">480</span>,
+        <span class="sig-arg">window_height</span>=<span class="sig-default">240</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_button_for_popup">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a button for displaying a popup page.</p>
+  <p>'label' -- The button label.</p>
+  <p>'url' -- The URL to display in the popup page.</p>
+  <p>returns -- HTML source for the button.  The button must be placed 
+  within a form element.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="format_color"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">format_color</span>(<span class="sig-arg">red</span>,
+        <span class="sig-arg">green</span>,
+        <span class="sig-arg">blue</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#format_color">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Format an RGB color value for HTML.</p>
+  <p>'red', 'green', 'blue' -- Color values for respective channels, 
+  between 0.0 and 1.0.  Values outside this range are truncated to this 
+  range.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="make_submit_button"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">make_submit_button</span>(<span class="sig-arg">title</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">OK</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.web-pysrc.html#make_submit_button">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate HTML for a button to submit the current form.</p>
+  <p>'title' -- The button title.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

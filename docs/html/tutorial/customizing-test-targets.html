@@ -1,0 +1,89 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>7. Test Targets</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="customizing.html" title="Chapter 3. Customizing QMTest"><link rel="prev" href="customizing-expectation-databases.html" title="6. Expectation Databases"><link rel="next" href="customizing-hosts.html" title="8. Hosts"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">7. Test Targets</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="customizing-expectation-databases.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Customizing <span class="application">QMTest</span></th><td width="20%" align="right"> <a accesskey="n" href="customizing-hosts.html">Next</a></td></tr></table><hr></div><div class="section" title="7. Test Targets"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="customizing-test-targets"></a>7. Test Targets</h2></div></div></div><p>Test targets represent entities that <span class="application">QMTest</span> 
+   uses to run tests.  See <a class="xref" href="concepts-targets.html" title="8. Targets">Section 8, &#8220;Targets&#8221;</a> for an overview of how
+   <span class="application">QMTest</span> uses targets.</p><div class="section" title="7.1. Target Specification"><div class="titlepage"><div><div><h3 class="title"><a name="target-specification"></a>7.1. Target Specification</h3></div></div></div><p>Each target specification includes the following:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>The name of the target.  This is a name identifying the
+         target, such as the host name of the computer which will run the
+         tests.  Target names should be unique in a single target
+         file.</p></li><li class="listitem"><p>The <em class="firstterm"><a name="def-target-class"></a>target
+         class</em>.  Similar to a test class, a target class is a
+         Python class which implements a type of target.  As with test
+         classes, a target class is identified by its name, which includes
+         the module name and the class name.</p><p>For example, <code class="classname">thread_target.ThreadTarget</code>
+         is the name of a target class, provided by <span class="application">QMTest</span>,
+         which runs tests in multiple threads on the local computer.</p><p><span class="application">QMTest</span> includes several target class 
+         implementations.  See <a class="xref" href="customizing-test-targets.html#target-classes" title="7.2. Target Classes">Section 7.2, &#8220;Target Classes&#8221;</a> for details.
+         </p></li><li class="listitem"><p>A <a class="link" href="concepts-targets.html#def-target-group">target group</a> name.
+         The test implementor may choose the syntax of target group names in
+         a test implementation.  Target groups may be used to encode
+         information about target attributes, such as architecture and
+         operating system, and capabilities.</p></li><li class="listitem"><p>Optionally, a target specification may include additional
+         properties.  Properties are named and have string values.  Some
+         target classes may use property information to control their
+         configuration.  For instance, a target class which executes tests
+         on a remote computer would extract the network address of the
+         remote computer from a target property.</p></li></ol></div></div><div class="section" title="7.2. Target Classes"><div class="titlepage"><div><div><h3 class="title"><a name="target-classes"></a>7.2. Target Classes</h3></div></div></div><p><span class="application">QMTest</span> includes these target class 
+     implementations.</p><div class="section" title="7.2.1. SerialTarget"><div class="titlepage"><div><div><h4 class="title"><a name="serial-target"></a>7.2.1. <code class="classname">SerialTarget</code></h4></div></div></div><p>The <code class="classname">serial_target.SerialTarget</code> target
+       class runs tests one after the other on the machine running
+       QMTest.  If you use a <code class="classname">SerialTarget</code>, you
+       should not also use any other targets, including another
+       <code class="classname">SerialTarget</code> at the same time.</p></div><div class="section" title="7.2.2. ThreadTarget"><div class="titlepage"><div><div><h4 class="title"><a name="thread-target"></a>7.2.2. <code class="classname">ThreadTarget</code></h4></div></div></div><p>The <code class="classname">thread_target.ThreadTarget</code> target
+       class runs tests in one or more threads on the machine running
+       QMTest.  The <code class="classname">ThreadTarget</code> can be used to
+       run multiple tests at once.</p><p><code class="classname">ThreadTarget</code> uses the following
+       properties:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>The <span class="property">concurrency</span> specifies the number
+           of threads to use.  Larger numbers of threads will allow QMTest
+           to run more tests in parallel.  You can experiment with this
+           value to find the setting that allows QMTest to run tests most
+           quickly.</p></li></ul></div></div><div class="section" title="7.2.3. ProcessTarget"><div class="titlepage"><div><div><h4 class="title"><a name="process-target"></a>7.2.3. <code class="classname">ProcessTarget</code></h4></div></div></div><p>The <code class="classname">process_target.ProcessTarget</code>
+       target class run tests in one more processes on the machine running
+       QMTest.  This target class is not available on Windows.  Like
+       <code class="classname">ThreadTarget</code>,
+       <code class="classname">ProcessTarget</code> can be used to run multiple
+       tests simultaneously.</p><p>In general, you should use
+       <code class="classname">ThreadTarget</code> instead of
+       <code class="classname">ProcessTarget</code> to maximize QMTest
+       performance.  However, on machines that do not have threads,
+       <code class="classname">ProcessTarget</code> provides an alternative way
+       of running tests in parallel.</p><p><code class="classname">ProcessTarget</code> uses the following
+       properties:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>The <span class="property">concurrency</span> specifies the number
+           of processes to use.  Larger numbers of processes will allow
+           QMTest to run more tests in parallel.  You can experiment with
+           this value to find the setting that allows QMTest to run tests
+           most quickly.</p></li><li class="listitem"><p><span class="application">QMTest</span> uses the path given by the
+           <span class="command"><strong>qmtest</strong></span> property to create additional QMTest
+           instances.  By default, the path
+           <code class="filename">/usr/local/bin/qmtest</code> is used.</p></li></ul></div></div><div class="section" title="7.2.4. RemoteShellTarget"><div class="titlepage"><div><div><h4 class="title"><a name="remote-shell-target"></a>7.2.4. <code class="classname">RemoteShellTarget</code></h4></div></div></div><p>The <code class="classname">rsh_target.RSHTarget</code>
+       target class runs tests on a remote computer via a remote shell
+       invocation (<span class="command"><strong>rsh</strong></span>, <span class="command"><strong>ssh</strong></span>, or
+       similar).  This target uses a remote shell to invoke a program
+       similar to the <span class="command"><strong>qmtest</strong></span> command on the remote computer.  This
+       remote program accepts test commands and responds with results from
+       running these tests.</p><p>To use <code class="classname">RSHTarget</code>, the remote
+       computer must have <span class="application">QMTest</span> installed and must contain an identical
+       copy of the test database. <span class="application">QMTest</span> does not transfer entire tests
+       over the remote shell connection; instead, it relies on the remote
+       test database for loading tests.</p><p>In addition, the remote shell program must be configured to
+       allow a remote login without additional intervention (such as typing
+       a password).  If you use <span class="command"><strong>rsh</strong></span>, you can use an
+       <code class="filename">.rhosts</code> file to set this up.  If you use
+       <span class="command"><strong>ssh</strong></span>, you can use an SSH public key and the
+       <span class="command"><strong>ssh-agent</strong></span> program for this.  See the
+       corresponding manual pages for details.</p><p><code class="classname">RSHTarget</code> uses all of the properties
+       given above for <code class="classname">ProcessTarget</code>.  In
+       addition, <code class="classname">RSHTarget</code> uses the following
+       properties:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>The <span class="property">remote_shell</span> property specifies the
+           path to the remote shell program.  The default value is
+           <span class="command"><strong>ssh</strong></span>.  The remote shell program must
+           accept the same command-line syntax as
+           <span class="command"><strong>rsh</strong></span>.</p></li><li class="listitem"><p>The <span class="property">host</span> property specifies the remote
+           host name.  If omitted, the target name is used.</p></li><li class="listitem"><p>The <span class="property">database_path</span> property specifies
+           the path to the test database on the remote computer.  The test
+           database must be identical to the local test database.  If
+           omitted, the local test database path is used.</p></li><li class="listitem"><p>The <span class="property">arguments</span> property specifies
+           additional command-line arguments for the remote shell program.
+           The value of this property is split at space characters, and the
+           arguments are added to the command line before the name of the
+           remote host.</p><p>For example, if you are using the <span class="command"><strong>ssh</strong></span>
+           remote shell program and wish to log in to the remote computer
+           using a different user account, specify the <code class="literal">-l
+           username</code> option using the <span class="property">arguments</span>
+           property.</p></li></ul></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="customizing-expectation-databases.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="customizing.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="customizing-hosts.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">6. Expectation Databases </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 8. Hosts</td></tr></table></div></body></html>

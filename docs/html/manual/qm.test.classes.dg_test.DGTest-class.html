@@ -1,0 +1,1267 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.classes.dg_test.DGTest</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.classes-module.html">Package&nbsp;classes</a> ::
+        <a href="qm.test.classes.dg_test-module.html">Module&nbsp;dg_test</a> ::
+        Class&nbsp;DGTest
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.classes.dg_test.DGTest-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class DGTest</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+         object --+                
+                  |                
+<a href="qm.extension.Extension-class.html">extension.Extension</a> --+            
+                      |            
+      <a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a> --+        
+                          |        
+                  test.Test --+    
+                              |    
+   dejagnu_base.DejaGNUBase --+    
+                              |    
+       dejagnu_test.DejaGNUTest --+
+                                  |
+                                 <strong class="uidshort">DGTest</strong>
+</pre>
+
+<hr />
+<p>A 'DGTest' is a test using the DejaGNU 'dg' driver.</p>
+  <p>This test class emulates the 'dg.exp' source file in the DejaGNU 
+  distribution.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.dg_test.DGTest.DGException-class.html" class="summary-name">DGException</a><br />
+      The exception class raised by 'DGTest'.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>dejagnu_test.DejaGNUTest</code></b>:
+      <code><a href="qm.test.classes.dejagnu_test.DejaGNUTest.BuildExecutable-class.html">BuildExecutable</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>test.Test</code></b>:
+      <code><a href="qm.test.test.Test.OutcomeField-class.html">OutcomeField</a></code>,
+      <code><a href="qm.test.test.Test.TestField-class.html">TestField</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b>:
+      <code><a href="qm.test.runnable.Runnable.ResourceField-class.html">ResourceField</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension.Type-class.html">Type</a></code>,
+      <code><a href="qm.extension.Extension.Type-class.html">__metaclass__</a></code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_RunDGTest" class="summary-sig-name" onclick="show_private();">_RunDGTest</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">tool_flags</span>,
+        <span class="summary-sig-arg">default_options</span>,
+        <span class="summary-sig-arg">context</span>,
+        <span class="summary-sig-arg">result</span>,
+        <span class="summary-sig-arg">path</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">default_kind</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">keep_output</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Run a 'dg' test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._RunDGTest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_RunDGToolPortion" class="summary-sig-name" onclick="show_private();">_RunDGToolPortion</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">tool_flags</span>,
+        <span class="summary-sig-arg">context</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Perform the tool-running portions of a DG test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._RunDGToolPortion">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_RunDGExecutePortion" class="summary-sig-name" onclick="show_private();">_RunDGExecutePortion</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">file</span>,
+        <span class="summary-sig-arg">context</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Perform the executable-running portions of a DG test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._RunDGExecutePortion">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_ExecuteFinalCommand" class="summary-sig-name" onclick="show_private();">_ExecuteFinalCommand</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">command</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">context</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Run a command specified with 'dg-final'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._ExecuteFinalCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_PruneOutput" class="summary-sig-name" onclick="show_private();">_PruneOutput</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">output</span>)</span><br />
+      Remove unintersting messages from 'output'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._PruneOutput">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_RunTool" class="summary-sig-name" onclick="show_private();">_RunTool</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">kind</span>,
+        <span class="summary-sig-arg">options</span>,
+        <span class="summary-sig-arg">context</span>,
+        <span class="summary-sig-arg">result</span>)</span><br />
+      Run the tool being tested.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._RunTool">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_DGdo" class="summary-sig-name" onclick="show_private();">_DGdo</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">line_num</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Emulate the 'dg-do' command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGdo">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_DGfinal" class="summary-sig-name" onclick="show_private();">_DGfinal</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">line_num</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Emulate the 'dg-final' command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGfinal">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_DGoptions" class="summary-sig-name" onclick="show_private();">_DGoptions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">line_num</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Emulate the 'dg-options' command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGoptions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_DGbogus" class="summary-sig-name" onclick="show_private();">_DGbogus</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">line_num</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Emulate the 'dg-bogus' command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGbogus">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_DGwarning" class="summary-sig-name" onclick="show_private();">_DGwarning</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">line_num</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Emulate the 'dg-warning' command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGwarning">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_DGerror" class="summary-sig-name" onclick="show_private();">_DGerror</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">line_num</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Emulate the 'dg-error' command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGerror">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_DGexcess_errors" class="summary-sig-name" onclick="show_private();">_DGexcess_errors</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">line_num</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Emulate the 'dg-excess-errors' command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGexcess_errors">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#__ExpectDiagnostic" class="summary-sig-name" onclick="show_private();">__ExpectDiagnostic</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">kind</span>,
+        <span class="summary-sig-arg">line_num</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Register an expected diagnostic.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest.__ExpectDiagnostic">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.classes.dg_test.DGTest-class.html#_ParseTargetSelector" class="summary-sig-name" onclick="show_private();">_ParseTargetSelector</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">selector</span>,
+        <span class="summary-sig-arg">context</span>)</span><br />
+      Parse the target 'selector'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._ParseTargetSelector">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>dejagnu_test.DejaGNUTest</code></b> (private):
+      <code>_Error</code>,
+      <code>_GetBuild</code>,
+      <code>_GetSourcePath</code>,
+      <code>_GetTarget</code>,
+      <code>_GetTargetEnvironment</code>,
+      <code>_IsNative</code>,
+      <code>_ParseTclWords</code>,
+      <code>_RecordDejaGNUOutcome</code>,
+      <code>_RunBuildExecutable</code>,
+      <code>_RunTargetExecutable</code>,
+      <code>_SetUp</code>,
+      <code>_Unresolved</code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>test.Test</code></b>:
+      <code>GetTargetGroup</code>,
+      <code>Run</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b>:
+      <code><a href="qm.test.runnable.Runnable-class.html#GetAttachments">GetAttachments</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#GetDatabase">GetDatabase</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#GetId">GetId</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#__init__">__init__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension-class.html#GetClassName">GetClassName</a></code>,
+      <code><a href="qm.extension.Extension-class.html#GetExplicitArguments">GetExplicitArguments</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomDocument">MakeDomDocument</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomElement">MakeDomElement</a></code>,
+      <code><a href="qm.extension.Extension-class.html#Write">Write</a></code>,
+      <code><a href="qm.extension.Extension-class.html#__getattr__">__getattr__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code>dejagnu_base.DejaGNUBase</code></b> (private):
+      <code>_RecordCommand</code>,
+      <code>_RecordCommandOutput</code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.dg_test.DGTest-class.html#__dg_command_regexp" class="summary-name" onclick="show_private();">__dg_command_regexp</a> = <code title="re.compile(r&quot;{[ \t]+dg-([-a-z]+)[ \t]+(.*)[ \t]+}[^}]*$&quot;)">re.compile(r&quot;{[ \t]+dg-([-a-z]+)[ \t]+(.<code class="variable-ellipsis">...</code></code><br />
+      A regular expression matching commands embedded in the source file.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="KIND_PREPROCESS"></a><span class="summary-name">KIND_PREPROCESS</span> = <code title="&quot;preprocess&quot;">&quot;preprocess&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="KIND_COMPILE"></a><span class="summary-name">KIND_COMPILE</span> = <code title="&quot;compile&quot;">&quot;compile&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="KIND_ASSEMBLE"></a><span class="summary-name">KIND_ASSEMBLE</span> = <code title="&quot;assemble&quot;">&quot;assemble&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="KIND_LINK"></a><span class="summary-name">KIND_LINK</span> = <code title="&quot;link&quot;">&quot;link&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="KIND_RUN"></a><span class="summary-name">KIND_RUN</span> = <code title="&quot;run&quot;">&quot;run&quot;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.dg_test.DGTest-class.html#keep_output" class="summary-name">keep_output</a> = <code title="BooleanField(default_value= False, description= &quot;&quot;&quot;True if the output \
+file should be retained
+        after the test is complete.  Otherwise, it is removed.&quot;&quot;&quot;)">BooleanField(default_value= False, description= <code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.dg_test.DGTest-class.html#_default_kind" class="summary-name" onclick="show_private();">_default_kind</a> = <code title="&quot;compile&quot;">&quot;compile&quot;</code><br />
+      The default test kind.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.dg_test.DGTest-class.html#__test_kinds" class="summary-name" onclick="show_private();">__test_kinds</a> = <code title="KIND_PREPROCESS, KIND_COMPILE, KIND_ASSEMBLE, KIND_LINK, KIND_RUN">KIND_PREPROCESS, KIND_COMPILE, KIND_ASSEMBLE, K<code class="variable-ellipsis">...</code></code><br />
+      The kinds of tests supported by 'dg.exp'.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__DIAG_BOGUS"></a><span class="summary-name">__DIAG_BOGUS</span> = <code title="&quot;bogus&quot;">&quot;bogus&quot;</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__DIAG_ERROR"></a><span class="summary-name">__DIAG_ERROR</span> = <code title="&quot;error&quot;">&quot;error&quot;</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__DIAG_WARNING"></a><span class="summary-name">__DIAG_WARNING</span> = <code title="&quot;warning&quot;">&quot;warning&quot;</code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.classes.dg_test.DGTest-class.html#__diagnostic_descriptions" class="summary-name" onclick="show_private();">__diagnostic_descriptions</a> = <code title="{__DIAG_ERROR: &quot;errors&quot;, __DIAG_WARNING: &quot;warnings&quot;, __DIAG_BOGUS: &quot;bo\
+gus messages&quot;, &quot;build&quot;: &quot;build failure&quot;,}">{__DIAG_ERROR: &quot;errors&quot;, __DIAG_WA<code class="variable-ellipsis">...</code></code><br />
+      A map from dg diagnostic kinds to descriptive strings.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>dejagnu_test.DejaGNUTest</code></b>:
+      <code>ERROR</code>,
+      <code>FAIL</code>,
+      <code>KFAIL</code>,
+      <code>KPASS</code>,
+      <code>PASS</code>,
+      <code>RESULT_PREFIX</code>,
+      <code>UNRESOLVED</code>,
+      <code>UNSUPPORTED</code>,
+      <code>UNTESTED</code>,
+      <code>WARNING</code>,
+      <code>XFAIL</code>,
+      <code>XPASS</code>,
+      <code>arguments</code>,
+      <code>dejagnu_outcomes</code>,
+      <code>executable_timeout</code>,
+      <code>outcome_map</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>test.Test</code></b>:
+      <code>PREREQUISITES_FIELD_ID</code>,
+      <code>kind</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b>:
+      <code><a href="qm.test.runnable.Runnable-class.html#EXTRA_DATABASE">EXTRA_DATABASE</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#EXTRA_ID">EXTRA_ID</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#RESOURCE_FIELD_ID">RESOURCE_FIELD_ID</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#resources">resources</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.runnable.Runnable-class.html">runnable.Runnable</a></code></b> (private):
+      <code><a href="qm.test.runnable.Runnable-class.html#_argument_dictionary" onclick="show_private();">_argument_dictionary</a></code>,
+      <code><a href="qm.test.runnable.Runnable-class.html#_argument_list" onclick="show_private();">_argument_list</a></code>
+      </p></div>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b> (private):
+      <code><a href="qm.extension.Extension-class.html#_allow_arg_names_matching_class_vars" onclick="show_private();">_allow_arg_names_matching_class_vars</a></code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="_RunDGTest"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_RunDGTest</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">tool_flags</span>,
+        <span class="sig-arg">default_options</span>,
+        <span class="sig-arg">context</span>,
+        <span class="sig-arg">result</span>,
+        <span class="sig-arg">path</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">default_kind</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">keep_output</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._RunDGTest">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run a 'dg' test.</p>
+  <p>'tool_flags' -- A list of strings giving a set of options to be 
+  provided to the tool being tested.</p>
+  <p>'default_options' -- A list of strings giving a default set of options
+  to be provided to the tool being tested.  These options can be overridden
+  by an embedded 'dg-options' command in the test itself.</p>
+  <p>'context' -- The 'Context' in which this test is running.</p>
+  <p>'result' -- The 'Result' of the test execution.</p>
+  <p>'path' -- The path to the test file.  If 'None', the main test file 
+  path is used.</p>
+  <p>'default_kind' -- The kind of test to perform.  If this value is 
+  'None', then 'self._default_kind' is used.</p>
+  <p>'keep_output' -- True if the output file should be retained after the 
+  test is complete.  Otherwise, it is removed.</p>
+  <p>This function emulates 'dg-test'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_RunDGToolPortion"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_RunDGToolPortion</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">tool_flags</span>,
+        <span class="sig-arg">context</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._RunDGToolPortion">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Perform the tool-running portions of a DG test.</p>
+  <p>Calls '_RunTool' and processes its output.</p>
+  <p>returns -- The filename of the generated file.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_RunDGExecutePortion"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_RunDGExecutePortion</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">file</span>,
+        <span class="sig-arg">context</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._RunDGExecutePortion">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Perform the executable-running portions of a DG test.</p>
+  <p>If this is a &quot;run&quot; test, runs the executable generated by 
+  the tool and checks its output.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_ExecuteFinalCommand"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_ExecuteFinalCommand</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">command</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">context</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._ExecuteFinalCommand">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run a command specified with 'dg-final'.</p>
+  <p>'command' -- A string giving the name of the command.</p>
+  <p>'args' -- A list of strings giving the arguments (if any) to that 
+  command.</p>
+  <p>'context' -- The 'Context' in which this test is running.</p>
+  <p>'result' -- The 'Result' of this test.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_PruneOutput"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_PruneOutput</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">output</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._PruneOutput">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Remove unintersting messages from 'output'.</p>
+  <p>'output' -- A string giving the output from the tool being tested.</p>
+  <p>returns -- A modified version of 'output'.  This modified version does
+  not contain tool output messages that are irrelevant for testing 
+  purposes.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_RunTool"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_RunTool</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">kind</span>,
+        <span class="sig-arg">options</span>,
+        <span class="sig-arg">context</span>,
+        <span class="sig-arg">result</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._RunTool">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run the tool being tested.</p>
+  <p>'path' -- The path to the test file.</p>
+  <p>'kind' -- The kind of test to perform.</p>
+  <p>'options' -- A list of strings giving command-line options to provide 
+  to the tool.</p>
+  <p>'context' -- The 'Context' for the test execution.</p>
+  <p>'result' -- The QMTest 'Result' for the test.</p>
+  <p>returns -- A pair '(output, file)' where 'output' consists of any 
+  messages produced by the compiler, and 'file' is the name of the file 
+  produced by the compilation, if any.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DGdo"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DGdo</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">line_num</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGdo">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Emulate the 'dg-do' command.</p>
+  <p>'line_num' -- The line number at which the command was found.</p>
+  <p>'args' -- The arguments to the command, as a list of strings.</p>
+  <p>'context' -- The 'Context' in which the test is running.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DGfinal"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DGfinal</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">line_num</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGfinal">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Emulate the 'dg-final' command.</p>
+  <p>'line_num' -- The line number at which the command was found.</p>
+  <p>'args' -- The arguments to the command, as a list of strings.</p>
+  <p>'context' -- The 'Context' in which the test is running.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DGoptions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DGoptions</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">line_num</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGoptions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Emulate the 'dg-options' command.</p>
+  <p>'line_num' -- The line number at which the command was found.</p>
+  <p>'args' -- The arguments to the command, as a list of strings.</p>
+  <p>'context' -- The 'Context' in which the test is running.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DGbogus"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DGbogus</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">line_num</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGbogus">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Emulate the 'dg-bogus' command.</p>
+  <p>'line_num' -- The number at which the command was found.</p>
+  <p>'args' -- The arguments to the command, as a list of strings.</p>
+  <p>'context' -- The 'Context' in which the test is running.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DGwarning"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DGwarning</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">line_num</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGwarning">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Emulate the 'dg-warning' command.</p>
+  <p>'line_num' -- The number at which the command was found.</p>
+  <p>'args' -- The arguments to the command, as a list of strings.</p>
+  <p>'context' -- The 'Context' in which the test is running.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DGerror"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DGerror</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">line_num</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGerror">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Emulate the 'dg-error' command.</p>
+  <p>'line_num' -- The number at which the command was found.</p>
+  <p>'args' -- The arguments to the command, as a list of strings.</p>
+  <p>'context' -- The 'Context' in which the test is running.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_DGexcess_errors"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_DGexcess_errors</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">line_num</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._DGexcess_errors">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Emulate the 'dg-excess-errors' command.</p>
+  <p>'line_num' -- The line number at which the command was found.</p>
+  <p>'args' -- The arguments to the command, as a list of strings.</p>
+  <p>'context' -- The 'Context' in which the test is running.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__ExpectDiagnostic"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__ExpectDiagnostic</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">kind</span>,
+        <span class="sig-arg">line_num</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest.__ExpectDiagnostic">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Register an expected diagnostic.</p>
+  <p>'kind' -- The kind of diagnostic expected.</p>
+  <p>'line_num' -- The number at which the command was found.</p>
+  <p>'args' -- The arguments to the command, as a list of strings.</p>
+  <p>'context' -- The 'Context' in which the test is running.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_ParseTargetSelector"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_ParseTargetSelector</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">selector</span>,
+        <span class="sig-arg">context</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.classes.dg_test-pysrc.html#DGTest._ParseTargetSelector">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parse the target 'selector'.</p>
+  <p>'selector' -- A target selector.</p>
+  <p>'context' -- The 'Context' in which the test is running.</p>
+  <p>returns -- For a 'target' selector, 'S' if this test should be run, or
+  'N' if it should not.  For an 'xfail' selector, 'F' if the test is 
+  expected to fail; 'P' if if not.</p>
+  <p>This function emulates dg-process-target.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__dg_command_regexp"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">__dg_command_regexp</h3>
+  <p>A regular expression matching commands embedded in the source 
+  file.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+re.compile(r&quot;{[ \t]+dg-([-a-z]+)[ \t]+(.*)[ \t]+}[^}]*$&quot;)
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="keep_output"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">keep_output</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+BooleanField(default_value= False, description= &quot;&quot;&quot;True if the output <span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+file should be retained
+        after the test is complete.  Otherwise, it is removed.&quot;&quot;&quot;)
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_default_kind"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">_default_kind</h3>
+  <p>The default test kind.</p>
+  <p>This value can be overridden by a 'dg-do' command in the test 
+  file.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+&quot;compile&quot;
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__test_kinds"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">__test_kinds</h3>
+  <p>The kinds of tests supported by 'dg.exp'.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+KIND_PREPROCESS, KIND_COMPILE, KIND_ASSEMBLE, KIND_LINK, KIND_RUN
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__diagnostic_descriptions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">__diagnostic_descriptions</h3>
+  <p>A map from dg diagnostic kinds to descriptive strings.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+{__DIAG_ERROR: &quot;errors&quot;, __DIAG_WARNING: &quot;warnings&quot;, __DIAG_BOGUS: &quot;bo<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+gus messages&quot;, &quot;build&quot;: &quot;build failure&quot;,}
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:41 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

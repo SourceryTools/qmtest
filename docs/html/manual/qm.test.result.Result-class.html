@@ -1,0 +1,1079 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.result.Result</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.result-module.html">Module&nbsp;result</a> ::
+        Class&nbsp;Result
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.result.Result-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Result</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.result-pysrc.html#Result">source&nbsp;code</a></span></p>
+<p>A 'Result' describes the outcome of a test.</p>
+  <p>A 'Result' contains two pieces of data: an outcome and a set of 
+  annotations.  The outcome indicates whether the test passed or failed.  
+  More specifically, the outcome may be one of the following constants:</p>
+  <p>'Result.PASS' -- The test passed.</p>
+  <p>'Result.FAIL' -- The test failed.</p>
+  <p>'Result.ERROR' -- Something went wrong in the process of trying to 
+  execute the test.  For example, if the Python code implementing the 'Run'
+  method in the test class raised an exception, the outcome would be 
+  'Result.ERROR'.</p>
+  <p>'Result.UNTESTED' -- QMTest did not even try to run the test. For 
+  example, if a prerequiste was not satisfied, then this outcome will be 
+  used.'</p>
+  <p>The annotations are a dictionary, mapping strings to strings.</p>
+  <p>The indices should be of the form 'class.name' where 'class' is the 
+  name of the test class that created the annotation.  Any annotations 
+  created by QMTest, as opposed to the test class, will have indices of the
+  form 'qmtest.name'.</p>
+  <p>The annotation values are HTML.  When displayed in the GUI, the HTML 
+  is inserted directly into the result page; when the command-line 
+  interface is used the HTML is converted to plain text.</p>
+  <p>Currently, QMTest recognizes the following built-in annotations:</p>
+  <p>'Result.CAUSE' -- For results whose outcome is not 'FAIL', this 
+  annotation gives a brief description of why the test failed.  The 
+  preferred form of this message is a phrase like &quot;Incorrect 
+  output.&quot; or &quot;Exception thrown.&quot;  The message should begin 
+  with a capital letter and end with a period.  Most results formatters 
+  will display this information prominently.</p>
+  <p>'Result.EXCEPTION' -- If an exeption was thrown during the test 
+  execution, a brief description of the exception.</p>
+  <p>'Result.TARGET' -- This annotation indicates on which target the test 
+  was executed.</p>
+  <p>'Result.TRACEBACK' -- If an exeption was thrown during the test 
+  execution, a representation of the traceback indicating where the 
+  exception was thrown.</p>
+  <p>A 'Result' object has methods that allow it to act as a dictionary 
+  from annotation names to annotation values.  You can directly add an 
+  annotation to a 'Result' by writing code of the form 'result[CAUSE] = 
+  &quot;Exception thrown.&quot;'.</p>
+  <p>A 'Result' object is also used to describe the outcome of executing 
+  either setup or cleanup phase of a 'Resource'.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">kind</span>,
+        <span class="summary-sig-arg">id</span>,
+        <span class="summary-sig-arg">outcome</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">PASS</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">annotations</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span><br />
+      Construct a new 'Result'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#__getstate__" class="summary-sig-name">__getstate__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return a representation of this result for pickling.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.__getstate__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__setstate__"></a><span class="summary-sig-name">__setstate__</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pickled_state</span>)</span><br />
+      Construct a 'Result' from its pickled form.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.__setstate__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#GetKind" class="summary-sig-name">GetKind</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the kind of result this is.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.GetKind">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#GetOutcome" class="summary-sig-name">GetOutcome</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the outcome associated with the test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.GetOutcome">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#SetOutcome" class="summary-sig-name">SetOutcome</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">outcome</span>,
+        <span class="summary-sig-arg">cause</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">annotations</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span><br />
+      Set the outcome associated with the test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.SetOutcome">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="Annotate"></a><span class="summary-sig-name">Annotate</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">annotations</span>)</span><br />
+      Add 'annotations' to the current set of annotations.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.Annotate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#Fail" class="summary-sig-name">Fail</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">cause</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">annotations</span>=<span class="summary-sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span><br />
+      Mark the test as failing.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.Fail">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#GetId" class="summary-sig-name">GetId</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the label for the test or resource.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.GetId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#GetCause" class="summary-sig-name">GetCause</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the cause of failure, if the test failed.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.GetCause">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#SetCause" class="summary-sig-name">SetCause</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">cause</span>)</span><br />
+      Set the cause of failure.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.SetCause">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#Quote" class="summary-sig-name">Quote</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">string</span>)</span><br />
+      Return a version of string suitable for an annotation value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.Quote">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#NoteException" class="summary-sig-name">NoteException</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">exc_info</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">cause</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">outcome</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">ERROR</code><code class="variable-quote">'</code></span>)</span><br />
+      Note that an exception occurred during execution.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.NoteException">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#CheckExitStatus" class="summary-sig-name">CheckExitStatus</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">prefix</span>,
+        <span class="summary-sig-arg">desc</span>,
+        <span class="summary-sig-arg">status</span>,
+        <span class="summary-sig-arg">non_zero_exit_ok</span>=<span class="summary-sig-default">0</span>)</span><br />
+      Check the exit status from a command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.CheckExitStatus">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.result.Result-class.html#MakeDomNode" class="summary-sig-name">MakeDomNode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">document</span>)</span><br />
+      Generate a DOM element node for this result.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.MakeDomNode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__getitem__"></a><span class="summary-sig-name">__getitem__</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.__getitem__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__setitem__"></a><span class="summary-sig-name">__setitem__</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>,
+        <span class="summary-sig-arg">value</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.__setitem__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__delitem__"></a><span class="summary-sig-name">__delitem__</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.__delitem__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get"></a><span class="summary-sig-name">get</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>,
+        <span class="summary-sig-arg">default</span>=<span class="summary-sig-default">None</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.get">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="has_key"></a><span class="summary-sig-name">has_key</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.has_key">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="keys"></a><span class="summary-sig-name">keys</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.keys">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="items"></a><span class="summary-sig-name">items</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.result-pysrc.html#Result.items">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RESOURCE_SETUP"></a><span class="summary-name">RESOURCE_SETUP</span> = <code title="'resource_setup'"><code class="variable-quote">'</code><code class="variable-string">resource_setup</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RESOURCE_CLEANUP"></a><span class="summary-name">RESOURCE_CLEANUP</span> = <code title="'resource_cleanup'"><code class="variable-quote">'</code><code class="variable-string">resource_cleanup</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TEST"></a><span class="summary-name">TEST</span> = <code title="'test'"><code class="variable-quote">'</code><code class="variable-string">test</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="FAIL"></a><span class="summary-name">FAIL</span> = <code title="'FAIL'"><code class="variable-quote">'</code><code class="variable-string">FAIL</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ERROR"></a><span class="summary-name">ERROR</span> = <code title="'ERROR'"><code class="variable-quote">'</code><code class="variable-string">ERROR</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNTESTED"></a><span class="summary-name">UNTESTED</span> = <code title="'UNTESTED'"><code class="variable-quote">'</code><code class="variable-string">UNTESTED</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="PASS"></a><span class="summary-name">PASS</span> = <code title="'PASS'"><code class="variable-quote">'</code><code class="variable-string">PASS</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="CAUSE"></a><span class="summary-name">CAUSE</span> = <code title="'qmtest.cause'"><code class="variable-quote">'</code><code class="variable-string">qmtest.cause</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="EXCEPTION"></a><span class="summary-name">EXCEPTION</span> = <code title="'qmtest.exception'"><code class="variable-quote">'</code><code class="variable-string">qmtest.exception</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="RESOURCE"></a><span class="summary-name">RESOURCE</span> = <code title="'qmtest.resource'"><code class="variable-quote">'</code><code class="variable-string">qmtest.resource</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TARGET"></a><span class="summary-name">TARGET</span> = <code title="'qmtest.target'"><code class="variable-quote">'</code><code class="variable-string">qmtest.target</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TRACEBACK"></a><span class="summary-name">TRACEBACK</span> = <code title="'qmtest.traceback'"><code class="variable-quote">'</code><code class="variable-string">qmtest.traceback</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="START_TIME"></a><span class="summary-name">START_TIME</span> = <code title="'qmtest.start_time'"><code class="variable-quote">'</code><code class="variable-string">qmtest.start_time</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="END_TIME"></a><span class="summary-name">END_TIME</span> = <code title="'qmtest.end_time'"><code class="variable-quote">'</code><code class="variable-string">qmtest.end_time</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TIMEOUT_DETAIL"></a><span class="summary-name">TIMEOUT_DETAIL</span> = <code title="'qmtest.timeout_detail'"><code class="variable-quote">'</code><code class="variable-string">qmtest.timeout_detail</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="kinds"></a><span class="summary-name">kinds</span> = <code title="['resource_setup', 'resource_cleanup', 'test']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">resource_setup</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">resource_cleanup</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">test</code><code class="variable-quote">'</code><code class="variable-group">]</code></code><br />
+      A list of the possible kinds.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.result.Result-class.html#outcomes" class="summary-name">outcomes</a> = <code title="['ERROR', 'FAIL', 'UNTESTED', 'PASS']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">ERROR</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">FAIL</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">UNTESTED</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">PASS</code><code class="variable-quote">'</code><code class="variable-group">]</code></code><br />
+      A list of the possible outcomes.
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">kind</span>,
+        <span class="sig-arg">id</span>,
+        <span class="sig-arg">outcome</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">PASS</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">annotations</span>=<span class="sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a new 'Result'.</p>
+  <p>'kind' -- The kind of result.  The value must be one of the 
+  'Result.kinds'.</p>
+  <p>'id' -- The label for the test or resource to which this result 
+  corresponds.</p>
+  <p>'outcome' -- The outcome associated with the test.  The value must be 
+  one of the 'Result.outcomes'.</p>
+  <p>'annotations' -- The annotations associated with the test.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="__getstate__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__getstate__</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.__getstate__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a representation of this result for pickling.</p>
+  <p>By using an explicit tuple representation of 'Result's when storing 
+  them in a pickle file, we decouple our storage format from internal 
+  implementation details (e.g., the names of private variables).</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetKind"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetKind</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.GetKind">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the kind of result this is.</p>
+  <p>returns -- The kind of entity (one of the 'kinds') to which this 
+  result corresponds.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetOutcome"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetOutcome</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.GetOutcome">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the outcome associated with the test.</p>
+  <p>returns -- The outcome associated with the test.  This value will be 
+  one of the 'Result.outcomes'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="SetOutcome"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">SetOutcome</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">outcome</span>,
+        <span class="sig-arg">cause</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">annotations</span>=<span class="sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.SetOutcome">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set the outcome associated with the test.</p>
+  <p>'outcome' -- One of the 'Result.outcomes'.</p>
+  <p>'cause' -- If not 'None', this value becomes the value of the 
+  'Result.CAUSE' annotation.</p>
+  <p>'annotations' -- The annotations are added to the current set of 
+  annotations.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Fail"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Fail</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">cause</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">annotations</span>=<span class="sig-default"><code class="variable-group">{</code><code class="variable-group">}</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.Fail">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Mark the test as failing.</p>
+  <p>'cause' -- If not 'None', this value becomes the value of the 
+  'Result.CAUSE' annotation.</p>
+  <p>'annotations' -- The annotations are added to the current set of 
+  annotations.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetId"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetId</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.GetId">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the label for the test or resource.</p>
+  <p>returns -- A label indicating indicating to which test or resource 
+  this result corresponds.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetCause"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetCause</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.GetCause">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the cause of failure, if the test failed.</p>
+  <p>returns -- If the test failed, return the cause of the failure, if 
+  available.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="SetCause"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">SetCause</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">cause</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.SetCause">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set the cause of failure.</p>
+  <p>'cause' -- A string indicating the cause of failure.  Like all 
+  annotations, 'cause' will be interested as HTML.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="Quote"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">Quote</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">string</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.Quote">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a version of string suitable for an annotation value.</p>
+  <p>Performs appropriate quoting for a string that should be taken 
+  verbatim; this includes HTML entity escaping, and addition of &lt;pre&gt;
+  tags.</p>
+  <p>'string' -- The verbatim string to be quoted.</p>
+  <p>returns -- The quoted string.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="NoteException"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">NoteException</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">exc_info</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">cause</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">outcome</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">ERROR</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.NoteException">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Note that an exception occurred during execution.</p>
+  <p>'exc_info' -- A triple, in the same form as that returned from 
+  'sys.exc_info'.  If 'None', the value of 'sys.exc_info()' is used 
+  instead.</p>
+  <p>'cause' -- The value of the 'Result.CAUSE' annotation.  If 'None', a 
+  default message is used.</p>
+  <p>'outcome' -- The outcome of the test, now that the exception has 
+  occurred.</p>
+  <p>A test class can call this method if an exception occurs while the 
+  test is being run.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="CheckExitStatus"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">CheckExitStatus</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">prefix</span>,
+        <span class="sig-arg">desc</span>,
+        <span class="sig-arg">status</span>,
+        <span class="sig-arg">non_zero_exit_ok</span>=<span class="sig-default">0</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.CheckExitStatus">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Check the exit status from a command.</p>
+  <p>'prefix' -- The prefix that should be used when creating result 
+  annotations.</p>
+  <p>'desc' -- A description of the executing program.</p>
+  <p>'status' -- The exit status, as returned by 'waitpid'.</p>
+  <p>'non_zero_exit_ok' -- True if a non-zero exit code is not considered 
+  failure.</p>
+  <p>returns -- False if the test failed, true otherwise.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="MakeDomNode"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">MakeDomNode</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">document</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.result-pysrc.html#Result.MakeDomNode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generate a DOM element node for this result.</p>
+  <p>Note that the context is not represented in the DOM node.</p>
+  <p>'document' -- The containing DOM document.</p>
+  <p>returns -- The element created.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="outcomes"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">outcomes</h3>
+  <p>A list of the possible outcomes.</p>
+  <p>The order of the 'outcomes' is significant; they are ordered from most
+  interesting to least interesting from the point of view of someone 
+  browsing results.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">ERROR</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">FAIL</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">UNTESTED</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">PASS</code><code class="variable-quote">'</code><code class="variable-group">]</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:41 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

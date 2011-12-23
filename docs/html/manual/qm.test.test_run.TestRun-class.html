@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.test_run.TestRun</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.test_run-module.html">Module&nbsp;test_run</a> ::
+        Class&nbsp;TestRun
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.test_run.TestRun-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class TestRun</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">TestRun</strong>
+</pre>
+
+<dl><dt>Known Subclasses:</dt>
+<dd>
+      <ul class="subclass-list">
+<li><a href="qm.test.reader_test_run.ReaderTestRun-class.html">reader_test_run.ReaderTestRun</a></li>  </ul>
+</dd></dl>
+
+<hr />
+<p>A 'TestRun' stores the 'Result's from a single test run.</p>
+  <p>The primary contents of a 'TestRun' are the the 'Result's of the run.
+  In addition, each 'TestRun' has an associated set of annotations, which 
+  are used to store global information about the 'TestRun'.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.test_run.TestRun-class.html#GetResult" class="summary-sig-name">GetResult</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">id</span>,
+        <span class="summary-sig-arg">kind</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">test</code><code class="variable-quote">'</code></span>)</span><br />
+      Return the 'Result' for the indicated test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.GetResult">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.test_run.TestRun-class.html#GetAnnotation" class="summary-sig-name">GetAnnotation</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">key</span>)</span><br />
+      Return the annotation associated with 'key'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.GetAnnotation">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.test_run.TestRun-class.html#GetAnnotations" class="summary-sig-name">GetAnnotations</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return this run's dictionary of annotations.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.GetAnnotations">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.test_run.TestRun-class.html#GetAllResults" class="summary-sig-name">GetAllResults</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">directory</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">kind</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">test</code><code class="variable-quote">'</code></span>)</span><br />
+      Return 'Result's from the given directory..</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.GetAllResults">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.test_run.TestRun-class.html#GetResultsByOutcome" class="summary-sig-name">GetResultsByOutcome</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">outcome</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">directory</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">kind</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">test</code><code class="variable-quote">'</code></span>)</span><br />
+      Return 'Result's with a particular outcome.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.GetResultsByOutcome">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.test_run.TestRun-class.html#CountOutcomes" class="summary-sig-name">CountOutcomes</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">directory</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">outcome</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Return statistics about the outcomes of tests.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.CountOutcomes">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__init__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="GetResult"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetResult</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">id</span>,
+        <span class="sig-arg">kind</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">test</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.GetResult">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the 'Result' for the indicated test.</p>
+  <p>'id' -- The name of a test or resource.</p>
+  <p>'kind' -- The kind of result to retrieve.  See 'Result' for a list of 
+  the available result kinds.</p>
+  <p>returns -- The 'Result' corresponding to 'test_id'.</p>
+  <p>raises -- 'KeyError' if there is no result of the given 'kind' for 
+  'id' in the test run.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetAnnotation"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetAnnotation</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">key</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.GetAnnotation">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the annotation associated with 'key'.</p>
+  <p>'key' -- A string giving the name of an annotation.</p>
+  <p>returns -- A string giving the value of the annotation, or 'None' if 
+  there is no such annotation.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetAnnotations"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetAnnotations</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.GetAnnotations">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return this run's dictionary of annotations.</p>
+  <p>returns -- A dictionary mapping annotation names (strings) to values 
+  (also strings).</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetAllResults"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetAllResults</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">directory</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">kind</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">test</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.GetAllResults">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return 'Result's from the given directory..</p>
+  <p>'directory' -- A path to a directory in the test database.</p>
+  <p>'kind' -- The kind of results to return.</p>
+  <p>returns -- All the results within 'directory' (including its 
+  subdirectories).</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetResultsByOutcome"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetResultsByOutcome</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">outcome</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">directory</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">kind</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">test</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.GetResultsByOutcome">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return 'Result's with a particular outcome.</p>
+  <p>'outcome' -- One of the 'Result.outcomes', or 'None'.</p>
+  <p>'directory' -- A path to a directory in the test database.</p>
+  <p>'kind' -- The kind of results to return.</p>
+  <p>returns -- All the results within 'directory' (including its 
+  subdirectories) that have the indicated 'outcome', or, if 'outcome' is 
+  'None', all test results from 'directory'.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="CountOutcomes"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">CountOutcomes</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">directory</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">outcome</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.test_run-pysrc.html#TestRun.CountOutcomes">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return statistics about the outcomes of tests.</p>
+  <p>'directory' -- A path to a directory in the test database.</p>
+  <p>'outcome' -- If not 'None', one of the 'Result.outcomes'.</p>
+  <p>returns -- A dictionary mapping outcomes to the number of test results
+  with that outcome located within 'directory' and its subdirectories.  If 
+  'outcome' is not 'None', the dictionary will have an entry only for the 
+  'outcome' specified.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:42 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

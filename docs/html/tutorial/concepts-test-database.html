@@ -1,0 +1,16 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>4. Test Database</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="concepts.html" title="Chapter 1. QMTest Concepts"><link rel="prev" href="concepts-test-suite.html" title="3. Test Suites"><link rel="next" href="concepts-expectation-database.html" title="5. Expectation Database"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4. Test Database</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="concepts-test-suite.html">Prev</a> </td><th width="60%" align="center">Chapter 1. <span class="application">QMTest</span> Concepts</th><td width="20%" align="right"> <a accesskey="n" href="concepts-expectation-database.html">Next</a></td></tr></table><hr></div><div class="section" title="4. Test Database"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="concepts-test-database"></a>4. Test Database</h2></div></div></div><p>A <em class="firstterm"><a name="def-test-database"></a>test database</em> stores
+    tests, test suites, and other entities. When you ask
+    <span class="application">QMTest</span> for a particular test by name, it
+    queries the test database to obtain the test itself.
+    <span class="application">QMTest</span> stores a test database in a single
+    directory, which may include many files and subdirectories.</p><p>In general, <span class="application">QMTest</span> can only use one test
+    database at a time. However, it is possible to create a test database
+    which contains other test databases. This mechanism allows you to store
+    the tests associated with different parts of a large application in
+    different test databases, and still combine them into a single large test
+    database when required.</p><p>A single test database can store many different kinds of tests. By
+    default, <span class="application">QMTest</span> stores tests, test suites, and
+    all other entities in the test database using subdirectories containing XML
+    files. Generally, there should be no need to examine or modify these files
+    directly. However, the use of an XML format makes it easy for you to
+    automatically generate tests from another program, if required.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="concepts-test-suite.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="concepts.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="concepts-expectation-database.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3. Test Suites </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 5. Expectation Database</td></tr></table></div></body></html>

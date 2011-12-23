@@ -1,0 +1,33 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>5. Writing Database Classes</title><link rel="stylesheet" type="text/css" href="cs.css"><meta name="generator" content="DocBook XSL Stylesheets V1.76.1"><link rel="home" href="index.html" title="QMTest: User's Guide"><link rel="up" href="extending.html" title="Chapter 4. Extending QMTest"><link rel="prev" href="extending-resource-classes.html" title="4. Writing Resource Classes"><link rel="next" href="extending-registering.html" title="6. Registering and Distributing Extension Classes"><link rel="copyright" href="ln-id335742.html" title="Legal Notice"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5. Writing Database Classes</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="extending-resource-classes.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Extending QMTest</th><td width="20%" align="right"> <a accesskey="n" href="extending-registering.html">Next</a></td></tr></table><hr></div><div class="section" title="5. Writing Database Classes"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extending-database-classes"></a>5. Writing Database Classes</h2></div></div></div><p>The test database class controls the format in which tests are
+  stored.  <span class="application">QMTest</span>'s default database class stores each test as an XML
+  file, but you might want to use a format that is particularly well
+  suited to your application domain or to your organization's
+  arrangement of computing resources.</p><p>For example, if you were testing a compiler, you might want to
+  represent tests as source files with special embedded comments
+  indicating what errors are expected when compiling the test.  You
+  could write a test database class that can read and write tests
+  in that format.</p><p>Or, if you wanted to share a single test database with many
+  people in such a way that everyone automatically saw updates to the
+  database, you might want to put all of the tests on a central HTTP
+  server.  You could write a test database class that retrieves tests
+  from the server and creates new tests by uploading them to the
+  server.</p><p>A test database class is a Python class that is derived from
+  <a class="ulink" href="http://www.codesourcery.com/public/qmtest/qmtest-2.4.1/internals/qm/test/database/Database.html" target="_top"><code class="classname">Database</code></a>, which is itself derived from
+  <code class="classname">Extension</code>.  To create a new database class,
+  you must define methods that read and write
+  <code class="classname">Extension</code> instances.</p><p>The database is also responsible for determining how tests
+  (and other entities stored in the database) are named.  Each item
+  stored in the database must have a unique name.  For a database that
+  stores files in the filesystem, the name of the file may be a good
+  name.  For a database of unit tests for Python module, the name of
+  the module might be a good name for the tests.  Choosing the naming
+  convention appropriate requires understanding both the application
+  domain and the way in which the tests will actually be
+  stored.</p><p>The database class must have a
+  <code class="function">GetExtension</code> method which retrieves an instance
+  of <code class="classname">Extension</code> given the name of the instance.
+  If your database is modifiable, you must also provide
+  <code class="function">WriteExtension</code> and
+  <code class="function">RemoveExtension</code> methods.  For historical
+  reasons, your database class must also set the class variable
+  <code class="varname">_is_generic_database</code> to true.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="extending-resource-classes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="extending.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="extending-registering.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4. Writing Resource Classes </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 6. Registering and Distributing Extension Classes</td></tr></table></div></body></html>

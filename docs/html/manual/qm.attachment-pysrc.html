@@ -1,0 +1,931 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.attachment</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        Module&nbsp;attachment
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.attachment-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.attachment-module.html">Module qm.attachment</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># File:   attachment.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Alex Samuel</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   2001-03-21</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#   Generic code for handling arbitrary file attachments.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># For license terms see the file COPYING.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-docstring">"""Code for handling arbitrary file attachments.</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-docstring">'Attachment' is a base class for classes that represent arbitrary</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-docstring">attachments.  Each 'Attachment' object has these four attributes:</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-docstring">  'mime_type' -- The MIME type of the attachment contents.  This</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-docstring">  information enables user interfaces to handle attachment data in a</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-docstring">  sensible fasion.</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-docstring">  'description' -- The user's description of the attachment contents.</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-docstring">  'file_name' -- A file name associated with the description.  This is</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-docstring">  usually the name of the file from which the attachment was originally</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-docstring">  uploaded or inserted.</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-docstring">  'location' -- A string containing the external location of the</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-docstring">  attachment data.  The semantics of this string are defined by</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"><tt class="py-docstring">  implementations of 'AttachmentStore', which use it to locate the</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-docstring">  attachment's data.</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-docstring">A special 'TemporaryAttachmentStore', with a different interface, is</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-docstring">used to store attachment data temporarily, at most for the life of the</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">program.  The 'temporary_store' global instance should be used."""</tt>  </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-comment"># imports</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-0" class="py-name" targets="Module qm.common=qm.common-module.html"><a title="qm.common" class="py-name" href="#" onclick="return doclink('link-0', 'common', 'link-0');">common</a></tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">mimetypes</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-1" class="py-name" targets="Module qm.xmlutil=qm.xmlutil-module.html"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-1', 'xmlutil', 'link-1');">xmlutil</a></tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Module qm.temporary_directory=qm.temporary_directory-module.html"><a title="qm.temporary_directory" class="py-name" href="#" onclick="return doclink('link-2', 'temporary_directory', 'link-2');">temporary_directory</a></tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-comment"># classes</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"> </tt>
+<a name="Attachment"></a><div id="Attachment-def"><a name="L54"></a><tt class="py-lineno"> 54</tt> <a class="py-toggle" href="#" id="Attachment-toggle" onclick="return toggle('Attachment');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html">Attachment</a><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Attachment-expanded"><a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">    <tt class="py-docstring">"""An arbitrary file attachment.</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-docstring">    Conceptually, an attachment is composed of these parts:</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-docstring">     1. A MIME type, as a string.</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-docstring">     2. A description, as a structured text string.</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-docstring">     3. A file name, corresponding to the original name of the file from</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-docstring">        which the attachment was uploaded, or the name of the file to</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-docstring">        use when the attachment is presented to the user in a file</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt class="py-docstring">        system.</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"><tt class="py-docstring">     4. A block of arbitrary data.</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-docstring">    For efficiency reasons, the attachment data is not stored in the</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-docstring">    attachment.  Instead, a *location* is stored, which is a key into</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-docstring">    the associated 'AttachmentStore' object."""</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"> </tt>
+<a name="Attachment.__init__"></a><div id="Attachment.__init__-def"><a name="L74"></a><tt class="py-lineno"> 74</tt> <a class="py-toggle" href="#" id="Attachment.__init__-toggle" onclick="return toggle('Attachment.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">                 <tt class="py-param">mime_type</tt><tt class="py-op">,</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">                 <tt class="py-param">description</tt><tt class="py-op">,</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">                 <tt class="py-param">file_name</tt><tt class="py-op">,</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">                 <tt class="py-param">location</tt><tt class="py-op">,</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">                 <tt class="py-param">store</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.__init__-expanded"><a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">        <tt class="py-docstring">"""Create a new attachment.</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line"><tt class="py-docstring">        'mime_type' -- The MIME type.  If 'None' or an empty string, the</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"><tt class="py-docstring">        function attempts to guess the MIME type from other information.</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line"><tt class="py-docstring">        'description' -- A description of the attachment contents.</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"><tt class="py-docstring">        'file_name' -- The user-visible file name to associate the</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"><tt class="py-docstring">        attachment.</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"><tt class="py-docstring">        'location' -- The location in an attachment store at which to</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"><tt class="py-docstring">        find the attachment data.</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-docstring">        'store' -- The attachment store in which the data is stored."""</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">        <tt class="py-comment"># If no MIME type is specified, try to guess it from the file</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">        <tt class="py-comment"># name.</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">mime_type</tt> <tt class="py-op">==</tt> <tt class="py-string">""</tt> <tt class="py-keyword">or</tt> <tt class="py-name">mime_type</tt> <tt class="py-keyword">is</tt> <tt id="link-3" class="py-name" targets="Variable qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#None"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-3', 'None', 'link-3');">None</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">            <tt class="py-name">mime_type</tt> <tt class="py-op">=</tt> <tt class="py-name">mimetypes</tt><tt class="py-op">.</tt><tt class="py-name">guess_type</tt><tt class="py-op">(</tt><tt id="link-4" class="py-name" targets="Variable qm.test.classes.previous_testrun.PreviousTestRun.file_name=qm.test.classes.previous_testrun.PreviousTestRun-class.html#file_name,Variable qm.test.classes.xml_expectation_database.XMLExpectationDatabase.file_name=qm.test.classes.xml_expectation_database.XMLExpectationDatabase-class.html#file_name"><a title="qm.test.classes.previous_testrun.PreviousTestRun.file_name
+qm.test.classes.xml_expectation_database.XMLExpectationDatabase.file_name" class="py-name" href="#" onclick="return doclink('link-4', 'file_name', 'link-4');">file_name</a></tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">mime_type</tt> <tt class="py-keyword">is</tt> <tt id="link-5" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-5', 'None', 'link-3');">None</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">                <tt class="py-comment"># Couldn't guess from the file name.  Use a safe</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">                <tt class="py-comment"># default.</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">                <tt class="py-name">mime_type</tt> <tt class="py-op">=</tt> <tt class="py-string">"application/octet-stream"</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__mime_type</tt> <tt class="py-op">=</tt> <tt class="py-name">mime_type</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">        <tt class="py-comment"># Store other attributes.</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__description</tt> <tt class="py-op">=</tt> <tt id="link-6" class="py-name" targets="Variable qm.dist.command.build_extensions.build_extensions.description=qm.dist.command.build_extensions.build_extensions-class.html#description,Variable qm.dist.command.install_extensions.install_extensions.description=qm.dist.command.install_extensions.install_extensions-class.html#description"><a title="qm.dist.command.build_extensions.build_extensions.description
+qm.dist.command.install_extensions.install_extensions.description" class="py-name" href="#" onclick="return doclink('link-6', 'description', 'link-6');">description</a></tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__file_name</tt> <tt class="py-op">=</tt> <tt id="link-7" class="py-name"><a title="qm.test.classes.previous_testrun.PreviousTestRun.file_name
+qm.test.classes.xml_expectation_database.XMLExpectationDatabase.file_name" class="py-name" href="#" onclick="return doclink('link-7', 'file_name', 'link-4');">file_name</a></tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__location</tt> <tt class="py-op">=</tt> <tt class="py-name">location</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__store</tt> <tt class="py-op">=</tt> <tt class="py-name">store</tt> </tt>
+</div><a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line"> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line"> </tt>
+<a name="Attachment.GetMimeType"></a><div id="Attachment.GetMimeType-def"><a name="L111"></a><tt class="py-lineno">111</tt> <a class="py-toggle" href="#" id="Attachment.GetMimeType-toggle" onclick="return toggle('Attachment.GetMimeType');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#GetMimeType">GetMimeType</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.GetMimeType-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.GetMimeType-expanded"><a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the attachment's MIME type."""</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__mime_type</tt> </tt>
+</div><a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line"> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line"> </tt>
+<a name="Attachment.GetDescription"></a><div id="Attachment.GetDescription-def"><a name="L117"></a><tt class="py-lineno">117</tt> <a class="py-toggle" href="#" id="Attachment.GetDescription-toggle" onclick="return toggle('Attachment.GetDescription');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#GetDescription">GetDescription</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.GetDescription-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.GetDescription-expanded"><a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the attachment's description."""</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__description</tt> </tt>
+</div><a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line"> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"> </tt>
+<a name="Attachment.GetFileName"></a><div id="Attachment.GetFileName-def"><a name="L123"></a><tt class="py-lineno">123</tt> <a class="py-toggle" href="#" id="Attachment.GetFileName-toggle" onclick="return toggle('Attachment.GetFileName');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#GetFileName">GetFileName</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.GetFileName-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.GetFileName-expanded"><a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the attachment's file name."""</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__file_name</tt> </tt>
+</div><a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line"> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"> </tt>
+<a name="Attachment.GetLocation"></a><div id="Attachment.GetLocation-def"><a name="L129"></a><tt class="py-lineno">129</tt> <a class="py-toggle" href="#" id="Attachment.GetLocation-toggle" onclick="return toggle('Attachment.GetLocation');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#GetLocation">GetLocation</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.GetLocation-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.GetLocation-expanded"><a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the attachment's location in an attachment store."""</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line"> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__location</tt> </tt>
+</div><a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line"> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line"> </tt>
+<a name="Attachment.GetData"></a><div id="Attachment.GetData-def"><a name="L135"></a><tt class="py-lineno">135</tt> <a class="py-toggle" href="#" id="Attachment.GetData-toggle" onclick="return toggle('Attachment.GetData');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#GetData">GetData</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.GetData-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.GetData-expanded"><a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">        <tt class="py-docstring">"""Get attachment data.</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- The attachment data."""</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Method qm.attachment.Attachment.GetStore()=qm.attachment.Attachment-class.html#GetStore"><a title="qm.attachment.Attachment.GetStore" class="py-name" href="#" onclick="return doclink('link-8', 'GetStore', 'link-8');">GetStore</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Method qm.attachment.Attachment.GetData()=qm.attachment.Attachment-class.html#GetData,Method qm.attachment.AttachmentStore.GetData()=qm.attachment.AttachmentStore-class.html#GetData,Method qm.attachment.FileAttachmentStore.GetData()=qm.attachment.FileAttachmentStore-class.html#GetData"><a title="qm.attachment.Attachment.GetData
+qm.attachment.AttachmentStore.GetData
+qm.attachment.FileAttachmentStore.GetData" class="py-name" href="#" onclick="return doclink('link-9', 'GetData', 'link-9');">GetData</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Method qm.attachment.Attachment.GetLocation()=qm.attachment.Attachment-class.html#GetLocation"><a title="qm.attachment.Attachment.GetLocation" class="py-name" href="#" onclick="return doclink('link-10', 'GetLocation', 'link-10');">GetLocation</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">         </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line"> </tt>
+<a name="Attachment.GetDataFile"></a><div id="Attachment.GetDataFile-def"><a name="L143"></a><tt class="py-lineno">143</tt> <a class="py-toggle" href="#" id="Attachment.GetDataFile-toggle" onclick="return toggle('Attachment.GetDataFile');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#GetDataFile">GetDataFile</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.GetDataFile-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.GetDataFile-expanded"><a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the path to a file containing attachment data.</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A file system path.  The file should be considered</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line"><tt class="py-docstring">        read-only, and should not be modified in any way."""</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line"> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name"><a title="qm.attachment.Attachment.GetStore" class="py-name" href="#" onclick="return doclink('link-11', 'GetStore', 'link-8');">GetStore</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Method qm.attachment.Attachment.GetDataFile()=qm.attachment.Attachment-class.html#GetDataFile,Method qm.attachment.AttachmentStore.GetDataFile()=qm.attachment.AttachmentStore-class.html#GetDataFile,Method qm.attachment.FileAttachmentStore.GetDataFile()=qm.attachment.FileAttachmentStore-class.html#GetDataFile"><a title="qm.attachment.Attachment.GetDataFile
+qm.attachment.AttachmentStore.GetDataFile
+qm.attachment.FileAttachmentStore.GetDataFile" class="py-name" href="#" onclick="return doclink('link-12', 'GetDataFile', 'link-12');">GetDataFile</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-13" class="py-name"><a title="qm.attachment.Attachment.GetLocation" class="py-name" href="#" onclick="return doclink('link-13', 'GetLocation', 'link-10');">GetLocation</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line"> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line"> </tt>
+<a name="Attachment.GetStore"></a><div id="Attachment.GetStore-def"><a name="L152"></a><tt class="py-lineno">152</tt> <a class="py-toggle" href="#" id="Attachment.GetStore-toggle" onclick="return toggle('Attachment.GetStore');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#GetStore">GetStore</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.GetStore-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.GetStore-expanded"><a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the store in which this attachment is located.</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- The 'AttachmentStore' that contains this attachment."""</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line"> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__store</tt> </tt>
+</div><a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line"> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line"> </tt>
+<a name="Attachment.Move"></a><div id="Attachment.Move-def"><a name="L160"></a><tt class="py-lineno">160</tt> <a class="py-toggle" href="#" id="Attachment.Move-toggle" onclick="return toggle('Attachment.Move');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#Move">Move</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">store</tt><tt class="py-op">,</tt> <tt class="py-param">location</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.Move-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.Move-expanded"><a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">        <tt class="py-docstring">"""Move the 'Attachment' to a new location.</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line"><tt class="py-docstring">        'store' -- The 'AttachmentStore' that will contain the</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line"><tt class="py-docstring">        attachment.</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line"><tt class="py-docstring">        'location' -- The location of the attachment within its current</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line"><tt class="py-docstring">        store."""</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line"> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">        <tt class="py-comment"># Store this attachment in its new location.  That must be done</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">        <tt class="py-comment"># before removing it from its current location as that step will</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line">        <tt class="py-comment"># destroy the data contained in the attachment.</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">        <tt class="py-name">store</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name" targets="Method qm.attachment.AttachmentStore.Store()=qm.attachment.AttachmentStore-class.html#Store,Method qm.attachment.FileAttachmentStore.Store()=qm.attachment.FileAttachmentStore-class.html#Store"><a title="qm.attachment.AttachmentStore.Store
+qm.attachment.FileAttachmentStore.Store" class="py-name" href="#" onclick="return doclink('link-14', 'Store', 'link-14');">Store</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">location</tt><tt class="py-op">)</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">        <tt class="py-comment"># Now, remove the attachment from its current location.</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__store</tt><tt class="py-op">.</tt><tt id="link-15" class="py-name" targets="Method qm.attachment.FileAttachmentStore.Remove()=qm.attachment.FileAttachmentStore-class.html#Remove,Method qm.temporary_directory.TemporaryDirectory.Remove()=qm.temporary_directory.TemporaryDirectory-class.html#Remove"><a title="qm.attachment.FileAttachmentStore.Remove
+qm.temporary_directory.TemporaryDirectory.Remove" class="py-name" href="#" onclick="return doclink('link-15', 'Remove', 'link-15');">Remove</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__location</tt><tt class="py-op">)</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line">        <tt class="py-comment"># Finally, update the information associated with the attachment.</tt> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__store</tt> <tt class="py-op">=</tt> <tt class="py-name">store</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__location</tt> <tt class="py-op">=</tt> <tt class="py-name">location</tt> </tt>
+</div><a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line"> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line">     </tt>
+<a name="Attachment.__str__"></a><div id="Attachment.__str__-def"><a name="L180"></a><tt class="py-lineno">180</tt> <a class="py-toggle" href="#" id="Attachment.__str__-toggle" onclick="return toggle('Attachment.__str__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#__str__">__str__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.__str__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.__str__-expanded"><a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-string">'&lt;Attachment "%s" (%s)&gt;'</tt> \ </tt>
+<a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line">               <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-16" class="py-name" targets="Method qm.attachment.Attachment.GetDescription()=qm.attachment.Attachment-class.html#GetDescription,Method qm.fields.Field.GetDescription()=qm.fields.Field-class.html#GetDescription,Method qm.test.test.TargetGroupField.GetDescription()=qm.test.test.TargetGroupField-class.html#GetDescription"><a title="qm.attachment.Attachment.GetDescription
+qm.fields.Field.GetDescription
+qm.test.test.TargetGroupField.GetDescription" class="py-name" href="#" onclick="return doclink('link-16', 'GetDescription', 'link-16');">GetDescription</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-17" class="py-name" targets="Method qm.attachment.Attachment.GetMimeType()=qm.attachment.Attachment-class.html#GetMimeType"><a title="qm.attachment.Attachment.GetMimeType" class="py-name" href="#" onclick="return doclink('link-17', 'GetMimeType', 'link-17');">GetMimeType</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line"> </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line"> </tt>
+<a name="Attachment.__cmp__"></a><div id="Attachment.__cmp__-def"><a name="L185"></a><tt class="py-lineno">185</tt> <a class="py-toggle" href="#" id="Attachment.__cmp__-toggle" onclick="return toggle('Attachment.__cmp__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.Attachment-class.html#__cmp__">__cmp__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">other</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Attachment.__cmp__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="Attachment.__cmp__-expanded"><a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">other</tt> <tt class="py-keyword">is</tt> <tt id="link-18" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-18', 'None', 'link-3');">None</a></tt> \ </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line">               <tt class="py-keyword">or</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name"><a title="qm.attachment.Attachment.GetDescription
+qm.fields.Field.GetDescription
+qm.test.test.TargetGroupField.GetDescription" class="py-name" href="#" onclick="return doclink('link-19', 'GetDescription', 'link-16');">GetDescription</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name"><a title="qm.attachment.Attachment.GetDescription
+qm.fields.Field.GetDescription
+qm.test.test.TargetGroupField.GetDescription" class="py-name" href="#" onclick="return doclink('link-20', 'GetDescription', 'link-16');">GetDescription</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> \ </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">               <tt class="py-keyword">or</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name"><a title="qm.attachment.Attachment.GetMimeType" class="py-name" href="#" onclick="return doclink('link-21', 'GetMimeType', 'link-17');">GetMimeType</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-22" class="py-name"><a title="qm.attachment.Attachment.GetMimeType" class="py-name" href="#" onclick="return doclink('link-22', 'GetMimeType', 'link-17');">GetMimeType</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> \ </tt>
+<a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line">               <tt class="py-keyword">or</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-23" class="py-name" targets="Method qm.attachment.Attachment.GetFileName()=qm.attachment.Attachment-class.html#GetFileName"><a title="qm.attachment.Attachment.GetFileName" class="py-name" href="#" onclick="return doclink('link-23', 'GetFileName', 'link-23');">GetFileName</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-24" class="py-name"><a title="qm.attachment.Attachment.GetFileName" class="py-name" href="#" onclick="return doclink('link-24', 'GetFileName', 'link-23');">GetFileName</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> \ </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line">               <tt class="py-keyword">or</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-25" class="py-name"><a title="qm.attachment.Attachment.GetLocation" class="py-name" href="#" onclick="return doclink('link-25', 'GetLocation', 'link-10');">GetLocation</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-26" class="py-name"><a title="qm.attachment.Attachment.GetLocation" class="py-name" href="#" onclick="return doclink('link-26', 'GetLocation', 'link-10');">GetLocation</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> \ </tt>
+<a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line">               <tt class="py-keyword">or</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-27" class="py-name"><a title="qm.attachment.Attachment.GetStore" class="py-name" href="#" onclick="return doclink('link-27', 'GetStore', 'link-8');">GetStore</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-28" class="py-name"><a title="qm.attachment.Attachment.GetStore" class="py-name" href="#" onclick="return doclink('link-28', 'GetStore', 'link-8');">GetStore</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line">     </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line"> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line"> </tt>
+<a name="AttachmentStore"></a><div id="AttachmentStore-def"><a name="L195"></a><tt class="py-lineno">195</tt> <a class="py-toggle" href="#" id="AttachmentStore-toggle" onclick="return toggle('AttachmentStore');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.attachment.AttachmentStore-class.html">AttachmentStore</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="AttachmentStore-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="AttachmentStore-expanded"><a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line">    <tt class="py-docstring">"""Interface for classes which store attachment data.</tt> </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line"><tt class="py-docstring">    An attachment store stores the raw data for an attachment.  The</tt> </tt>
+<a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line"><tt class="py-docstring">    store is not responsible for storing auxiliary information,</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line"><tt class="py-docstring">    including the attachment's description, file name, or MIME type.</tt> </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line"><tt class="py-docstring">    Users of an 'AttachmentStore' reference attachment data by a</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line"><tt class="py-docstring">    *location*, which is stored with the attachment.</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line"><tt class="py-docstring">    Please note that the 'AttachmentStore' interface provides methods</tt> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line"><tt class="py-docstring">    for retrieving attachment data only; not for storing it.  The</tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line"><tt class="py-docstring">    interface for storing may be defined in any way by implementations."""</tt> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line"> </tt>
+<a name="AttachmentStore.GetData"></a><div id="AttachmentStore.GetData-def"><a name="L209"></a><tt class="py-lineno">209</tt> <a class="py-toggle" href="#" id="AttachmentStore.GetData-toggle" onclick="return toggle('AttachmentStore.GetData');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.AttachmentStore-class.html#GetData">GetData</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">location</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="AttachmentStore.GetData-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="AttachmentStore.GetData-expanded"><a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the data for an attachment.</tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A string containing the attachment data."""</tt> </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line"> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">NotImplementedError</tt> </tt>
+</div><a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line"> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line"> </tt>
+<a name="AttachmentStore.GetDataFile"></a><div id="AttachmentStore.GetDataFile-def"><a name="L217"></a><tt class="py-lineno">217</tt> <a class="py-toggle" href="#" id="AttachmentStore.GetDataFile-toggle" onclick="return toggle('AttachmentStore.GetDataFile');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.AttachmentStore-class.html#GetDataFile">GetDataFile</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">location</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="AttachmentStore.GetDataFile-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="AttachmentStore.GetDataFile-expanded"><a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the path to a file containing the data for</tt> </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line"><tt class="py-docstring">        'attachment'.</tt> </tt>
+<a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L221"></a><tt class="py-lineno">221</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A file system path.</tt> </tt>
+<a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line"><tt class="py-docstring">        The file is read-only, and may be a temporary file.  The caller</tt> </tt>
+<a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line"><tt class="py-docstring">        should not modify the file in any way."""</tt> </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line"> </tt>
+<a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">NotImplementedError</tt> </tt>
+</div><a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line"> </tt>
+<a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line"> </tt>
+<a name="AttachmentStore.GetSize"></a><div id="AttachmentStore.GetSize-def"><a name="L229"></a><tt class="py-lineno">229</tt> <a class="py-toggle" href="#" id="AttachmentStore.GetSize-toggle" onclick="return toggle('AttachmentStore.GetSize');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.AttachmentStore-class.html#GetSize">GetSize</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">location</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="AttachmentStore.GetSize-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="AttachmentStore.GetSize-expanded"><a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return the size of the data for an attachment.</tt> </tt>
+<a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- The length of the attachment data, in bytes.</tt> </tt>
+<a name="L233"></a><tt class="py-lineno">233</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line"><tt class="py-docstring">        This method may be overridden by derived classes."""</tt> </tt>
+<a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line"> </tt>
+<a name="L236"></a><tt class="py-lineno">236</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-29" class="py-name" targets="Method qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len()=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#len"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-29', 'len', 'link-29');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-30" class="py-name"><a title="qm.attachment.Attachment.GetData
+qm.attachment.AttachmentStore.GetData
+qm.attachment.FileAttachmentStore.GetData" class="py-name" href="#" onclick="return doclink('link-30', 'GetData', 'link-9');">GetData</a></tt><tt class="py-op">(</tt><tt class="py-name">location</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L237"></a><tt class="py-lineno">237</tt>  <tt class="py-line"> </tt>
+<a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line"> </tt>
+<a name="AttachmentStore.HandleDownloadRequest"></a><div id="AttachmentStore.HandleDownloadRequest-def"><a name="L239"></a><tt class="py-lineno">239</tt> <a class="py-toggle" href="#" id="AttachmentStore.HandleDownloadRequest-toggle" onclick="return toggle('AttachmentStore.HandleDownloadRequest');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.AttachmentStore-class.html#HandleDownloadRequest">HandleDownloadRequest</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">request</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="AttachmentStore.HandleDownloadRequest-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="AttachmentStore.HandleDownloadRequest-expanded"><a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line">        <tt class="py-docstring">"""Handle a web request to download attachment data.</tt> </tt>
+<a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line"><tt class="py-docstring">        'request' -- A 'WebRequest' object.  The location of the</tt> </tt>
+<a name="L243"></a><tt class="py-lineno">243</tt>  <tt class="py-line"><tt class="py-docstring">        attachment data is stored in the 'location' property, and the</tt> </tt>
+<a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line"><tt class="py-docstring">        MIME type in the 'mime_type' property.</tt> </tt>
+<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- A pair '(mime_type, data)' where 'mime_type' is the</tt> </tt>
+<a name="L247"></a><tt class="py-lineno">247</tt>  <tt class="py-line"><tt class="py-docstring">        MIME type stored in the request and 'data' is the contents of</tt> </tt>
+<a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line"><tt class="py-docstring">        the attachment."""</tt> </tt>
+<a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line"> </tt>
+<a name="L250"></a><tt class="py-lineno">250</tt>  <tt class="py-line">        <tt class="py-name">location</tt> <tt class="py-op">=</tt> <tt class="py-name">request</tt><tt class="py-op">[</tt><tt class="py-string">"location"</tt><tt class="py-op">]</tt> </tt>
+<a name="L251"></a><tt class="py-lineno">251</tt>  <tt class="py-line">        <tt class="py-name">mime_type</tt> <tt class="py-op">=</tt> <tt class="py-name">request</tt><tt class="py-op">[</tt><tt class="py-string">"mime_type"</tt><tt class="py-op">]</tt> </tt>
+<a name="L252"></a><tt class="py-lineno">252</tt>  <tt class="py-line">        <tt class="py-name">data</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-31" class="py-name"><a title="qm.attachment.Attachment.GetData
+qm.attachment.AttachmentStore.GetData
+qm.attachment.FileAttachmentStore.GetData" class="py-name" href="#" onclick="return doclink('link-31', 'GetData', 'link-9');">GetData</a></tt><tt class="py-op">(</tt><tt class="py-name">location</tt><tt class="py-op">)</tt> </tt>
+<a name="L253"></a><tt class="py-lineno">253</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-op">(</tt><tt class="py-name">mime_type</tt><tt class="py-op">,</tt> <tt class="py-name">data</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L254"></a><tt class="py-lineno">254</tt>  <tt class="py-line"> </tt>
+<a name="L255"></a><tt class="py-lineno">255</tt>  <tt class="py-line"> </tt>
+<a name="AttachmentStore.Store"></a><div id="AttachmentStore.Store-def"><a name="L256"></a><tt class="py-lineno">256</tt> <a class="py-toggle" href="#" id="AttachmentStore.Store-toggle" onclick="return toggle('AttachmentStore.Store');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.AttachmentStore-class.html#Store">Store</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">attachment</tt><tt class="py-op">,</tt> <tt class="py-param">location</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="AttachmentStore.Store-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="AttachmentStore.Store-expanded"><a name="L257"></a><tt class="py-lineno">257</tt>  <tt class="py-line">        <tt class="py-docstring">"""Add an attachment to the store.</tt> </tt>
+<a name="L258"></a><tt class="py-lineno">258</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L259"></a><tt class="py-lineno">259</tt>  <tt class="py-line"><tt class="py-docstring">        'attachment' -- The 'Attachment' to store.</tt> </tt>
+<a name="L260"></a><tt class="py-lineno">260</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L261"></a><tt class="py-lineno">261</tt>  <tt class="py-line"><tt class="py-docstring">        'location' -- The location in which to store the 'attachment'."""</tt> </tt>
+<a name="L262"></a><tt class="py-lineno">262</tt>  <tt class="py-line"> </tt>
+<a name="L263"></a><tt class="py-lineno">263</tt>  <tt class="py-line">        <tt class="py-keyword">raise</tt> <tt class="py-name">NotImplementedError</tt> </tt>
+</div></div><a name="L264"></a><tt class="py-lineno">264</tt>  <tt class="py-line">         </tt>
+<a name="L265"></a><tt class="py-lineno">265</tt>  <tt class="py-line"> </tt>
+<a name="L266"></a><tt class="py-lineno">266</tt>  <tt class="py-line"> </tt>
+<a name="FileAttachmentStore"></a><div id="FileAttachmentStore-def"><a name="L267"></a><tt class="py-lineno">267</tt> <a class="py-toggle" href="#" id="FileAttachmentStore-toggle" onclick="return toggle('FileAttachmentStore');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.attachment.FileAttachmentStore-class.html">FileAttachmentStore</a><tt class="py-op">(</tt><tt class="py-base-class">AttachmentStore</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="FileAttachmentStore-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="FileAttachmentStore-expanded"><a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line">    <tt class="py-docstring">"""An attachment store based on the file system.</tt> </tt>
+<a name="L269"></a><tt class="py-lineno">269</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line"><tt class="py-docstring">    The locations are the names of files in the file system."""</tt> </tt>
+<a name="L271"></a><tt class="py-lineno">271</tt>  <tt class="py-line"> </tt>
+<a name="FileAttachmentStore.__init__"></a><div id="FileAttachmentStore.__init__-def"><a name="L272"></a><tt class="py-lineno">272</tt> <a class="py-toggle" href="#" id="FileAttachmentStore.__init__-toggle" onclick="return toggle('FileAttachmentStore.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.FileAttachmentStore-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">root</tt> <tt class="py-op">=</tt> <tt id="link-32" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-32', 'None', 'link-3');">None</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="FileAttachmentStore.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="FileAttachmentStore.__init__-expanded"><a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">        <tt class="py-docstring">"""Construct a new 'FileAttachmentStore'</tt> </tt>
+<a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L275"></a><tt class="py-lineno">275</tt>  <tt class="py-line"><tt class="py-docstring">        'root' -- If not 'None', the root directory for the store.  All</tt> </tt>
+<a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line"><tt class="py-docstring">        locations are relative to this directory.  If 'None', all</tt> </tt>
+<a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line"><tt class="py-docstring">        locations are relative to the current directory."""</tt> </tt>
+<a name="L278"></a><tt class="py-lineno">278</tt>  <tt class="py-line">         </tt>
+<a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line">        <tt class="py-name">super</tt><tt class="py-op">(</tt><tt id="link-33" class="py-name" targets="Class qm.attachment.AttachmentStore=qm.attachment.AttachmentStore-class.html"><a title="qm.attachment.AttachmentStore" class="py-name" href="#" onclick="return doclink('link-33', 'AttachmentStore', 'link-33');">AttachmentStore</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-34" class="py-name" targets="Method qm.attachment.Attachment.__init__()=qm.attachment.Attachment-class.html#__init__,Method qm.attachment.FileAttachmentStore.__init__()=qm.attachment.FileAttachmentStore-class.html#__init__,Method qm.attachment.TemporaryAttachmentStore.__init__()=qm.attachment.TemporaryAttachmentStore-class.html#__init__,Method qm.cmdline.CommandParser.__init__()=qm.cmdline.CommandParser-class.html#__init__,Method qm.common.PythonException.__init__()=qm.common.PythonException-class.html#__init__,Method qm.common.QMException.__init__()=qm.common.QMException-class.html#__init__,Method qm.common.RcConfiguration.__init__()=qm.common.RcConfiguration-class.html#__init__,Method qm.db.Connection.__init__()=qm.db.Connection-class.html#__init__,Method qm.diagnostic.DiagnosticSet.__init__()=qm.diagnostic.DiagnosticSet-class.html#__init__,Method qm.dist.distribution.Distribution.__init__()=qm.dist.distribution.Distribution-class.html#__init__,Method qm.executable.Filter.__init__()=qm.executable.Filter-class.html#__init__,Method qm.executable.TimeoutExecutable.__init__()=qm.executable.TimeoutExecutable-class.html#__init__,Method qm.executable.TimeoutExecutable.__init__()=qm.executable.TimeoutExecutable-class.html#__init__,Method qm.extension.Extension.Type.__init__()=qm.extension.Extension.Type-class.html#__init__,Method qm.extension.Extension.__init__()=qm.extension.Extension-class.html#__init__,Method qm.external.DocumentTemplate.DT_If.If.__init__()=qm.external.DocumentTemplate.DT_If.If-class.html#__init__,Method qm.external.DocumentTemplate.DT_If.Unless.__init__()=qm.external.DocumentTemplate.DT_If.Unless-class.html#__init__,Method qm.external.DocumentTemplate.DT_In.InClass.__init__()=qm.external.DocumentTemplate.DT_In.InClass-class.html#__init__,Method qm.external.DocumentTemplate.DT_InSV.sequence_variables.__init__()=qm.external.DocumentTemplate.DT_InSV.sequence_variables-class.html#__init__,Method qm.external.DocumentTemplate.DT_Let.Let.__init__()=qm.external.DocumentTemplate.DT_Let.Let-class.html#__init__,Method qm.external.DocumentTemplate.DT_Raise.Raise.__init__()=qm.external.DocumentTemplate.DT_Raise.Raise-class.html#__init__,Method qm.external.DocumentTemplate.DT_Return.DTReturn.__init__()=qm.external.DocumentTemplate.DT_Return.DTReturn-class.html#__init__,Method qm.external.DocumentTemplate.DT_Return.ReturnTag.__init__()=qm.external.DocumentTemplate.DT_Return.ReturnTag-class.html#__init__,Method qm.external.DocumentTemplate.DT_String.FileMixin.__init__()=qm.external.DocumentTemplate.DT_String.FileMixin-class.html#__init__,Method qm.external.DocumentTemplate.DT_String.String.__init__()=qm.external.DocumentTemplate.DT_String.String-class.html#__init__,Method qm.external.DocumentTemplate.DT_Try.Try.__init__()=qm.external.DocumentTemplate.DT_Try.Try-class.html#__init__,Method qm.external.DocumentTemplate.DT_Var.Call.__init__()=qm.external.DocumentTemplate.DT_Var.Call-class.html#__init__,Method qm.external.DocumentTemplate.DT_Var.Comment.__init__()=qm.external.DocumentTemplate.DT_Var.Comment-class.html#__init__,Method qm.external.DocumentTemplate.DT_Var.Var.__init__()=qm.external.DocumentTemplate.DT_Var.Var-class.html#__init__,Method qm.external.DocumentTemplate.DT_With.With.__init__()=qm.external.DocumentTemplate.DT_With.With-class.html#__init__,Method qm.external.DocumentTemplate.VSEval.Eval.__init__()=qm.external.DocumentTemplate.VSEval.Eval-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.DictInstance.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.DictInstance-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#__init__,Method qm.fields.AttachmentField.__init__()=qm.fields.AttachmentField-class.html#__init__,Method qm.fields.BooleanField.__init__()=qm.fields.BooleanField-class.html#__init__,Method qm.fields.DictionaryField.__init__()=qm.fields.DictionaryField-class.html#__init__,Method qm.fields.EnumerationField.__init__()=qm.fields.EnumerationField-class.html#__init__,Method qm.fields.Field.__init__()=qm.fields.Field-class.html#__init__,Method qm.fields.IntegerField.__init__()=qm.fields.IntegerField-class.html#__init__,Method qm.fields.PythonField.__init__()=qm.fields.PythonField-class.html#__init__,Method qm.fields.SetField.__init__()=qm.fields.SetField-class.html#__init__,Method qm.fields.TextField.__init__()=qm.fields.TextField-class.html#__init__,Method qm.fields.TimeField.__init__()=qm.fields.TimeField-class.html#__init__,Method qm.fields.TupleField.__init__()=qm.fields.TupleField-class.html#__init__,Method qm.fields.UploadAttachmentPage.__init__()=qm.fields.UploadAttachmentPage-class.html#__init__,Method qm.host.Host.__init__()=qm.host.Host-class.html#__init__,Method qm.host.Host.__init__()=qm.host.Host-class.html#__init__,Method qm.label.Label.__init__()=qm.label.Label-class.html#__init__,Method qm.platform_unix.SignalException.__init__()=qm.platform_unix.SignalException-class.html#__init__,Method qm.platform_win32.SignalException.__init__()=qm.platform_win32.SignalException-class.html#__init__,Method qm.structured_text.HtmlFormatter.__init__()=qm.structured_text.HtmlFormatter-class.html#__init__,Method qm.structured_text.StructuredTextProcessor.__init__()=qm.structured_text.StructuredTextProcessor-class.html#__init__,Method qm.structured_text.TextFormatter.__init__()=qm.structured_text.TextFormatter-class.html#__init__,Method qm.temporary_directory.TemporaryDirectory.__init__()=qm.temporary_directory.TemporaryDirectory-class.html#__init__,Method qm.test.base.CouldNotLoadExtensionError.__init__()=qm.test.base.CouldNotLoadExtensionError-class.html#__init__,Method qm.test.classes.compilation_test_database.CompilationTestDatabase.__init__()=qm.test.classes.compilation_test_database.CompilationTestDatabase-class.html#__init__,Method qm.test.classes.compiler.Compiler.__init__()=qm.test.classes.compiler.Compiler-class.html#__init__,Method qm.test.classes.compiler.Diagnostic.__init__()=qm.test.classes.compiler.Diagnostic-class.html#__init__,Method qm.test.classes.compiler.SourcePosition.__init__()=qm.test.classes.compiler.SourcePosition-class.html#__init__,Method qm.test.classes.compiler_test.CompilationStep.__init__()=qm.test.classes.compiler_test.CompilationStep-class.html#__init__,Method qm.test.classes.dejagnu_stream.DejaGNUReader.__init__()=qm.test.classes.dejagnu_stream.DejaGNUReader-class.html#__init__,Method qm.test.classes.dejagnu_stream.DejaGNUStream.__init__()=qm.test.classes.dejagnu_stream.DejaGNUStream-class.html#__init__,Method qm.test.classes.dir_run_database.DirRunDatabase.__init__()=qm.test.classes.dir_run_database.DirRunDatabase-class.html#__init__,Method qm.test.classes.file.SubstitutionField.__init__()=qm.test.classes.file.SubstitutionField-class.html#__init__,Method qm.test.classes.mount_database.MountDatabase.MountedSuite.__init__()=qm.test.classes.mount_database.MountDatabase.MountedSuite-class.html#__init__,Method qm.test.classes.mount_database.MountDatabase.__init__()=qm.test.classes.mount_database.MountDatabase-class.html#__init__,Method qm.test.classes.pickle_result_stream.PickleResultReader.__init__()=qm.test.classes.pickle_result_stream.PickleResultReader-class.html#__init__,Method qm.test.classes.pickle_result_stream.PickleResultStream.__init__()=qm.test.classes.pickle_result_stream.PickleResultStream-class.html#__init__,Method qm.test.classes.previous_testrun.PreviousTestRun.__init__()=qm.test.classes.previous_testrun.PreviousTestRun-class.html#__init__,Method qm.test.classes.process_target.ProcessTarget.__init__()=qm.test.classes.process_target.ProcessTarget-class.html#__init__,Method qm.test.classes.rsh_target.RSHTarget.__init__()=qm.test.classes.rsh_target.RSHTarget-class.html#__init__,Method qm.test.classes.serial_target.SerialTarget.__init__()=qm.test.classes.serial_target.SerialTarget-class.html#__init__,Method qm.test.classes.sql_result_stream.SQLResultReader.__init__()=qm.test.classes.sql_result_stream.SQLResultReader-class.html#__init__,Method qm.test.classes.sql_result_stream.SQLResultStream.__init__()=qm.test.classes.sql_result_stream.SQLResultStream-class.html#__init__,Method qm.test.classes.sql_result_stream._Buffer.__init__()=qm.test.classes.sql_result_stream._Buffer-class.html#__init__,Method qm.test.classes.sql_result_stream._SQLConnected.__init__()=qm.test.classes.sql_result_stream._SQLConnected-class.html#__init__,Method qm.test.classes.tet_stream.TETStream.__init__()=qm.test.classes.tet_stream.TETStream-class.html#__init__,Method qm.test.classes.text_result_stream.TextResultStream.__init__()=qm.test.classes.text_result_stream.TextResultStream-class.html#__init__,Method qm.test.classes.thread_target.LocalThread.__init__()=qm.test.classes.thread_target.LocalThread-class.html#__init__,Method qm.test.classes.thread_target.ThreadTarget.__init__()=qm.test.classes.thread_target.ThreadTarget-class.html#__init__,Method qm.test.classes.xml_database.XMLDatabase.__init__()=qm.test.classes.xml_database.XMLDatabase-class.html#__init__,Method qm.test.classes.xml_expectation_database.XMLExpectationDatabase.__init__()=qm.test.classes.xml_expectation_database.XMLExpectationDatabase-class.html#__init__,Method qm.test.classes.xml_result_stream.XMLResultReader.__init__()=qm.test.classes.xml_result_stream.XMLResultReader-class.html#__init__,Method qm.test.classes.xml_result_stream.XMLResultStream.__init__()=qm.test.classes.xml_result_stream.XMLResultStream-class.html#__init__,Method qm.test.cmdline.QMTest.__init__()=qm.test.cmdline.QMTest-class.html#__init__,Method qm.test.command_thread.CommandThread.__init__()=qm.test.command_thread.CommandThread-class.html#__init__,Method qm.test.context.Context.__init__()=qm.test.context.Context-class.html#__init__,Method qm.test.context.ContextException.__init__()=qm.test.context.ContextException-class.html#__init__,Method qm.test.database.Database.__init__()=qm.test.database.Database-class.html#__init__,Method qm.test.database.ItemDescriptor.__init__()=qm.test.database.ItemDescriptor-class.html#__init__,Method qm.test.database.NoSuchItemError.__init__()=qm.test.database.NoSuchItemError-class.html#__init__,Method qm.test.database.NoSuchResourceError.__init__()=qm.test.database.NoSuchResourceError-class.html#__init__,Method qm.test.database.NoSuchSuiteError.__init__()=qm.test.database.NoSuchSuiteError-class.html#__init__,Method qm.test.database.NoSuchTestError.__init__()=qm.test.database.NoSuchTestError-class.html#__init__,Method qm.test.database.ResourceDescriptor.__init__()=qm.test.database.ResourceDescriptor-class.html#__init__,Method qm.test.database.TestDescriptor.__init__()=qm.test.database.TestDescriptor-class.html#__init__,Method qm.test.directory_suite.DirectorySuite.__init__()=qm.test.directory_suite.DirectorySuite-class.html#__init__,Method qm.test.execution_engine.ExecutionEngine.__TestStatus.__init__()=qm.test.execution_engine.ExecutionEngine.__TestStatus-class.html#__init__,Method qm.test.execution_engine.ExecutionEngine.__init__()=qm.test.execution_engine.ExecutionEngine-class.html#__init__,Method qm.test.execution_thread.ExecutionThread.__init__()=qm.test.execution_thread.ExecutionThread-class.html#__init__,Method qm.test.file_database.ExtensionDatabase.__init__()=qm.test.file_database.ExtensionDatabase-class.html#__init__,Method qm.test.file_result_reader.FileResultReader.__init__()=qm.test.file_result_reader.FileResultReader-class.html#__init__,Method qm.test.file_result_stream.FileResultStream.__init__()=qm.test.file_result_stream.FileResultStream-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.ImplicitSuite.__init__()=qm.test.parameter_database.ParameterDatabase.ImplicitSuite-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.ParameterSuite.__init__()=qm.test.parameter_database.ParameterDatabase.ParameterSuite-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.WrapperSuite.__init__()=qm.test.parameter_database.ParameterDatabase.WrapperSuite-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.__init__()=qm.test.parameter_database.ParameterDatabase-class.html#__init__,Method qm.test.reader_test_run.ReaderTestRun.__init__()=qm.test.reader_test_run.ReaderTestRun-class.html#__init__,Method qm.test.report.ReportGenerator.__init__()=qm.test.report.ReportGenerator-class.html#__init__,Method qm.test.result.Result.__init__()=qm.test.result.Result-class.html#__init__,Method qm.test.result_reader.ResultReader.__init__()=qm.test.result_reader.ResultReader-class.html#__init__,Method qm.test.result_stream.ResultStream.__init__()=qm.test.result_stream.ResultStream-class.html#__init__,Method qm.test.runnable.Runnable.__init__()=qm.test.runnable.Runnable-class.html#__init__,Method qm.test.suite.Suite.__init__()=qm.test.suite.Suite-class.html#__init__,Method qm.test.target.Target.__ResourceSetUpException.__init__()=qm.test.target.Target.__ResourceSetUpException-class.html#__init__,Method qm.test.target.Target.__init__()=qm.test.target.Target-class.html#__init__,Method qm.test.test.Test.OutcomeField.__init__()=qm.test.test.Test.OutcomeField-class.html#__init__,Method qm.test.test.Test.OutcomeField.__init__()=qm.test.test.Test.OutcomeField-class.html#__init__,Method qm.test.web.web.ContextPage.__init__()=qm.test.web.web.ContextPage-class.html#__init__,Method qm.test.web.web.DefaultDtmlPage.__init__()=qm.test.web.web.DefaultDtmlPage-class.html#__init__,Method qm.test.web.web.DirPage.__init__()=qm.test.web.web.DirPage-class.html#__init__,Method qm.test.web.web.DirReportPage.__init__()=qm.test.web.web.DirReportPage-class.html#__init__,Method qm.test.web.web.Item.__init__()=qm.test.web.web.Item-class.html#__init__,Method qm.test.web.web.LoadContextPage.__init__()=qm.test.web.web.LoadContextPage-class.html#__init__,Method qm.test.web.web.LoadExpectationsPage.__init__()=qm.test.web.web.LoadExpectationsPage-class.html#__init__,Method qm.test.web.web.LoadResultsPage.__init__()=qm.test.web.web.LoadResultsPage-class.html#__init__,Method qm.test.web.web.NewItemPage.__init__()=qm.test.web.web.NewItemPage-class.html#__init__,Method qm.test.web.web.NewSuitePage.__init__()=qm.test.web.web.NewSuitePage-class.html#__init__,Method qm.test.web.web.QMTestPage.__init__()=qm.test.web.web.QMTestPage-class.html#__init__,Method qm.test.web.web.QMTestReportPage.__init__()=qm.test.web.web.QMTestReportPage-class.html#__init__,Method qm.test.web.web.QMTestServer.__init__()=qm.test.web.web.QMTestServer-class.html#__init__,Method qm.test.web.web.ResultPage.__init__()=qm.test.web.web.ResultPage-class.html#__init__,Method qm.test.web.web.SetExpectationPage.__init__()=qm.test.web.web.SetExpectationPage-class.html#__init__,Method qm.test.web.web.ShowItemPage.__init__()=qm.test.web.web.ShowItemPage-class.html#__init__,Method qm.test.web.web.ShowItemReportPage.__init__()=qm.test.web.web.ShowItemReportPage-class.html#__init__,Method qm.test.web.web.ShowSuitePage.__init__()=qm.test.web.web.ShowSuitePage-class.html#__init__,Method qm.test.web.web.StorageResultsStream.__init__()=qm.test.web.web.StorageResultsStream-class.html#__init__,Method qm.test.web.web.TestResultsPage.__init__()=qm.test.web.web.TestResultsPage-class.html#__init__,Method qm.trace.Tracer.__init__()=qm.trace.Tracer-class.html#__init__,Method qm.user.Group.__init__()=qm.user.Group-class.html#__init__,Method qm.user.User.__init__()=qm.user.User-class.html#__init__,Method qm.user.XmlDatabase.__init__()=qm.user.XmlDatabase-class.html#__init__,Method qm.user.XmlDatabaseAuthenticator.__init__()=qm.user.XmlDatabaseAuthenticator-class.html#__init__,Method qm.web.CGIWebRequest.__init__()=qm.web.CGIWebRequest-class.html#__init__,Method qm.web.DtmlPage.__init__()=qm.web.DtmlPage-class.html#__init__,Method qm.web.HttpRedirect.__init__()=qm.web.HttpRedirect-class.html#__init__,Method qm.web.Session.__init__()=qm.web.Session-class.html#__init__,Method qm.web.WebRequest.__init__()=qm.web.WebRequest-class.html#__init__,Method qm.web.WebServer.__init__()=qm.web.WebServer-class.html#__init__"><a title="qm.attachment.Attachment.__init__
+qm.attachment.FileAttachmentStore.__init__
+qm.attachment.TemporaryAttachmentStore.__init__
+qm.cmdline.CommandParser.__init__
+qm.common.PythonException.__init__
+qm.common.QMException.__init__
+qm.common.RcConfiguration.__init__
+qm.db.Connection.__init__
+qm.diagnostic.DiagnosticSet.__init__
+qm.dist.distribution.Distribution.__init__
+qm.executable.Filter.__init__
+qm.executable.TimeoutExecutable.__init__
+qm.executable.TimeoutExecutable.__init__
+qm.extension.Extension.Type.__init__
+qm.extension.Extension.__init__
+qm.external.DocumentTemplate.DT_If.If.__init__
+qm.external.DocumentTemplate.DT_If.Unless.__init__
+qm.external.DocumentTemplate.DT_In.InClass.__init__
+qm.external.DocumentTemplate.DT_InSV.sequence_variables.__init__
+qm.external.DocumentTemplate.DT_Let.Let.__init__
+qm.external.DocumentTemplate.DT_Raise.Raise.__init__
+qm.external.DocumentTemplate.DT_Return.DTReturn.__init__
+qm.external.DocumentTemplate.DT_Return.ReturnTag.__init__
+qm.external.DocumentTemplate.DT_String.FileMixin.__init__
+qm.external.DocumentTemplate.DT_String.String.__init__
+qm.external.DocumentTemplate.DT_Try.Try.__init__
+qm.external.DocumentTemplate.DT_Var.Call.__init__
+qm.external.DocumentTemplate.DT_Var.Comment.__init__
+qm.external.DocumentTemplate.DT_Var.Var.__init__
+qm.external.DocumentTemplate.DT_With.With.__init__
+qm.external.DocumentTemplate.VSEval.Eval.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.DictInstance.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.__init__
+qm.fields.AttachmentField.__init__
+qm.fields.BooleanField.__init__
+qm.fields.DictionaryField.__init__
+qm.fields.EnumerationField.__init__
+qm.fields.Field.__init__
+qm.fields.IntegerField.__init__
+qm.fields.PythonField.__init__
+qm.fields.SetField.__init__
+qm.fields.TextField.__init__
+qm.fields.TimeField.__init__
+qm.fields.TupleField.__init__
+qm.fields.UploadAttachmentPage.__init__
+qm.host.Host.__init__
+qm.host.Host.__init__
+qm.label.Label.__init__
+qm.platform_unix.SignalException.__init__
+qm.platform_win32.SignalException.__init__
+qm.structured_text.HtmlFormatter.__init__
+qm.structured_text.StructuredTextProcessor.__init__
+qm.structured_text.TextFormatter.__init__
+qm.temporary_directory.TemporaryDirectory.__init__
+qm.test.base.CouldNotLoadExtensionError.__init__
+qm.test.classes.compilation_test_database.CompilationTestDatabase.__init__
+qm.test.classes.compiler.Compiler.__init__
+qm.test.classes.compiler.Diagnostic.__init__
+qm.test.classes.compiler.SourcePosition.__init__
+qm.test.classes.compiler_test.CompilationStep.__init__
+qm.test.classes.dejagnu_stream.DejaGNUReader.__init__
+qm.test.classes.dejagnu_stream.DejaGNUStream.__init__
+qm.test.classes.dir_run_database.DirRunDatabase.__init__
+qm.test.classes.file.SubstitutionField.__init__
+qm.test.classes.mount_database.MountDatabase.MountedSuite.__init__
+qm.test.classes.mount_database.MountDatabase.__init__
+qm.test.classes.pickle_result_stream.PickleResultReader.__init__
+qm.test.classes.pickle_result_stream.PickleResultStream.__init__
+qm.test.classes.previous_testrun.PreviousTestRun.__init__
+qm.test.classes.process_target.ProcessTarget.__init__
+qm.test.classes.rsh_target.RSHTarget.__init__
+qm.test.classes.serial_target.SerialTarget.__init__
+qm.test.classes.sql_result_stream.SQLResultReader.__init__
+qm.test.classes.sql_result_stream.SQLResultStream.__init__
+qm.test.classes.sql_result_stream._Buffer.__init__
+qm.test.classes.sql_result_stream._SQLConnected.__init__
+qm.test.classes.tet_stream.TETStream.__init__
+qm.test.classes.text_result_stream.TextResultStream.__init__
+qm.test.classes.thread_target.LocalThread.__init__
+qm.test.classes.thread_target.ThreadTarget.__init__
+qm.test.classes.xml_database.XMLDatabase.__init__
+qm.test.classes.xml_expectation_database.XMLExpectationDatabase.__init__
+qm.test.classes.xml_result_stream.XMLResultReader.__init__
+qm.test.classes.xml_result_stream.XMLResultStream.__init__
+qm.test.cmdline.QMTest.__init__
+qm.test.command_thread.CommandThread.__init__
+qm.test.context.Context.__init__
+qm.test.context.ContextException.__init__
+qm.test.database.Database.__init__
+qm.test.database.ItemDescriptor.__init__
+qm.test.database.NoSuchItemError.__init__
+qm.test.database.NoSuchResourceError.__init__
+qm.test.database.NoSuchSuiteError.__init__
+qm.test.database.NoSuchTestError.__init__
+qm.test.database.ResourceDescriptor.__init__
+qm.test.database.TestDescriptor.__init__
+qm.test.directory_suite.DirectorySuite.__init__
+qm.test.execution_engine.ExecutionEngine.__TestStatus.__init__
+qm.test.execution_engine.ExecutionEngine.__init__
+qm.test.execution_thread.ExecutionThread.__init__
+qm.test.file_database.ExtensionDatabase.__init__
+qm.test.file_result_reader.FileResultReader.__init__
+qm.test.file_result_stream.FileResultStream.__init__
+qm.test.parameter_database.ParameterDatabase.ImplicitSuite.__init__
+qm.test.parameter_database.ParameterDatabase.ParameterSuite.__init__
+qm.test.parameter_database.ParameterDatabase.WrapperSuite.__init__
+qm.test.parameter_database.ParameterDatabase.__init__
+qm.test.reader_test_run.ReaderTestRun.__init__
+qm.test.report.ReportGenerator.__init__
+qm.test.result.Result.__init__
+qm.test.result_reader.ResultReader.__init__
+qm.test.result_stream.ResultStream.__init__
+qm.test.runnable.Runnable.__init__
+qm.test.suite.Suite.__init__
+qm.test.target.Target.__ResourceSetUpException.__init__
+qm.test.target.Target.__init__
+qm.test.test.Test.OutcomeField.__init__
+qm.test.test.Test.OutcomeField.__init__
+qm.test.web.web.ContextPage.__init__
+qm.test.web.web.DefaultDtmlPage.__init__
+qm.test.web.web.DirPage.__init__
+qm.test.web.web.DirReportPage.__init__
+qm.test.web.web.Item.__init__
+qm.test.web.web.LoadContextPage.__init__
+qm.test.web.web.LoadExpectationsPage.__init__
+qm.test.web.web.LoadResultsPage.__init__
+qm.test.web.web.NewItemPage.__init__
+qm.test.web.web.NewSuitePage.__init__
+qm.test.web.web.QMTestPage.__init__
+qm.test.web.web.QMTestReportPage.__init__
+qm.test.web.web.QMTestServer.__init__
+qm.test.web.web.ResultPage.__init__
+qm.test.web.web.SetExpectationPage.__init__
+qm.test.web.web.ShowItemPage.__init__
+qm.test.web.web.ShowItemReportPage.__init__
+qm.test.web.web.ShowSuitePage.__init__
+qm.test.web.web.StorageResultsStream.__init__
+qm.test.web.web.TestResultsPage.__init__
+qm.trace.Tracer.__init__
+qm.user.Group.__init__
+qm.user.User.__init__
+qm.user.XmlDatabase.__init__
+qm.user.XmlDatabaseAuthenticator.__init__
+qm.web.CGIWebRequest.__init__
+qm.web.DtmlPage.__init__
+qm.web.HttpRedirect.__init__
+qm.web.Session.__init__
+qm.web.WebRequest.__init__
+qm.web.WebServer.__init__" class="py-name" href="#" onclick="return doclink('link-34', '__init__', 'link-34');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L280"></a><tt class="py-lineno">280</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__root</tt> <tt class="py-op">=</tt> <tt class="py-name">root</tt> </tt>
+</div><a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line">         </tt>
+<a name="L282"></a><tt class="py-lineno">282</tt>  <tt class="py-line">         </tt>
+<a name="FileAttachmentStore.GetData"></a><div id="FileAttachmentStore.GetData-def"><a name="L283"></a><tt class="py-lineno">283</tt> <a class="py-toggle" href="#" id="FileAttachmentStore.GetData-toggle" onclick="return toggle('FileAttachmentStore.GetData');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.FileAttachmentStore-class.html#GetData">GetData</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">location</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="FileAttachmentStore.GetData-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="FileAttachmentStore.GetData-expanded"><a name="L284"></a><tt class="py-lineno">284</tt>  <tt class="py-line"> </tt>
+<a name="L285"></a><tt class="py-lineno">285</tt>  <tt class="py-line">        <tt class="py-comment"># Open the file.</tt> </tt>
+<a name="L286"></a><tt class="py-lineno">286</tt>  <tt class="py-line">        <tt class="py-name">f</tt> <tt class="py-op">=</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-35" class="py-name"><a title="qm.attachment.Attachment.GetDataFile
+qm.attachment.AttachmentStore.GetDataFile
+qm.attachment.FileAttachmentStore.GetDataFile" class="py-name" href="#" onclick="return doclink('link-35', 'GetDataFile', 'link-12');">GetDataFile</a></tt><tt class="py-op">(</tt><tt class="py-name">location</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L287"></a><tt class="py-lineno">287</tt>  <tt class="py-line">        <tt class="py-comment"># Read the contents.</tt> </tt>
+<a name="L288"></a><tt class="py-lineno">288</tt>  <tt class="py-line">        <tt class="py-name">s</tt> <tt class="py-op">=</tt> <tt class="py-name">f</tt><tt class="py-op">.</tt><tt id="link-36" class="py-name" targets="Method qm.external.DocumentTemplate.DT_String.String.read()=qm.external.DocumentTemplate.DT_String.String-class.html#read"><a title="qm.external.DocumentTemplate.DT_String.String.read" class="py-name" href="#" onclick="return doclink('link-36', 'read', 'link-36');">read</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L289"></a><tt class="py-lineno">289</tt>  <tt class="py-line">        <tt class="py-comment"># Close the file.</tt> </tt>
+<a name="L290"></a><tt class="py-lineno">290</tt>  <tt class="py-line">        <tt class="py-name">f</tt><tt class="py-op">.</tt><tt id="link-37" class="py-name" targets="Method qm.db.Connection.close()=qm.db.Connection-class.html#close"><a title="qm.db.Connection.close" class="py-name" href="#" onclick="return doclink('link-37', 'close', 'link-37');">close</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L291"></a><tt class="py-lineno">291</tt>  <tt class="py-line"> </tt>
+<a name="L292"></a><tt class="py-lineno">292</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">s</tt> </tt>
+</div><a name="L293"></a><tt class="py-lineno">293</tt>  <tt class="py-line"> </tt>
+<a name="L294"></a><tt class="py-lineno">294</tt>  <tt class="py-line"> </tt>
+<a name="FileAttachmentStore.GetDataFile"></a><div id="FileAttachmentStore.GetDataFile-def"><a name="L295"></a><tt class="py-lineno">295</tt> <a class="py-toggle" href="#" id="FileAttachmentStore.GetDataFile-toggle" onclick="return toggle('FileAttachmentStore.GetDataFile');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.FileAttachmentStore-class.html#GetDataFile">GetDataFile</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">location</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="FileAttachmentStore.GetDataFile-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="FileAttachmentStore.GetDataFile-expanded"><a name="L296"></a><tt class="py-lineno">296</tt>  <tt class="py-line"> </tt>
+<a name="L297"></a><tt class="py-lineno">297</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__root</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt id="link-38" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-38', 'None', 'link-3');">None</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L298"></a><tt class="py-lineno">298</tt>  <tt class="py-line">            <tt class="py-comment"># It might seem sensible to assert that the location be a</tt> </tt>
+<a name="L299"></a><tt class="py-lineno">299</tt>  <tt class="py-line">            <tt class="py-comment"># relative path, but that would break backwards</tt> </tt>
+<a name="L300"></a><tt class="py-lineno">300</tt>  <tt class="py-line">            <tt class="py-comment"># compatibility with older versions fo QMTest.  In those</tt> </tt>
+<a name="L301"></a><tt class="py-lineno">301</tt>  <tt class="py-line">            <tt class="py-comment"># older versions, the XMLDatabase sometimes used an absolute</tt> </tt>
+<a name="L302"></a><tt class="py-lineno">302</tt>  <tt class="py-line">            <tt class="py-comment"># path for attachment locations.</tt> </tt>
+<a name="L303"></a><tt class="py-lineno">303</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__root</tt><tt class="py-op">,</tt> <tt class="py-name">location</tt><tt class="py-op">)</tt> </tt>
+<a name="L304"></a><tt class="py-lineno">304</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L305"></a><tt class="py-lineno">305</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">location</tt> </tt>
+</div><a name="L306"></a><tt class="py-lineno">306</tt>  <tt class="py-line"> </tt>
+<a name="L307"></a><tt class="py-lineno">307</tt>  <tt class="py-line"> </tt>
+<a name="FileAttachmentStore.GetSize"></a><div id="FileAttachmentStore.GetSize-def"><a name="L308"></a><tt class="py-lineno">308</tt> <a class="py-toggle" href="#" id="FileAttachmentStore.GetSize-toggle" onclick="return toggle('FileAttachmentStore.GetSize');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.FileAttachmentStore-class.html#GetSize">GetSize</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">location</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="FileAttachmentStore.GetSize-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="FileAttachmentStore.GetSize-expanded"><a name="L309"></a><tt class="py-lineno">309</tt>  <tt class="py-line">         </tt>
+<a name="L310"></a><tt class="py-lineno">310</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">stat</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-39" class="py-name"><a title="qm.attachment.Attachment.GetDataFile
+qm.attachment.AttachmentStore.GetDataFile
+qm.attachment.FileAttachmentStore.GetDataFile" class="py-name" href="#" onclick="return doclink('link-39', 'GetDataFile', 'link-12');">GetDataFile</a></tt><tt class="py-op">(</tt><tt class="py-name">location</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">6</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L311"></a><tt class="py-lineno">311</tt>  <tt class="py-line"> </tt>
+<a name="L312"></a><tt class="py-lineno">312</tt>  <tt class="py-line"> </tt>
+<a name="FileAttachmentStore.Store"></a><div id="FileAttachmentStore.Store-def"><a name="L313"></a><tt class="py-lineno">313</tt> <a class="py-toggle" href="#" id="FileAttachmentStore.Store-toggle" onclick="return toggle('FileAttachmentStore.Store');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.FileAttachmentStore-class.html#Store">Store</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">attachment</tt><tt class="py-op">,</tt> <tt class="py-param">location</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="FileAttachmentStore.Store-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="FileAttachmentStore.Store-expanded"><a name="L314"></a><tt class="py-lineno">314</tt>  <tt class="py-line"> </tt>
+<a name="L315"></a><tt class="py-lineno">315</tt>  <tt class="py-line">        <tt class="py-comment"># Create the file.</tt> </tt>
+<a name="L316"></a><tt class="py-lineno">316</tt>  <tt class="py-line">        <tt id="link-40" class="py-name" targets="Module qm.test.classes.file=qm.test.classes.file-module.html,Variable qm.test.file_result_reader.FileResultReader.file=qm.test.file_result_reader.FileResultReader-class.html#file,Variable qm.test.file_result_stream.FileResultStream.file=qm.test.file_result_stream.FileResultStream-class.html#file"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-40', 'file', 'link-40');">file</a></tt> <tt class="py-op">=</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-41" class="py-name"><a title="qm.attachment.Attachment.GetDataFile
+qm.attachment.AttachmentStore.GetDataFile
+qm.attachment.FileAttachmentStore.GetDataFile" class="py-name" href="#" onclick="return doclink('link-41', 'GetDataFile', 'link-12');">GetDataFile</a></tt><tt class="py-op">(</tt><tt class="py-name">location</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-string">"w"</tt><tt class="py-op">)</tt> </tt>
+<a name="L317"></a><tt class="py-lineno">317</tt>  <tt class="py-line">        <tt class="py-comment"># Write the data.</tt> </tt>
+<a name="L318"></a><tt class="py-lineno">318</tt>  <tt class="py-line">        <tt id="link-42" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-42', 'file', 'link-40');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt id="link-43" class="py-name" targets="Module qm.attachment=qm.attachment-module.html"><a title="qm.attachment" class="py-name" href="#" onclick="return doclink('link-43', 'attachment', 'link-43');">attachment</a></tt><tt class="py-op">.</tt><tt id="link-44" class="py-name"><a title="qm.attachment.Attachment.GetData
+qm.attachment.AttachmentStore.GetData
+qm.attachment.FileAttachmentStore.GetData" class="py-name" href="#" onclick="return doclink('link-44', 'GetData', 'link-9');">GetData</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L319"></a><tt class="py-lineno">319</tt>  <tt class="py-line">        <tt class="py-comment"># Close the file.</tt> </tt>
+<a name="L320"></a><tt class="py-lineno">320</tt>  <tt class="py-line">        <tt id="link-45" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-45', 'file', 'link-40');">file</a></tt><tt class="py-op">.</tt><tt id="link-46" class="py-name"><a title="qm.db.Connection.close" class="py-name" href="#" onclick="return doclink('link-46', 'close', 'link-37');">close</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L321"></a><tt class="py-lineno">321</tt>  <tt class="py-line"> </tt>
+<a name="L322"></a><tt class="py-lineno">322</tt>  <tt class="py-line"> </tt>
+<a name="FileAttachmentStore.Remove"></a><div id="FileAttachmentStore.Remove-def"><a name="L323"></a><tt class="py-lineno">323</tt> <a class="py-toggle" href="#" id="FileAttachmentStore.Remove-toggle" onclick="return toggle('FileAttachmentStore.Remove');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.FileAttachmentStore-class.html#Remove">Remove</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">location</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="FileAttachmentStore.Remove-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="FileAttachmentStore.Remove-expanded"><a name="L324"></a><tt class="py-lineno">324</tt>  <tt class="py-line">        <tt class="py-docstring">"""Remove an attachment.</tt> </tt>
+<a name="L325"></a><tt class="py-lineno">325</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L326"></a><tt class="py-lineno">326</tt>  <tt class="py-line"><tt class="py-docstring">        'location' -- The location whose data should be removed."""</tt> </tt>
+<a name="L327"></a><tt class="py-lineno">327</tt>  <tt class="py-line"> </tt>
+<a name="L328"></a><tt class="py-lineno">328</tt>  <tt class="py-line">        <tt class="py-name">os</tt><tt class="py-op">.</tt><tt id="link-47" class="py-name" targets="Method qm.user.Group.remove()=qm.user.Group-class.html#remove"><a title="qm.user.Group.remove" class="py-name" href="#" onclick="return doclink('link-47', 'remove', 'link-47');">remove</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-48" class="py-name"><a title="qm.attachment.Attachment.GetDataFile
+qm.attachment.AttachmentStore.GetDataFile
+qm.attachment.FileAttachmentStore.GetDataFile" class="py-name" href="#" onclick="return doclink('link-48', 'GetDataFile', 'link-12');">GetDataFile</a></tt><tt class="py-op">(</tt><tt class="py-name">location</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L329"></a><tt class="py-lineno">329</tt>  <tt class="py-line"> </tt>
+<a name="L330"></a><tt class="py-lineno">330</tt>  <tt class="py-line"> </tt>
+<a name="L331"></a><tt class="py-lineno">331</tt>  <tt class="py-line"> </tt>
+<a name="TemporaryAttachmentStore"></a><div id="TemporaryAttachmentStore-def"><a name="L332"></a><tt class="py-lineno">332</tt> <a class="py-toggle" href="#" id="TemporaryAttachmentStore-toggle" onclick="return toggle('TemporaryAttachmentStore');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.attachment.TemporaryAttachmentStore-class.html">TemporaryAttachmentStore</a><tt class="py-op">(</tt><tt class="py-base-class">FileAttachmentStore</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TemporaryAttachmentStore-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="TemporaryAttachmentStore-expanded"><a name="L333"></a><tt class="py-lineno">333</tt>  <tt class="py-line">    <tt class="py-docstring">"""Temporary storage for attachment data.</tt> </tt>
+<a name="L334"></a><tt class="py-lineno">334</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L335"></a><tt class="py-lineno">335</tt>  <tt class="py-line"><tt class="py-docstring">    A 'TemporaryAttachmentStore' stores attachment data in a temporary</tt> </tt>
+<a name="L336"></a><tt class="py-lineno">336</tt>  <tt class="py-line"><tt class="py-docstring">    location, for up to the lifetime of the running program.  When the</tt> </tt>
+<a name="L337"></a><tt class="py-lineno">337</tt>  <tt class="py-line"><tt class="py-docstring">    program ends, all temporarily stored attachment data is deleted.</tt> </tt>
+<a name="L338"></a><tt class="py-lineno">338</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L339"></a><tt class="py-lineno">339</tt>  <tt class="py-line"><tt class="py-docstring">    A data object in the temporary store is identified by its location.</tt> </tt>
+<a name="L340"></a><tt class="py-lineno">340</tt>  <tt class="py-line"><tt class="py-docstring">    Locations should be generated by 'make_temporary_location'."""</tt> </tt>
+<a name="L341"></a><tt class="py-lineno">341</tt>  <tt class="py-line"> </tt>
+<a name="TemporaryAttachmentStore.__init__"></a><div id="TemporaryAttachmentStore.__init__-def"><a name="L342"></a><tt class="py-lineno">342</tt> <a class="py-toggle" href="#" id="TemporaryAttachmentStore.__init__-toggle" onclick="return toggle('TemporaryAttachmentStore.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.TemporaryAttachmentStore-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TemporaryAttachmentStore.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TemporaryAttachmentStore.__init__-expanded"><a name="L343"></a><tt class="py-lineno">343</tt>  <tt class="py-line">        <tt class="py-docstring">"""Construct a temporary attachment store.</tt> </tt>
+<a name="L344"></a><tt class="py-lineno">344</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L345"></a><tt class="py-lineno">345</tt>  <tt class="py-line"><tt class="py-docstring">        The store is initially empty."""</tt> </tt>
+<a name="L346"></a><tt class="py-lineno">346</tt>  <tt class="py-line"> </tt>
+<a name="L347"></a><tt class="py-lineno">347</tt>  <tt class="py-line">        <tt class="py-comment"># Construct a temporary directory in which to store attachment</tt> </tt>
+<a name="L348"></a><tt class="py-lineno">348</tt>  <tt class="py-line">        <tt class="py-comment"># data.</tt> </tt>
+<a name="L349"></a><tt class="py-lineno">349</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__tmpdir</tt> <tt class="py-op">=</tt> <tt id="link-49" class="py-name"><a title="qm.temporary_directory" class="py-name" href="#" onclick="return doclink('link-49', 'temporary_directory', 'link-2');">temporary_directory</a></tt><tt class="py-op">.</tt><tt id="link-50" class="py-name" targets="Class qm.temporary_directory.TemporaryDirectory=qm.temporary_directory.TemporaryDirectory-class.html"><a title="qm.temporary_directory.TemporaryDirectory" class="py-name" href="#" onclick="return doclink('link-50', 'TemporaryDirectory', 'link-50');">TemporaryDirectory</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L350"></a><tt class="py-lineno">350</tt>  <tt class="py-line">        <tt class="py-comment"># Initialize the base class.</tt> </tt>
+<a name="L351"></a><tt class="py-lineno">351</tt>  <tt class="py-line">        <tt class="py-name">path</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__tmpdir</tt><tt class="py-op">.</tt><tt id="link-51" class="py-name" targets="Method qm.temporary_directory.TemporaryDirectory.GetPath()=qm.temporary_directory.TemporaryDirectory-class.html#GetPath,Method qm.test.classes.compiler.Compiler.GetPath()=qm.test.classes.compiler.Compiler-class.html#GetPath,Method qm.test.database.Database.GetPath()=qm.test.database.Database-class.html#GetPath"><a title="qm.temporary_directory.TemporaryDirectory.GetPath
+qm.test.classes.compiler.Compiler.GetPath
+qm.test.database.Database.GetPath" class="py-name" href="#" onclick="return doclink('link-51', 'GetPath', 'link-51');">GetPath</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L352"></a><tt class="py-lineno">352</tt>  <tt class="py-line">        <tt class="py-name">super</tt><tt class="py-op">(</tt><tt id="link-52" class="py-name" targets="Class qm.attachment.TemporaryAttachmentStore=qm.attachment.TemporaryAttachmentStore-class.html"><a title="qm.attachment.TemporaryAttachmentStore" class="py-name" href="#" onclick="return doclink('link-52', 'TemporaryAttachmentStore', 'link-52');">TemporaryAttachmentStore</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-53" class="py-name"><a title="qm.attachment.Attachment.__init__
+qm.attachment.FileAttachmentStore.__init__
+qm.attachment.TemporaryAttachmentStore.__init__
+qm.cmdline.CommandParser.__init__
+qm.common.PythonException.__init__
+qm.common.QMException.__init__
+qm.common.RcConfiguration.__init__
+qm.db.Connection.__init__
+qm.diagnostic.DiagnosticSet.__init__
+qm.dist.distribution.Distribution.__init__
+qm.executable.Filter.__init__
+qm.executable.TimeoutExecutable.__init__
+qm.executable.TimeoutExecutable.__init__
+qm.extension.Extension.Type.__init__
+qm.extension.Extension.__init__
+qm.external.DocumentTemplate.DT_If.If.__init__
+qm.external.DocumentTemplate.DT_If.Unless.__init__
+qm.external.DocumentTemplate.DT_In.InClass.__init__
+qm.external.DocumentTemplate.DT_InSV.sequence_variables.__init__
+qm.external.DocumentTemplate.DT_Let.Let.__init__
+qm.external.DocumentTemplate.DT_Raise.Raise.__init__
+qm.external.DocumentTemplate.DT_Return.DTReturn.__init__
+qm.external.DocumentTemplate.DT_Return.ReturnTag.__init__
+qm.external.DocumentTemplate.DT_String.FileMixin.__init__
+qm.external.DocumentTemplate.DT_String.String.__init__
+qm.external.DocumentTemplate.DT_Try.Try.__init__
+qm.external.DocumentTemplate.DT_Var.Call.__init__
+qm.external.DocumentTemplate.DT_Var.Comment.__init__
+qm.external.DocumentTemplate.DT_Var.Var.__init__
+qm.external.DocumentTemplate.DT_With.With.__init__
+qm.external.DocumentTemplate.VSEval.Eval.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.DictInstance.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.__init__
+qm.fields.AttachmentField.__init__
+qm.fields.BooleanField.__init__
+qm.fields.DictionaryField.__init__
+qm.fields.EnumerationField.__init__
+qm.fields.Field.__init__
+qm.fields.IntegerField.__init__
+qm.fields.PythonField.__init__
+qm.fields.SetField.__init__
+qm.fields.TextField.__init__
+qm.fields.TimeField.__init__
+qm.fields.TupleField.__init__
+qm.fields.UploadAttachmentPage.__init__
+qm.host.Host.__init__
+qm.host.Host.__init__
+qm.label.Label.__init__
+qm.platform_unix.SignalException.__init__
+qm.platform_win32.SignalException.__init__
+qm.structured_text.HtmlFormatter.__init__
+qm.structured_text.StructuredTextProcessor.__init__
+qm.structured_text.TextFormatter.__init__
+qm.temporary_directory.TemporaryDirectory.__init__
+qm.test.base.CouldNotLoadExtensionError.__init__
+qm.test.classes.compilation_test_database.CompilationTestDatabase.__init__
+qm.test.classes.compiler.Compiler.__init__
+qm.test.classes.compiler.Diagnostic.__init__
+qm.test.classes.compiler.SourcePosition.__init__
+qm.test.classes.compiler_test.CompilationStep.__init__
+qm.test.classes.dejagnu_stream.DejaGNUReader.__init__
+qm.test.classes.dejagnu_stream.DejaGNUStream.__init__
+qm.test.classes.dir_run_database.DirRunDatabase.__init__
+qm.test.classes.file.SubstitutionField.__init__
+qm.test.classes.mount_database.MountDatabase.MountedSuite.__init__
+qm.test.classes.mount_database.MountDatabase.__init__
+qm.test.classes.pickle_result_stream.PickleResultReader.__init__
+qm.test.classes.pickle_result_stream.PickleResultStream.__init__
+qm.test.classes.previous_testrun.PreviousTestRun.__init__
+qm.test.classes.process_target.ProcessTarget.__init__
+qm.test.classes.rsh_target.RSHTarget.__init__
+qm.test.classes.serial_target.SerialTarget.__init__
+qm.test.classes.sql_result_stream.SQLResultReader.__init__
+qm.test.classes.sql_result_stream.SQLResultStream.__init__
+qm.test.classes.sql_result_stream._Buffer.__init__
+qm.test.classes.sql_result_stream._SQLConnected.__init__
+qm.test.classes.tet_stream.TETStream.__init__
+qm.test.classes.text_result_stream.TextResultStream.__init__
+qm.test.classes.thread_target.LocalThread.__init__
+qm.test.classes.thread_target.ThreadTarget.__init__
+qm.test.classes.xml_database.XMLDatabase.__init__
+qm.test.classes.xml_expectation_database.XMLExpectationDatabase.__init__
+qm.test.classes.xml_result_stream.XMLResultReader.__init__
+qm.test.classes.xml_result_stream.XMLResultStream.__init__
+qm.test.cmdline.QMTest.__init__
+qm.test.command_thread.CommandThread.__init__
+qm.test.context.Context.__init__
+qm.test.context.ContextException.__init__
+qm.test.database.Database.__init__
+qm.test.database.ItemDescriptor.__init__
+qm.test.database.NoSuchItemError.__init__
+qm.test.database.NoSuchResourceError.__init__
+qm.test.database.NoSuchSuiteError.__init__
+qm.test.database.NoSuchTestError.__init__
+qm.test.database.ResourceDescriptor.__init__
+qm.test.database.TestDescriptor.__init__
+qm.test.directory_suite.DirectorySuite.__init__
+qm.test.execution_engine.ExecutionEngine.__TestStatus.__init__
+qm.test.execution_engine.ExecutionEngine.__init__
+qm.test.execution_thread.ExecutionThread.__init__
+qm.test.file_database.ExtensionDatabase.__init__
+qm.test.file_result_reader.FileResultReader.__init__
+qm.test.file_result_stream.FileResultStream.__init__
+qm.test.parameter_database.ParameterDatabase.ImplicitSuite.__init__
+qm.test.parameter_database.ParameterDatabase.ParameterSuite.__init__
+qm.test.parameter_database.ParameterDatabase.WrapperSuite.__init__
+qm.test.parameter_database.ParameterDatabase.__init__
+qm.test.reader_test_run.ReaderTestRun.__init__
+qm.test.report.ReportGenerator.__init__
+qm.test.result.Result.__init__
+qm.test.result_reader.ResultReader.__init__
+qm.test.result_stream.ResultStream.__init__
+qm.test.runnable.Runnable.__init__
+qm.test.suite.Suite.__init__
+qm.test.target.Target.__ResourceSetUpException.__init__
+qm.test.target.Target.__init__
+qm.test.test.Test.OutcomeField.__init__
+qm.test.test.Test.OutcomeField.__init__
+qm.test.web.web.ContextPage.__init__
+qm.test.web.web.DefaultDtmlPage.__init__
+qm.test.web.web.DirPage.__init__
+qm.test.web.web.DirReportPage.__init__
+qm.test.web.web.Item.__init__
+qm.test.web.web.LoadContextPage.__init__
+qm.test.web.web.LoadExpectationsPage.__init__
+qm.test.web.web.LoadResultsPage.__init__
+qm.test.web.web.NewItemPage.__init__
+qm.test.web.web.NewSuitePage.__init__
+qm.test.web.web.QMTestPage.__init__
+qm.test.web.web.QMTestReportPage.__init__
+qm.test.web.web.QMTestServer.__init__
+qm.test.web.web.ResultPage.__init__
+qm.test.web.web.SetExpectationPage.__init__
+qm.test.web.web.ShowItemPage.__init__
+qm.test.web.web.ShowItemReportPage.__init__
+qm.test.web.web.ShowSuitePage.__init__
+qm.test.web.web.StorageResultsStream.__init__
+qm.test.web.web.TestResultsPage.__init__
+qm.trace.Tracer.__init__
+qm.user.Group.__init__
+qm.user.User.__init__
+qm.user.XmlDatabase.__init__
+qm.user.XmlDatabaseAuthenticator.__init__
+qm.web.CGIWebRequest.__init__
+qm.web.DtmlPage.__init__
+qm.web.HttpRedirect.__init__
+qm.web.Session.__init__
+qm.web.WebRequest.__init__
+qm.web.WebServer.__init__" class="py-name" href="#" onclick="return doclink('link-53', '__init__', 'link-34');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L353"></a><tt class="py-lineno">353</tt>  <tt class="py-line"> </tt>
+<a name="L354"></a><tt class="py-lineno">354</tt>  <tt class="py-line"> </tt>
+<a name="TemporaryAttachmentStore.HandleUploadRequest"></a><div id="TemporaryAttachmentStore.HandleUploadRequest-def"><a name="L355"></a><tt class="py-lineno">355</tt> <a class="py-toggle" href="#" id="TemporaryAttachmentStore.HandleUploadRequest-toggle" onclick="return toggle('TemporaryAttachmentStore.HandleUploadRequest');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment.TemporaryAttachmentStore-class.html#HandleUploadRequest">HandleUploadRequest</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">request</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TemporaryAttachmentStore.HandleUploadRequest-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TemporaryAttachmentStore.HandleUploadRequest-expanded"><a name="L356"></a><tt class="py-lineno">356</tt>  <tt class="py-line">        <tt class="py-docstring">"""Handle a web request to upload attachment data.</tt> </tt>
+<a name="L357"></a><tt class="py-lineno">357</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L358"></a><tt class="py-lineno">358</tt>  <tt class="py-line"><tt class="py-docstring">        Store the attachment data contained in the request as a</tt> </tt>
+<a name="L359"></a><tt class="py-lineno">359</tt>  <tt class="py-line"><tt class="py-docstring">        temporary attachment.  It is assumed that the request is being</tt> </tt>
+<a name="L360"></a><tt class="py-lineno">360</tt>  <tt class="py-line"><tt class="py-docstring">        submitted from a popup upload browser window, so the returned</tt> </tt>
+<a name="L361"></a><tt class="py-lineno">361</tt>  <tt class="py-line"><tt class="py-docstring">        HTML page instructs the window to close itself.</tt> </tt>
+<a name="L362"></a><tt class="py-lineno">362</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L363"></a><tt class="py-lineno">363</tt>  <tt class="py-line"><tt class="py-docstring">        'request' -- A 'WebRequest' object.</tt> </tt>
+<a name="L364"></a><tt class="py-lineno">364</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L365"></a><tt class="py-lineno">365</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- HTML text of a page that instructs the browser window</tt> </tt>
+<a name="L366"></a><tt class="py-lineno">366</tt>  <tt class="py-line"><tt class="py-docstring">        to close."""</tt> </tt>
+<a name="L367"></a><tt class="py-lineno">367</tt>  <tt class="py-line"> </tt>
+<a name="L368"></a><tt class="py-lineno">368</tt>  <tt class="py-line">        <tt class="py-name">location</tt> <tt class="py-op">=</tt> <tt class="py-name">request</tt><tt class="py-op">[</tt><tt class="py-string">"location"</tt><tt class="py-op">]</tt> </tt>
+<a name="L369"></a><tt class="py-lineno">369</tt>  <tt class="py-line">        <tt class="py-comment"># Create the file.</tt> </tt>
+<a name="L370"></a><tt class="py-lineno">370</tt>  <tt class="py-line">        <tt id="link-54" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-54', 'file', 'link-40');">file</a></tt> <tt class="py-op">=</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-55" class="py-name"><a title="qm.attachment.Attachment.GetDataFile
+qm.attachment.AttachmentStore.GetDataFile
+qm.attachment.FileAttachmentStore.GetDataFile" class="py-name" href="#" onclick="return doclink('link-55', 'GetDataFile', 'link-12');">GetDataFile</a></tt><tt class="py-op">(</tt><tt class="py-name">location</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-string">"w"</tt><tt class="py-op">)</tt> </tt>
+<a name="L371"></a><tt class="py-lineno">371</tt>  <tt class="py-line">        <tt class="py-comment"># Write the data.</tt> </tt>
+<a name="L372"></a><tt class="py-lineno">372</tt>  <tt class="py-line">        <tt id="link-56" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-56', 'file', 'link-40');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-name">request</tt><tt class="py-op">[</tt><tt class="py-string">"file_data"</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L373"></a><tt class="py-lineno">373</tt>  <tt class="py-line">        <tt class="py-comment"># Close the file.</tt> </tt>
+<a name="L374"></a><tt class="py-lineno">374</tt>  <tt class="py-line">        <tt id="link-57" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-57', 'file', 'link-40');">file</a></tt><tt class="py-op">.</tt><tt id="link-58" class="py-name"><a title="qm.db.Connection.close" class="py-name" href="#" onclick="return doclink('link-58', 'close', 'link-37');">close</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L375"></a><tt class="py-lineno">375</tt>  <tt class="py-line">        <tt class="py-comment"># Return a page that closes the popup window from which the</tt> </tt>
+<a name="L376"></a><tt class="py-lineno">376</tt>  <tt class="py-line">        <tt class="py-comment"># attachment was submitted.</tt> </tt>
+<a name="L377"></a><tt class="py-lineno">377</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-string">'''</tt> </tt>
+<a name="L378"></a><tt class="py-lineno">378</tt>  <tt class="py-line"><tt class="py-string">        &lt;html&gt;&lt;body&gt;</tt> </tt>
+<a name="L379"></a><tt class="py-lineno">379</tt>  <tt class="py-line"><tt class="py-string">        &lt;script type="text/javascript" language="JavaScript"&gt;</tt> </tt>
+<a name="L380"></a><tt class="py-lineno">380</tt>  <tt class="py-line"><tt class="py-string">        window.close();</tt> </tt>
+<a name="L381"></a><tt class="py-lineno">381</tt>  <tt class="py-line"><tt class="py-string">        &lt;/script&gt;</tt> </tt>
+<a name="L382"></a><tt class="py-lineno">382</tt>  <tt class="py-line"><tt class="py-string">        &lt;/body&gt;&lt;/html&gt;</tt> </tt>
+<a name="L383"></a><tt class="py-lineno">383</tt>  <tt class="py-line"><tt class="py-string">        '''</tt> </tt>
+</div></div><a name="L384"></a><tt class="py-lineno">384</tt>  <tt class="py-line"> </tt>
+<a name="L385"></a><tt class="py-lineno">385</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L386"></a><tt class="py-lineno">386</tt>  <tt class="py-line"><tt class="py-comment"># functions</tt> </tt>
+<a name="L387"></a><tt class="py-lineno">387</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L388"></a><tt class="py-lineno">388</tt>  <tt class="py-line"> </tt>
+<a name="L389"></a><tt class="py-lineno">389</tt>  <tt class="py-line"><tt id="link-59" class="py-name" targets="Variable qm.attachment._temporary_location_prefix=qm.attachment-module.html#_temporary_location_prefix"><a title="qm.attachment._temporary_location_prefix" class="py-name" href="#" onclick="return doclink('link-59', '_temporary_location_prefix', 'link-59');">_temporary_location_prefix</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"_temporary"</tt> </tt>
+<a name="L390"></a><tt class="py-lineno">390</tt>  <tt class="py-line"> </tt>
+<a name="L391"></a><tt class="py-lineno">391</tt>  <tt class="py-line"> </tt>
+<a name="make_temporary_location"></a><div id="make_temporary_location-def"><a name="L392"></a><tt class="py-lineno">392</tt> <a class="py-toggle" href="#" id="make_temporary_location-toggle" onclick="return toggle('make_temporary_location');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment-module.html#make_temporary_location">make_temporary_location</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="make_temporary_location-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="make_temporary_location-expanded"><a name="L393"></a><tt class="py-lineno">393</tt>  <tt class="py-line">    <tt class="py-docstring">"""Return a unique location for temporary attachment data."""</tt> </tt>
+<a name="L394"></a><tt class="py-lineno">394</tt>  <tt class="py-line"> </tt>
+<a name="L395"></a><tt class="py-lineno">395</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt id="link-60" class="py-name"><a title="qm.attachment._temporary_location_prefix" class="py-name" href="#" onclick="return doclink('link-60', '_temporary_location_prefix', 'link-59');">_temporary_location_prefix</a></tt> <tt class="py-op">+</tt> <tt id="link-61" class="py-name"><a title="qm.common" class="py-name" href="#" onclick="return doclink('link-61', 'common', 'link-0');">common</a></tt><tt class="py-op">.</tt><tt id="link-62" class="py-name" targets="Function qm.common.make_unique_tag()=qm.common-module.html#make_unique_tag"><a title="qm.common.make_unique_tag" class="py-name" href="#" onclick="return doclink('link-62', 'make_unique_tag', 'link-62');">make_unique_tag</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L396"></a><tt class="py-lineno">396</tt>  <tt class="py-line"> </tt>
+<a name="L397"></a><tt class="py-lineno">397</tt>  <tt class="py-line"> </tt>
+<a name="make_dom_node"></a><div id="make_dom_node-def"><a name="L398"></a><tt class="py-lineno">398</tt> <a class="py-toggle" href="#" id="make_dom_node-toggle" onclick="return toggle('make_dom_node');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment-module.html#make_dom_node">make_dom_node</a><tt class="py-op">(</tt><tt class="py-param">attachment</tt><tt class="py-op">,</tt> <tt class="py-param">document</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="make_dom_node-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="make_dom_node-expanded"><a name="L399"></a><tt class="py-lineno">399</tt>  <tt class="py-line">    <tt class="py-docstring">"""Create a DOM element node for this attachment.</tt> </tt>
+<a name="L400"></a><tt class="py-lineno">400</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L401"></a><tt class="py-lineno">401</tt>  <tt class="py-line"><tt class="py-docstring">    'document' -- A DOM document node in which to create the</tt> </tt>
+<a name="L402"></a><tt class="py-lineno">402</tt>  <tt class="py-line"><tt class="py-docstring">    element.</tt> </tt>
+<a name="L403"></a><tt class="py-lineno">403</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L404"></a><tt class="py-lineno">404</tt>  <tt class="py-line"><tt class="py-docstring">    returns -- A DOM element node."""</tt> </tt>
+<a name="L405"></a><tt class="py-lineno">405</tt>  <tt class="py-line"> </tt>
+<a name="L406"></a><tt class="py-lineno">406</tt>  <tt class="py-line">    <tt class="py-comment"># Create an attachment element.</tt> </tt>
+<a name="L407"></a><tt class="py-lineno">407</tt>  <tt class="py-line">    <tt class="py-name">node</tt> <tt class="py-op">=</tt> <tt class="py-name">document</tt><tt class="py-op">.</tt><tt class="py-name">createElement</tt><tt class="py-op">(</tt><tt class="py-string">"attachment"</tt><tt class="py-op">)</tt> </tt>
+<a name="L408"></a><tt class="py-lineno">408</tt>  <tt class="py-line">    <tt class="py-comment"># Is it a null attachment?</tt> </tt>
+<a name="L409"></a><tt class="py-lineno">409</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt id="link-63" class="py-name"><a title="qm.attachment" class="py-name" href="#" onclick="return doclink('link-63', 'attachment', 'link-43');">attachment</a></tt> <tt class="py-keyword">is</tt> <tt id="link-64" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-64', 'None', 'link-3');">None</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L410"></a><tt class="py-lineno">410</tt>  <tt class="py-line">        <tt class="py-comment"># Then that's it.</tt> </tt>
+<a name="L411"></a><tt class="py-lineno">411</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">node</tt> </tt>
+<a name="L412"></a><tt class="py-lineno">412</tt>  <tt class="py-line"> </tt>
+<a name="L413"></a><tt class="py-lineno">413</tt>  <tt class="py-line">    <tt class="py-name">mime_type</tt> <tt class="py-op">=</tt> <tt id="link-65" class="py-name"><a title="qm.attachment" class="py-name" href="#" onclick="return doclink('link-65', 'attachment', 'link-43');">attachment</a></tt><tt class="py-op">.</tt><tt id="link-66" class="py-name"><a title="qm.attachment.Attachment.GetMimeType" class="py-name" href="#" onclick="return doclink('link-66', 'GetMimeType', 'link-17');">GetMimeType</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L414"></a><tt class="py-lineno">414</tt>  <tt class="py-line"> </tt>
+<a name="L415"></a><tt class="py-lineno">415</tt>  <tt class="py-line">    <tt class="py-comment"># Create and add the description node.</tt> </tt>
+<a name="L416"></a><tt class="py-lineno">416</tt>  <tt class="py-line">    <tt class="py-name">child</tt> <tt class="py-op">=</tt> <tt id="link-67" class="py-name"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-67', 'xmlutil', 'link-1');">xmlutil</a></tt><tt class="py-op">.</tt><tt class="py-name">create_dom_text_element</tt><tt class="py-op">(</tt> </tt>
+<a name="L417"></a><tt class="py-lineno">417</tt>  <tt class="py-line">        <tt class="py-name">document</tt><tt class="py-op">,</tt> <tt class="py-string">"description"</tt><tt class="py-op">,</tt> <tt id="link-68" class="py-name"><a title="qm.attachment" class="py-name" href="#" onclick="return doclink('link-68', 'attachment', 'link-43');">attachment</a></tt><tt class="py-op">.</tt><tt id="link-69" class="py-name"><a title="qm.attachment.Attachment.GetDescription
+qm.fields.Field.GetDescription
+qm.test.test.TargetGroupField.GetDescription" class="py-name" href="#" onclick="return doclink('link-69', 'GetDescription', 'link-16');">GetDescription</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L418"></a><tt class="py-lineno">418</tt>  <tt class="py-line">    <tt class="py-name">node</tt><tt class="py-op">.</tt><tt class="py-name">appendChild</tt><tt class="py-op">(</tt><tt class="py-name">child</tt><tt class="py-op">)</tt> </tt>
+<a name="L419"></a><tt class="py-lineno">419</tt>  <tt class="py-line">    <tt class="py-comment"># Create and add the MIME type node.</tt> </tt>
+<a name="L420"></a><tt class="py-lineno">420</tt>  <tt class="py-line">    <tt class="py-name">child</tt> <tt class="py-op">=</tt> <tt id="link-70" class="py-name"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-70', 'xmlutil', 'link-1');">xmlutil</a></tt><tt class="py-op">.</tt><tt class="py-name">create_dom_text_element</tt><tt class="py-op">(</tt> </tt>
+<a name="L421"></a><tt class="py-lineno">421</tt>  <tt class="py-line">        <tt class="py-name">document</tt><tt class="py-op">,</tt> <tt class="py-string">"mime-type"</tt><tt class="py-op">,</tt> <tt class="py-name">mime_type</tt><tt class="py-op">)</tt> </tt>
+<a name="L422"></a><tt class="py-lineno">422</tt>  <tt class="py-line">    <tt class="py-name">node</tt><tt class="py-op">.</tt><tt class="py-name">appendChild</tt><tt class="py-op">(</tt><tt class="py-name">child</tt><tt class="py-op">)</tt> </tt>
+<a name="L423"></a><tt class="py-lineno">423</tt>  <tt class="py-line">    <tt class="py-comment"># Create and add the file name node.</tt> </tt>
+<a name="L424"></a><tt class="py-lineno">424</tt>  <tt class="py-line">    <tt class="py-name">child</tt> <tt class="py-op">=</tt> <tt id="link-71" class="py-name"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-71', 'xmlutil', 'link-1');">xmlutil</a></tt><tt class="py-op">.</tt><tt class="py-name">create_dom_text_element</tt><tt class="py-op">(</tt> </tt>
+<a name="L425"></a><tt class="py-lineno">425</tt>  <tt class="py-line">        <tt class="py-name">document</tt><tt class="py-op">,</tt> <tt class="py-string">"filename"</tt><tt class="py-op">,</tt> <tt id="link-72" class="py-name"><a title="qm.attachment" class="py-name" href="#" onclick="return doclink('link-72', 'attachment', 'link-43');">attachment</a></tt><tt class="py-op">.</tt><tt id="link-73" class="py-name"><a title="qm.attachment.Attachment.GetFileName" class="py-name" href="#" onclick="return doclink('link-73', 'GetFileName', 'link-23');">GetFileName</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L426"></a><tt class="py-lineno">426</tt>  <tt class="py-line">    <tt class="py-name">node</tt><tt class="py-op">.</tt><tt class="py-name">appendChild</tt><tt class="py-op">(</tt><tt class="py-name">child</tt><tt class="py-op">)</tt> </tt>
+<a name="L427"></a><tt class="py-lineno">427</tt>  <tt class="py-line">    <tt class="py-comment"># Create a location element, to include attachment data by</tt> </tt>
+<a name="L428"></a><tt class="py-lineno">428</tt>  <tt class="py-line">    <tt class="py-comment"># reference.</tt> </tt>
+<a name="L429"></a><tt class="py-lineno">429</tt>  <tt class="py-line">    <tt class="py-name">location</tt> <tt class="py-op">=</tt> <tt id="link-74" class="py-name"><a title="qm.attachment" class="py-name" href="#" onclick="return doclink('link-74', 'attachment', 'link-43');">attachment</a></tt><tt class="py-op">.</tt><tt id="link-75" class="py-name"><a title="qm.attachment.Attachment.GetLocation" class="py-name" href="#" onclick="return doclink('link-75', 'GetLocation', 'link-10');">GetLocation</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L430"></a><tt class="py-lineno">430</tt>  <tt class="py-line">    <tt class="py-name">child</tt> <tt class="py-op">=</tt> <tt id="link-76" class="py-name"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-76', 'xmlutil', 'link-1');">xmlutil</a></tt><tt class="py-op">.</tt><tt class="py-name">create_dom_text_element</tt><tt class="py-op">(</tt><tt class="py-name">document</tt><tt class="py-op">,</tt> <tt class="py-string">"location"</tt><tt class="py-op">,</tt> <tt class="py-name">location</tt><tt class="py-op">)</tt> </tt>
+<a name="L431"></a><tt class="py-lineno">431</tt>  <tt class="py-line"> </tt>
+<a name="L432"></a><tt class="py-lineno">432</tt>  <tt class="py-line">    <tt class="py-name">node</tt><tt class="py-op">.</tt><tt class="py-name">appendChild</tt><tt class="py-op">(</tt><tt class="py-name">child</tt><tt class="py-op">)</tt> </tt>
+<a name="L433"></a><tt class="py-lineno">433</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">node</tt> </tt>
+</div><a name="L434"></a><tt class="py-lineno">434</tt>  <tt class="py-line"> </tt>
+<a name="L435"></a><tt class="py-lineno">435</tt>  <tt class="py-line"> </tt>
+<a name="from_dom_node"></a><div id="from_dom_node-def"><a name="L436"></a><tt class="py-lineno">436</tt> <a class="py-toggle" href="#" id="from_dom_node-toggle" onclick="return toggle('from_dom_node');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.attachment-module.html#from_dom_node">from_dom_node</a><tt class="py-op">(</tt><tt class="py-param">node</tt><tt class="py-op">,</tt> <tt class="py-param">store</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="from_dom_node-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="from_dom_node-expanded"><a name="L437"></a><tt class="py-lineno">437</tt>  <tt class="py-line">    <tt class="py-docstring">"""Construct an attachment object from a DOM element node.</tt> </tt>
+<a name="L438"></a><tt class="py-lineno">438</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L439"></a><tt class="py-lineno">439</tt>  <tt class="py-line"><tt class="py-docstring">    'node' -- A DOM attachment element node.</tt> </tt>
+<a name="L440"></a><tt class="py-lineno">440</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L441"></a><tt class="py-lineno">441</tt>  <tt class="py-line"><tt class="py-docstring">    'store' -- The associated attachment store.</tt> </tt>
+<a name="L442"></a><tt class="py-lineno">442</tt>  <tt class="py-line"><tt class="py-docstring">    </tt> </tt>
+<a name="L443"></a><tt class="py-lineno">443</tt>  <tt class="py-line"><tt class="py-docstring">    returns -- An attachment instance.  The type is determined by</tt> </tt>
+<a name="L444"></a><tt class="py-lineno">444</tt>  <tt class="py-line"><tt class="py-docstring">    'attachment_class'.</tt> </tt>
+<a name="L445"></a><tt class="py-lineno">445</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L446"></a><tt class="py-lineno">446</tt>  <tt class="py-line"><tt class="py-docstring">    If the attachment object requires additional context information to</tt> </tt>
+<a name="L447"></a><tt class="py-lineno">447</tt>  <tt class="py-line"><tt class="py-docstring">    interpret the location (if it's specified in the attachment</tt> </tt>
+<a name="L448"></a><tt class="py-lineno">448</tt>  <tt class="py-line"><tt class="py-docstring">    element), the caller must provide it directly to the object."""</tt> </tt>
+<a name="L449"></a><tt class="py-lineno">449</tt>  <tt class="py-line"> </tt>
+<a name="L450"></a><tt class="py-lineno">450</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt id="link-77" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-77', 'len', 'link-29');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">node</tt><tt class="py-op">.</tt><tt class="py-name">childNodes</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L451"></a><tt class="py-lineno">451</tt>  <tt class="py-line">        <tt class="py-comment"># It's an empty element, signifying a null attachment.</tt> </tt>
+<a name="L452"></a><tt class="py-lineno">452</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-78" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-78', 'None', 'link-3');">None</a></tt> </tt>
+<a name="L453"></a><tt class="py-lineno">453</tt>  <tt class="py-line"> </tt>
+<a name="L454"></a><tt class="py-lineno">454</tt>  <tt class="py-line">    <tt class="py-comment"># Extract the fixed fields; use a default value for each that is not</tt> </tt>
+<a name="L455"></a><tt class="py-lineno">455</tt>  <tt class="py-line">    <tt class="py-comment"># present. </tt> </tt>
+<a name="L456"></a><tt class="py-lineno">456</tt>  <tt class="py-line">    <tt id="link-79" class="py-name"><a title="qm.dist.command.build_extensions.build_extensions.description
+qm.dist.command.install_extensions.install_extensions.description" class="py-name" href="#" onclick="return doclink('link-79', 'description', 'link-6');">description</a></tt> <tt class="py-op">=</tt> <tt id="link-80" class="py-name"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-80', 'xmlutil', 'link-1');">xmlutil</a></tt><tt class="py-op">.</tt><tt class="py-name">get_child_text</tt><tt class="py-op">(</tt><tt class="py-name">node</tt><tt class="py-op">,</tt> <tt class="py-string">"description"</tt><tt class="py-op">,</tt> <tt class="py-string">""</tt><tt class="py-op">)</tt> </tt>
+<a name="L457"></a><tt class="py-lineno">457</tt>  <tt class="py-line">    <tt class="py-name">mime_type</tt> <tt class="py-op">=</tt> <tt id="link-81" class="py-name"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-81', 'xmlutil', 'link-1');">xmlutil</a></tt><tt class="py-op">.</tt><tt class="py-name">get_child_text</tt><tt class="py-op">(</tt> </tt>
+<a name="L458"></a><tt class="py-lineno">458</tt>  <tt class="py-line">        <tt class="py-name">node</tt><tt class="py-op">,</tt> <tt class="py-string">"mime-type"</tt><tt class="py-op">,</tt> <tt class="py-string">"application/octet-stream"</tt><tt class="py-op">)</tt> </tt>
+<a name="L459"></a><tt class="py-lineno">459</tt>  <tt class="py-line">    <tt id="link-82" class="py-name"><a title="qm.test.classes.previous_testrun.PreviousTestRun.file_name
+qm.test.classes.xml_expectation_database.XMLExpectationDatabase.file_name" class="py-name" href="#" onclick="return doclink('link-82', 'file_name', 'link-4');">file_name</a></tt> <tt class="py-op">=</tt> <tt id="link-83" class="py-name"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-83', 'xmlutil', 'link-1');">xmlutil</a></tt><tt class="py-op">.</tt><tt class="py-name">get_child_text</tt><tt class="py-op">(</tt><tt class="py-name">node</tt><tt class="py-op">,</tt> <tt class="py-string">"filename"</tt><tt class="py-op">,</tt> <tt class="py-string">""</tt><tt class="py-op">)</tt> </tt>
+<a name="L460"></a><tt class="py-lineno">460</tt>  <tt class="py-line">    <tt class="py-name">location</tt> <tt class="py-op">=</tt> <tt id="link-84" class="py-name"><a title="qm.xmlutil" class="py-name" href="#" onclick="return doclink('link-84', 'xmlutil', 'link-1');">xmlutil</a></tt><tt class="py-op">.</tt><tt class="py-name">get_child_text</tt><tt class="py-op">(</tt><tt class="py-name">node</tt><tt class="py-op">,</tt> <tt class="py-string">"location"</tt><tt class="py-op">)</tt> </tt>
+<a name="L461"></a><tt class="py-lineno">461</tt>  <tt class="py-line">    <tt class="py-comment"># Construct the resulting attachment.</tt> </tt>
+<a name="L462"></a><tt class="py-lineno">462</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt id="link-85" class="py-name" targets="Class qm.attachment.Attachment=qm.attachment.Attachment-class.html"><a title="qm.attachment.Attachment" class="py-name" href="#" onclick="return doclink('link-85', 'Attachment', 'link-85');">Attachment</a></tt><tt class="py-op">(</tt><tt class="py-name">mime_type</tt><tt class="py-op">,</tt> <tt id="link-86" class="py-name"><a title="qm.dist.command.build_extensions.build_extensions.description
+qm.dist.command.install_extensions.install_extensions.description" class="py-name" href="#" onclick="return doclink('link-86', 'description', 'link-6');">description</a></tt><tt class="py-op">,</tt> <tt id="link-87" class="py-name"><a title="qm.test.classes.previous_testrun.PreviousTestRun.file_name
+qm.test.classes.xml_expectation_database.XMLExpectationDatabase.file_name" class="py-name" href="#" onclick="return doclink('link-87', 'file_name', 'link-4');">file_name</a></tt><tt class="py-op">,</tt> <tt class="py-name">location</tt><tt class="py-op">,</tt> <tt class="py-name">store</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L463"></a><tt class="py-lineno">463</tt>  <tt class="py-line"> </tt>
+<a name="L464"></a><tt class="py-lineno">464</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L465"></a><tt class="py-lineno">465</tt>  <tt class="py-line"><tt class="py-comment"># Local Variables:</tt> </tt>
+<a name="L466"></a><tt class="py-lineno">466</tt>  <tt class="py-line"><tt class="py-comment"># mode: python</tt> </tt>
+<a name="L467"></a><tt class="py-lineno">467</tt>  <tt class="py-line"><tt class="py-comment"># indent-tabs-mode: nil</tt> </tt>
+<a name="L468"></a><tt class="py-lineno">468</tt>  <tt class="py-line"><tt class="py-comment"># fill-column: 72</tt> </tt>
+<a name="L469"></a><tt class="py-lineno">469</tt>  <tt class="py-line"><tt class="py-comment"># End:</tt> </tt>
+<a name="L470"></a><tt class="py-lineno">470</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:43 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

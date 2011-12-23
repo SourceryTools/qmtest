@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.classes.local_host</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.classes-module.html">Package&nbsp;classes</a> ::
+        Module&nbsp;local_host
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.classes.local_host-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.test.classes.local_host-module.html">Module qm.test.classes.local_host</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-comment"># File:   local_host.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Mark Mitchell</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   2005-06-03</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-comment">#   LocalHost</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2005 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"><tt class="py-comment"># Imports</tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line"><tt class="py-comment">#######################################################################</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"><tt class="py-keyword">from</tt>   <tt id="link-0" class="py-name" targets="Package qm=qm-module.html"><a title="qm" class="py-name" href="#" onclick="return doclink('link-0', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module qm.host=qm.host-module.html,Variable qm.test.classes.rsh_target.RSHTarget.host=qm.test.classes.rsh_target.RSHTarget-class.html#host"><a title="qm.host
+qm.test.classes.rsh_target.RSHTarget.host" class="py-name" href="#" onclick="return doclink('link-1', 'host', 'link-1');">host</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Class qm.host.Host=qm.host.Host-class.html"><a title="qm.host.Host" class="py-name" href="#" onclick="return doclink('link-2', 'Host', 'link-2');">Host</a></tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">shutil</tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line"><tt class="py-comment"># Classes</tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line"><tt class="py-comment">#######################################################################</tt> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line"> </tt>
+<a name="LocalHost"></a><div id="LocalHost-def"><a name="L27"></a><tt class="py-lineno">27</tt> <a class="py-toggle" href="#" id="LocalHost-toggle" onclick="return toggle('LocalHost');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.test.classes.local_host.LocalHost-class.html">LocalHost</a><tt class="py-op">(</tt><tt class="py-base-class">Host</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalHost-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="LocalHost-expanded"><a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line">    <tt class="py-docstring">"""A 'LocalHost' is the machine on which Python is running.</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line"><tt class="py-docstring">    The default directory for a 'LocalHost' is the current working</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line"><tt class="py-docstring">    directory for this Python process."""</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line"> </tt>
+<a name="LocalHost.UploadFile"></a><div id="LocalHost.UploadFile-def"><a name="L33"></a><tt class="py-lineno">33</tt> <a class="py-toggle" href="#" id="LocalHost.UploadFile-toggle" onclick="return toggle('LocalHost.UploadFile');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.local_host.LocalHost-class.html#UploadFile">UploadFile</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">local_file</tt><tt class="py-op">,</tt> <tt class="py-param">remote_file</tt> <tt class="py-op">=</tt> <tt id="link-3" class="py-name" targets="Variable qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#None"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-3', 'None', 'link-3');">None</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalHost.UploadFile-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="LocalHost.UploadFile-expanded"><a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line"> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">remote_file</tt> <tt class="py-keyword">is</tt> <tt id="link-4" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-4', 'None', 'link-3');">None</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line">            <tt class="py-name">remote_file</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">basename</tt><tt class="py-op">(</tt><tt class="py-name">local_file</tt><tt class="py-op">)</tt> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">        <tt class="py-comment"># Do not copy the files if they are the same.</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Method qm.test.classes.local_host.LocalHost._SameFile()=qm.test.classes.local_host.LocalHost-class.html#_SameFile,Method qm.test.classes.local_host.LocalHost._SameFile()=qm.test.classes.local_host.LocalHost-class.html#_SameFile"><a title="qm.test.classes.local_host.LocalHost._SameFile
+qm.test.classes.local_host.LocalHost._SameFile" class="py-name" href="#" onclick="return doclink('link-5', '_SameFile', 'link-5');">_SameFile</a></tt><tt class="py-op">(</tt><tt class="py-name">local_file</tt><tt class="py-op">,</tt> <tt class="py-name">remote_file</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line">            <tt class="py-name">shutil</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Function qm.common.copy()=qm.common-module.html#copy,Method qm.web.CGIWebRequest.copy()=qm.web.CGIWebRequest-class.html#copy,Method qm.web.WebRequest.copy()=qm.web.WebRequest-class.html#copy"><a title="qm.common.copy
+qm.web.CGIWebRequest.copy
+qm.web.WebRequest.copy" class="py-name" href="#" onclick="return doclink('link-6', 'copy', 'link-6');">copy</a></tt><tt class="py-op">(</tt><tt class="py-name">local_file</tt><tt class="py-op">,</tt> <tt class="py-name">remote_file</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line"> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line"> </tt>
+<a name="LocalHost.UploadAndRun"></a><div id="LocalHost.UploadAndRun-def"><a name="L42"></a><tt class="py-lineno">42</tt> <a class="py-toggle" href="#" id="LocalHost.UploadAndRun-toggle" onclick="return toggle('LocalHost.UploadAndRun');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.local_host.LocalHost-class.html#UploadAndRun">UploadAndRun</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">path</tt><tt class="py-op">,</tt> <tt class="py-param">arguments</tt><tt class="py-op">,</tt> <tt class="py-param">environment</tt> <tt class="py-op">=</tt> <tt id="link-7" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-7', 'None', 'link-3');">None</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line">                     <tt class="py-param">timeout</tt> <tt class="py-op">=</tt> <tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalHost.UploadAndRun-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="LocalHost.UploadAndRun-expanded"><a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line"> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">        <tt class="py-comment"># There is no need to actually upload the file, since it is</tt> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line">        <tt class="py-comment"># running on the local machine.</tt> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Method qm.executable.Executable.Run()=qm.executable.Executable-class.html#Run,Method qm.executable.TimeoutExecutable.Run()=qm.executable.TimeoutExecutable-class.html#Run,Method qm.executable.TimeoutExecutable.Run()=qm.executable.TimeoutExecutable-class.html#Run,Method qm.host.Host.Run()=qm.host.Host-class.html#Run,Method qm.host.Host.Run()=qm.host.Host-class.html#Run,Method qm.test.classes.command.ExecTest.Run()=qm.test.classes.command.ExecTest-class.html#Run,Method qm.test.classes.command.ShellCommandTest.Run()=qm.test.classes.command.ShellCommandTest-class.html#Run,Method qm.test.classes.command.ShellScriptTest.Run()=qm.test.classes.command.ShellScriptTest-class.html#Run,Method qm.test.classes.command_host.CommandHost.Run()=qm.test.classes.command_host.CommandHost-class.html#Run,Method qm.test.classes.compilation_test.CompilationTest.Run()=qm.test.classes.compilation_test.CompilationTest-class.html#Run,Method qm.test.classes.compilation_test.CompilationTest.Run()=qm.test.classes.compilation_test.CompilationTest-class.html#Run,Method qm.test.classes.compilation_test.ExecutableTest.Run()=qm.test.classes.compilation_test.ExecutableTest-class.html#Run,Method qm.test.classes.compiler_test.CompilerTest.Run()=qm.test.classes.compiler_test.CompilerTest-class.html#Run,Method qm.test.classes.file.FileContentsTest.Run()=qm.test.classes.file.FileContentsTest-class.html#Run,Method qm.test.classes.python.BaseExceptionTest.Run()=qm.test.classes.python.BaseExceptionTest-class.html#Run,Method qm.test.classes.python.ExecTest.Run()=qm.test.classes.python.ExecTest-class.html#Run,Method qm.test.classes.simulator.Simulator.Run()=qm.test.classes.simulator.Simulator-class.html#Run,Method qm.test.classes.ssh_host.RSHHost.Run()=qm.test.classes.ssh_host.RSHHost-class.html#Run,Method qm.test.classes.ssh_host.SSHHost.Run()=qm.test.classes.ssh_host.SSHHost-class.html#Run,Method qm.test.database.TestDescriptor.Run()=qm.test.database.TestDescriptor-class.html#Run,Method qm.test.execution_engine.ExecutionEngine.Run()=qm.test.execution_engine.ExecutionEngine-class.html#Run,Method qm.test.execution_engine.ExecutionEngine.Run()=qm.test.execution_engine.ExecutionEngine-class.html#Run,Method qm.test.test.Test.Run()=qm.test.test.Test-class.html#Run,Method qm.test.test.Test.Run()=qm.test.test.Test-class.html#Run,Method qm.web.WebServer.Run()=qm.web.WebServer-class.html#Run,Method qm.web.WebServer.Run()=qm.web.WebServer-class.html#Run"><a title="qm.executable.Executable.Run
+qm.executable.TimeoutExecutable.Run
+qm.executable.TimeoutExecutable.Run
+qm.host.Host.Run
+qm.host.Host.Run
+qm.test.classes.command.ExecTest.Run
+qm.test.classes.command.ShellCommandTest.Run
+qm.test.classes.command.ShellScriptTest.Run
+qm.test.classes.command_host.CommandHost.Run
+qm.test.classes.compilation_test.CompilationTest.Run
+qm.test.classes.compilation_test.CompilationTest.Run
+qm.test.classes.compilation_test.ExecutableTest.Run
+qm.test.classes.compiler_test.CompilerTest.Run
+qm.test.classes.file.FileContentsTest.Run
+qm.test.classes.python.BaseExceptionTest.Run
+qm.test.classes.python.ExecTest.Run
+qm.test.classes.simulator.Simulator.Run
+qm.test.classes.ssh_host.RSHHost.Run
+qm.test.classes.ssh_host.SSHHost.Run
+qm.test.database.TestDescriptor.Run
+qm.test.execution_engine.ExecutionEngine.Run
+qm.test.execution_engine.ExecutionEngine.Run
+qm.test.test.Test.Run
+qm.test.test.Test.Run
+qm.web.WebServer.Run
+qm.web.WebServer.Run" class="py-name" href="#" onclick="return doclink('link-8', 'Run', 'link-8');">Run</a></tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">,</tt> <tt id="link-9" class="py-name" targets="Variable qm.extension.Extension.arguments=qm.extension.Extension-class.html#arguments,Variable qm.test.classes.command.ExecTest.arguments=qm.test.classes.command.ExecTest-class.html#arguments,Variable qm.test.classes.command.ExecTestBase.arguments=qm.test.classes.command.ExecTestBase-class.html#arguments,Variable qm.test.classes.command.ShellCommandTest.arguments=qm.test.classes.command.ShellCommandTest-class.html#arguments,Variable qm.test.classes.command.ShellScriptTest.arguments=qm.test.classes.command.ShellScriptTest-class.html#arguments,Variable qm.test.classes.dejagnu_stream.DejaGNUReader.arguments=qm.test.classes.dejagnu_stream.DejaGNUReader-class.html#arguments,Variable qm.test.classes.dejagnu_stream.DejaGNUStream.arguments=qm.test.classes.dejagnu_stream.DejaGNUStream-class.html#arguments,Variable qm.test.classes.dejagnu_test.DejaGNUTest.arguments=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#arguments,Variable qm.test.classes.explicit_suite.ExplicitSuite.arguments=qm.test.classes.explicit_suite.ExplicitSuite-class.html#arguments,Variable qm.test.classes.file.FileContentsTest.arguments=qm.test.classes.file.FileContentsTest-class.html#arguments,Variable qm.test.classes.pickle_result_stream.PickleResultStream.arguments=qm.test.classes.pickle_result_stream.PickleResultStream-class.html#arguments,Variable qm.test.classes.process_target.ProcessTarget.arguments=qm.test.classes.process_target.ProcessTarget-class.html#arguments,Variable qm.test.classes.python.BaseExceptionTest.arguments=qm.test.classes.python.BaseExceptionTest-class.html#arguments,Variable qm.test.classes.python.ExceptionTest.arguments=qm.test.classes.python.ExceptionTest-class.html#arguments,Variable qm.test.classes.python.ExecTest.arguments=qm.test.classes.python.ExecTest-class.html#arguments,Variable qm.test.classes.python.StringExceptionTest.arguments=qm.test.classes.python.StringExceptionTest-class.html#arguments,Variable qm.test.classes.rsh_target.RSHTarget.arguments=qm.test.classes.rsh_target.RSHTarget-class.html#arguments,Variable qm.test.classes.sql_result_stream.SQLResultReader.arguments=qm.test.classes.sql_result_stream.SQLResultReader-class.html#arguments,Variable qm.test.classes.sql_result_stream._SQLConnected.arguments=qm.test.classes.sql_result_stream._SQLConnected-class.html#arguments,Variable qm.test.classes.temporary.TempDirectoryResource.arguments=qm.test.classes.temporary.TempDirectoryResource-class.html#arguments,Variable qm.test.classes.text_result_stream.TextResultStream.arguments=qm.test.classes.text_result_stream.TextResultStream-class.html#arguments,Variable qm.test.classes.thread_target.ThreadTarget.arguments=qm.test.classes.thread_target.ThreadTarget-class.html#arguments,Variable qm.test.database.Database.arguments=qm.test.database.Database-class.html#arguments,Variable qm.test.file_database.ExtensionDatabase.arguments=qm.test.file_database.ExtensionDatabase-class.html#arguments,Variable qm.test.file_result_reader.FileResultReader.arguments=qm.test.file_result_reader.FileResultReader-class.html#arguments,Variable qm.test.file_result_stream.FileResultStream.arguments=qm.test.file_result_stream.FileResultStream-class.html#arguments,Variable qm.test.runnable.Runnable.arguments=qm.test.runnable.Runnable-class.html#arguments,Variable qm.test.suite.Suite.arguments=qm.test.suite.Suite-class.html#arguments,Variable qm.test.target.Target.arguments=qm.test.target.Target-class.html#arguments,Variable qm.test.test.Test.arguments=qm.test.test.Test-class.html#arguments"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-9', 'arguments', 'link-9');">arguments</a></tt><tt class="py-op">,</tt> <tt class="py-name">environment</tt><tt class="py-op">,</tt> <tt class="py-name">timeout</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line"> </tt>
+<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line"> </tt>
+<a name="LocalHost.DownloadFile"></a><div id="LocalHost.DownloadFile-def"><a name="L50"></a><tt class="py-lineno">50</tt> <a class="py-toggle" href="#" id="LocalHost.DownloadFile-toggle" onclick="return toggle('LocalHost.DownloadFile');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.local_host.LocalHost-class.html#DownloadFile">DownloadFile</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">remote_file</tt><tt class="py-op">,</tt> <tt class="py-param">local_file</tt> <tt class="py-op">=</tt> <tt id="link-10" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-10', 'None', 'link-3');">None</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalHost.DownloadFile-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="LocalHost.DownloadFile-expanded"><a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line"> </tt>
+<a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Method qm.host.Host.UploadFile()=qm.host.Host-class.html#UploadFile,Method qm.test.classes.local_host.LocalHost.UploadFile()=qm.test.classes.local_host.LocalHost-class.html#UploadFile,Method qm.test.classes.local_host.LocalHost.UploadFile()=qm.test.classes.local_host.LocalHost-class.html#UploadFile,Method qm.test.classes.ssh_host.SSHHost.UploadFile()=qm.test.classes.ssh_host.SSHHost-class.html#UploadFile"><a title="qm.host.Host.UploadFile
+qm.test.classes.local_host.LocalHost.UploadFile
+qm.test.classes.local_host.LocalHost.UploadFile
+qm.test.classes.ssh_host.SSHHost.UploadFile" class="py-name" href="#" onclick="return doclink('link-11', 'UploadFile', 'link-11');">UploadFile</a></tt><tt class="py-op">(</tt><tt class="py-name">remote_file</tt><tt class="py-op">,</tt> <tt class="py-name">local_file</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L53"></a><tt class="py-lineno">53</tt>  <tt class="py-line"> </tt>
+<a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line"> </tt>
+<a name="LocalHost._SameFile"></a><div id="LocalHost._SameFile-def"><a name="L55"></a><tt class="py-lineno">55</tt> <a class="py-toggle" href="#" id="LocalHost._SameFile-toggle" onclick="return toggle('LocalHost._SameFile');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.local_host.LocalHost-class.html#_SameFile">_SameFile</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">file1</tt><tt class="py-op">,</tt> <tt class="py-param">file2</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalHost._SameFile-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="LocalHost._SameFile-expanded"><a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line">        <tt class="py-docstring">"""Return true iff 'file1' and 'file2' are the same file.</tt> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line"><tt class="py-docstring">        returns -- True iff 'file1' and 'file2' are the same file,</tt> </tt>
+<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line"><tt class="py-docstring">        even if they have different names."""</tt> </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line"> </tt>
+<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">file1</tt><tt class="py-op">)</tt> <tt class="py-keyword">or</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">file2</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">,</tt> <tt class="py-string">"samefile"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">samefile</tt><tt class="py-op">(</tt><tt class="py-name">file1</tt><tt class="py-op">,</tt> <tt class="py-name">file2</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">normcase</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">abspath</tt><tt class="py-op">(</tt><tt class="py-name">file1</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L66"></a><tt class="py-lineno">66</tt>  <tt class="py-line">                <tt class="py-op">==</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">normcase</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">abspath</tt><tt class="py-op">(</tt><tt class="py-name">file2</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L67"></a><tt class="py-lineno">67</tt>  <tt class="py-line"> </tt>
+<a name="L68"></a><tt class="py-lineno">68</tt>  <tt class="py-line"> </tt>
+<a name="LocalHost.DeleteFile"></a><div id="LocalHost.DeleteFile-def"><a name="L69"></a><tt class="py-lineno">69</tt> <a class="py-toggle" href="#" id="LocalHost.DeleteFile-toggle" onclick="return toggle('LocalHost.DeleteFile');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.local_host.LocalHost-class.html#DeleteFile">DeleteFile</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">remote_file</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalHost.DeleteFile-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="LocalHost.DeleteFile-expanded"><a name="L70"></a><tt class="py-lineno">70</tt>  <tt class="py-line"> </tt>
+<a name="L71"></a><tt class="py-lineno">71</tt>  <tt class="py-line">        <tt class="py-name">os</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Method qm.user.Group.remove()=qm.user.Group-class.html#remove"><a title="qm.user.Group.remove" class="py-name" href="#" onclick="return doclink('link-12', 'remove', 'link-12');">remove</a></tt><tt class="py-op">(</tt><tt class="py-name">remote_file</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L72"></a><tt class="py-lineno">72</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:46 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,1134 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.classes.text_result_stream</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.classes-module.html">Package&nbsp;classes</a> ::
+        Module&nbsp;text_result_stream
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.classes.text_result_stream-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="qm.test.classes.text_result_stream-module.html">Module qm.test.classes.text_result_stream</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># File:   test_result_stream.py</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># Author: Mark Mitchell</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"># Date:   2001-10-10</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment"># Contents:</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#   QMTest TextResultStream class.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2001, 2002, 2003 by CodeSourcery, LLC.  All rights reserved. </tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># For license terms see the file COPYING.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment"># imports</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-0" class="py-name" targets="Package qm=qm-module.html"><a title="qm" class="py-name" href="#" onclick="return doclink('link-0', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module qm.common=qm.common-module.html"><a title="qm.common" class="py-name" href="#" onclick="return doclink('link-1', 'common', 'link-1');">common</a></tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-2" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-2', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-3" class="py-name" targets="Module qm.fields=qm.fields-module.html"><a title="qm.fields" class="py-name" href="#" onclick="return doclink('link-3', 'fields', 'link-3');">fields</a></tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-keyword">from</tt>   <tt id="link-4" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-4', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Function qm.external.DocumentTemplate.DT_Util.test()=qm.external.DocumentTemplate.DT_Util-module.html#test,Package qm.test=qm.test-module.html,Module qm.test.test=qm.test.test-module.html"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-5', 'test', 'link-5');">test</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Module qm.test.base=qm.test.base-module.html"><a title="qm.test.base" class="py-name" href="#" onclick="return doclink('link-6', 'base', 'link-6');">base</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-keyword">from</tt>   <tt id="link-7" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-7', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-8" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-8', 'test', 'link-5');">test</a></tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Module qm.test.result=qm.test.result-module.html"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-9', 'result', 'link-9');">result</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-keyword">from</tt>   <tt id="link-10" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-10', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-11" class="py-name"><a title="qm.external.DocumentTemplate.DT_Util.test
+qm.test
+qm.test.test" class="py-name" href="#" onclick="return doclink('link-11', 'test', 'link-5');">test</a></tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Module qm.test.file_result_stream=qm.test.file_result_stream-module.html"><a title="qm.test.file_result_stream" class="py-name" href="#" onclick="return doclink('link-12', 'file_result_stream', 'link-12');">file_result_stream</a></tt> <tt class="py-keyword">import</tt> <tt id="link-13" class="py-name" targets="Class qm.test.file_result_stream.FileResultStream=qm.test.file_result_stream.FileResultStream-class.html"><a title="qm.test.file_result_stream.FileResultStream" class="py-name" href="#" onclick="return doclink('link-13', 'FileResultStream', 'link-13');">FileResultStream</a></tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-comment"># classes</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"> </tt>
+<a name="TextResultStream"></a><div id="TextResultStream-def"><a name="L30"></a><tt class="py-lineno"> 30</tt> <a class="py-toggle" href="#" id="TextResultStream-toggle" onclick="return toggle('TextResultStream');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html">TextResultStream</a><tt class="py-op">(</tt><tt class="py-base-class">FileResultStream</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="TextResultStream-expanded"><a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line">    <tt class="py-docstring">"""A 'TextResultStream' displays test results textually.</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"><tt class="py-docstring">    A 'TextResultStream' displays information textually, in human</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-docstring">    readable form.  This 'ResultStream' is used when QMTest is run</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-docstring">    without a graphical user interface."""</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line">    <tt id="link-14" class="py-name" targets="Variable qm.extension.Extension.arguments=qm.extension.Extension-class.html#arguments,Variable qm.test.classes.command.ExecTest.arguments=qm.test.classes.command.ExecTest-class.html#arguments,Variable qm.test.classes.command.ExecTestBase.arguments=qm.test.classes.command.ExecTestBase-class.html#arguments,Variable qm.test.classes.command.ShellCommandTest.arguments=qm.test.classes.command.ShellCommandTest-class.html#arguments,Variable qm.test.classes.command.ShellScriptTest.arguments=qm.test.classes.command.ShellScriptTest-class.html#arguments,Variable qm.test.classes.dejagnu_stream.DejaGNUReader.arguments=qm.test.classes.dejagnu_stream.DejaGNUReader-class.html#arguments,Variable qm.test.classes.dejagnu_stream.DejaGNUStream.arguments=qm.test.classes.dejagnu_stream.DejaGNUStream-class.html#arguments,Variable qm.test.classes.dejagnu_test.DejaGNUTest.arguments=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#arguments,Variable qm.test.classes.explicit_suite.ExplicitSuite.arguments=qm.test.classes.explicit_suite.ExplicitSuite-class.html#arguments,Variable qm.test.classes.file.FileContentsTest.arguments=qm.test.classes.file.FileContentsTest-class.html#arguments,Variable qm.test.classes.pickle_result_stream.PickleResultStream.arguments=qm.test.classes.pickle_result_stream.PickleResultStream-class.html#arguments,Variable qm.test.classes.process_target.ProcessTarget.arguments=qm.test.classes.process_target.ProcessTarget-class.html#arguments,Variable qm.test.classes.python.BaseExceptionTest.arguments=qm.test.classes.python.BaseExceptionTest-class.html#arguments,Variable qm.test.classes.python.ExceptionTest.arguments=qm.test.classes.python.ExceptionTest-class.html#arguments,Variable qm.test.classes.python.ExecTest.arguments=qm.test.classes.python.ExecTest-class.html#arguments,Variable qm.test.classes.python.StringExceptionTest.arguments=qm.test.classes.python.StringExceptionTest-class.html#arguments,Variable qm.test.classes.rsh_target.RSHTarget.arguments=qm.test.classes.rsh_target.RSHTarget-class.html#arguments,Variable qm.test.classes.sql_result_stream.SQLResultReader.arguments=qm.test.classes.sql_result_stream.SQLResultReader-class.html#arguments,Variable qm.test.classes.sql_result_stream._SQLConnected.arguments=qm.test.classes.sql_result_stream._SQLConnected-class.html#arguments,Variable qm.test.classes.temporary.TempDirectoryResource.arguments=qm.test.classes.temporary.TempDirectoryResource-class.html#arguments,Variable qm.test.classes.text_result_stream.TextResultStream.arguments=qm.test.classes.text_result_stream.TextResultStream-class.html#arguments,Variable qm.test.classes.thread_target.ThreadTarget.arguments=qm.test.classes.thread_target.ThreadTarget-class.html#arguments,Variable qm.test.database.Database.arguments=qm.test.database.Database-class.html#arguments,Variable qm.test.file_database.ExtensionDatabase.arguments=qm.test.file_database.ExtensionDatabase-class.html#arguments,Variable qm.test.file_result_reader.FileResultReader.arguments=qm.test.file_result_reader.FileResultReader-class.html#arguments,Variable qm.test.file_result_stream.FileResultStream.arguments=qm.test.file_result_stream.FileResultStream-class.html#arguments,Variable qm.test.runnable.Runnable.arguments=qm.test.runnable.Runnable-class.html#arguments,Variable qm.test.suite.Suite.arguments=qm.test.suite.Suite-class.html#arguments,Variable qm.test.target.Target.arguments=qm.test.target.Target-class.html#arguments,Variable qm.test.test.Test.arguments=qm.test.test.Test-class.html#arguments"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-14', 'arguments', 'link-14');">arguments</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line">        <tt id="link-15" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-15', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-16" class="py-name"><a title="qm.fields" class="py-name" href="#" onclick="return doclink('link-16', 'fields', 'link-3');">fields</a></tt><tt class="py-op">.</tt><tt id="link-17" class="py-name" targets="Class qm.fields.EnumerationField=qm.fields.EnumerationField-class.html"><a title="qm.fields.EnumerationField" class="py-name" href="#" onclick="return doclink('link-17', 'EnumerationField', 'link-17');">EnumerationField</a></tt><tt class="py-op">(</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">            <tt id="link-18" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_If.Else.name=qm.external.DocumentTemplate.DT_If.Else-class.html#name,Variable qm.external.DocumentTemplate.DT_If.If.name=qm.external.DocumentTemplate.DT_If.If-class.html#name,Variable qm.external.DocumentTemplate.DT_If.Unless.name=qm.external.DocumentTemplate.DT_If.Unless-class.html#name,Variable qm.external.DocumentTemplate.DT_In.InFactory.name=qm.external.DocumentTemplate.DT_In.InFactory-class.html#name,Variable qm.external.DocumentTemplate.DT_Let.Let.name=qm.external.DocumentTemplate.DT_Let.Let-class.html#name,Variable qm.external.DocumentTemplate.DT_Raise.Raise.name=qm.external.DocumentTemplate.DT_Raise.Raise-class.html#name,Variable qm.external.DocumentTemplate.DT_Return.ReturnTag.name=qm.external.DocumentTemplate.DT_Return.ReturnTag-class.html#name,Method qm.external.DocumentTemplate.DT_String.String.name()=qm.external.DocumentTemplate.DT_String.String-class.html#name,Variable qm.external.DocumentTemplate.DT_Try.Try.name=qm.external.DocumentTemplate.DT_Try.Try-class.html#name,Variable qm.external.DocumentTemplate.DT_Util.name=qm.external.DocumentTemplate.DT_Util-module.html#name,Variable qm.external.DocumentTemplate.DT_Var.Call.name=qm.external.DocumentTemplate.DT_Var.Call-class.html#name,Variable qm.external.DocumentTemplate.DT_Var.Comment.name=qm.external.DocumentTemplate.DT_Var.Comment-class.html#name,Variable qm.external.DocumentTemplate.DT_Var.Var.name=qm.external.DocumentTemplate.DT_Var.Var-class.html#name,Variable qm.external.DocumentTemplate.DT_With.With.name=qm.external.DocumentTemplate.DT_With.With-class.html#name,Variable qm.external.DocumentTemplate.pDocumentTemplate.name=qm.external.DocumentTemplate.pDocumentTemplate-module.html#name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-18', 'name', 'link-18');">name</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"format"</tt><tt class="py-op">,</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">            <tt id="link-19" class="py-name" targets="Variable qm.test.web.web.LoadContextPage.title=qm.test.web.web.LoadContextPage-class.html#title,Variable qm.test.web.web.LoadExpectationsPage.title=qm.test.web.web.LoadExpectationsPage-class.html#title,Variable qm.test.web.web.LoadResultsPage.title=qm.test.web.web.LoadResultsPage-class.html#title"><a title="qm.test.web.web.LoadContextPage.title
+qm.test.web.web.LoadExpectationsPage.title
+qm.test.web.web.LoadResultsPage.title" class="py-name" href="#" onclick="return doclink('link-19', 'title', 'link-19');">title</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"Format"</tt><tt class="py-op">,</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">            <tt id="link-20" class="py-name" targets="Variable qm.dist.command.build_extensions.build_extensions.description=qm.dist.command.build_extensions.build_extensions-class.html#description,Variable qm.dist.command.install_extensions.install_extensions.description=qm.dist.command.install_extensions.install_extensions-class.html#description"><a title="qm.dist.command.build_extensions.build_extensions.description
+qm.dist.command.install_extensions.install_extensions.description" class="py-name" href="#" onclick="return doclink('link-20', 'description', 'link-20');">description</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"""The output format used by this result stream.</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-string">            There are three sections to the output:</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-string">            (S) Summary statistics.</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-string">            (I) Individual test-by-test results.</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-string">            (U) Individual test-by-test results for tests with unexpected</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-string">                outcomes.</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-string">            For each of the sections of individual test-by-test results, the</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-string">            results can be shown either in one of three modes:</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-string">            (A) Show all annotations.</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-string">            (N) Show no annotations.</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-string">            (U) Show annotations only if the test has an unexpected outcome.</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-string">            In the "brief" format, results for all tests are shown as</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt class="py-string">            they execute, with unexpected results displayed in full</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-string">            detail, followed by a list of all the tests with</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-string">            unexpected results in full detail, followed by the summary</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-string">            information.  This format is useful for interactive use:</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt class="py-string">            the user can see that the tests are running as they go,</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"><tt class="py-string">            can attempt to fix failures while letting the remainder of</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"><tt class="py-string">            the tests run, and can easily see the summary of the</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"><tt class="py-string">            results later if the window in which the run is occurring</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-string">            is left unattended.</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-string">            In the "batch" format, statistics are displayed first</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-string">            followed by full results for tests with unexpected</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-string">            outcomes.  The batch format is useful when QMTest is run</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-string">            in batch mode, such as from an overnight job.  The first</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-string">            few lines of the results (often presented by email) give</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-string">            an overview of the results; the remainder of the file</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-string">            gives details about any tests with unexpected outcomes.</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"><tt class="py-string">            The "full" format is like "brief" except that all</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"><tt class="py-string">            annotations are shown for tests as they are run.</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"><tt class="py-string">            In the "stats" format only the summary statistics are</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"><tt class="py-string">            displayed."""</tt><tt class="py-op">,</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">            <tt class="py-name">enumerals</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-string">"brief"</tt><tt class="py-op">,</tt> <tt class="py-string">"batch"</tt><tt class="py-op">,</tt> <tt class="py-string">"full"</tt><tt class="py-op">,</tt> <tt class="py-string">"stats"</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">        <tt id="link-21" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-21', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-22" class="py-name"><a title="qm.fields" class="py-name" href="#" onclick="return doclink('link-22', 'fields', 'link-3');">fields</a></tt><tt class="py-op">.</tt><tt id="link-23" class="py-name" targets="Class qm.fields.TextField=qm.fields.TextField-class.html"><a title="qm.fields.TextField" class="py-name" href="#" onclick="return doclink('link-23', 'TextField', 'link-23');">TextField</a></tt><tt class="py-op">(</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">            <tt id="link-24" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-24', 'name', 'link-18');">name</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"statistics_format"</tt><tt class="py-op">,</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">            <tt id="link-25" class="py-name"><a title="qm.test.web.web.LoadContextPage.title
+qm.test.web.web.LoadExpectationsPage.title
+qm.test.web.web.LoadResultsPage.title" class="py-name" href="#" onclick="return doclink('link-25', 'title', 'link-19');">title</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"Statistics Format"</tt><tt class="py-op">,</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">            <tt class="py-name">verbatim</tt> <tt class="py-op">=</tt> <tt class="py-string">"true"</tt><tt class="py-op">,</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">            <tt class="py-name">multiline</tt> <tt class="py-op">=</tt> <tt class="py-string">"true"</tt><tt class="py-op">,</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">            <tt id="link-26" class="py-name"><a title="qm.dist.command.build_extensions.build_extensions.description
+qm.dist.command.install_extensions.install_extensions.description" class="py-name" href="#" onclick="return doclink('link-26', 'description', 'link-20');">description</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"""The format string used to display statistics.</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-string">            The format string is an ordinary Python format string.</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"><tt class="py-string">            The following fill-ins are available:</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"><tt class="py-string">            'TOTAL' -- The total number of tests.</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"><tt class="py-string">            'EXPECTED' -- The total number of tests that had an</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"><tt class="py-string">            expected outcome.</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line"><tt class="py-string">            'EXPECTED_PERCENT' -- The percentage of tests with</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"><tt class="py-string">            expected outcomes.</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"><tt class="py-string">            'UNEXPECTED' -- The total number of tests that had an </tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"><tt class="py-string">            unexpected outcome.</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line"><tt class="py-string">            For each outcome 'O', there are additional fill-ins:</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line"><tt class="py-string">            'O' -- The total number of tests with outcome 'O'.</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line"><tt class="py-string">            </tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line"><tt class="py-string">            'O_PERCENT' -- The percentage of tests with outcome 'O' to</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line"><tt class="py-string">            total tests, as a floating point value.</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line"><tt class="py-string">            'O_UNEXPECTED' -- The total number of tests with an</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line"><tt class="py-string">            unexpected outcome of 'O'.</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line"><tt class="py-string"></tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line"><tt class="py-string">            'O_UNEXEPECTED_PERCENT' -- The ratio of tests without an</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line"><tt class="py-string">            unexpected outcome of 'O' to total tests, as a floating</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"><tt class="py-string">            point value."""</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">        <tt class="py-op">]</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">     </tt>
+<a name="TextResultStream.__init__"></a><div id="TextResultStream.__init__-def"><a name="L122"></a><tt class="py-lineno">122</tt> <a class="py-toggle" href="#" id="TextResultStream.__init__-toggle" onclick="return toggle('TextResultStream.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">arguments</tt> <tt class="py-op">=</tt> <tt id="link-27" class="py-name" targets="Variable qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#None"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-27', 'None', 'link-27');">None</a></tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">args</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream.__init__-expanded"><a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">        <tt class="py-docstring">"""Construct a 'TextResultStream'.</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"><tt class="py-docstring">        'args' -- As for 'Extension.__init__'."""</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">        <tt class="py-comment"># Initialize the base class.</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">        <tt class="py-name">super</tt><tt class="py-op">(</tt><tt id="link-28" class="py-name" targets="Class qm.test.classes.text_result_stream.TextResultStream=qm.test.classes.text_result_stream.TextResultStream-class.html"><a title="qm.test.classes.text_result_stream.TextResultStream" class="py-name" href="#" onclick="return doclink('link-28', 'TextResultStream', 'link-28');">TextResultStream</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-29" class="py-name" targets="Method qm.attachment.Attachment.__init__()=qm.attachment.Attachment-class.html#__init__,Method qm.attachment.FileAttachmentStore.__init__()=qm.attachment.FileAttachmentStore-class.html#__init__,Method qm.attachment.TemporaryAttachmentStore.__init__()=qm.attachment.TemporaryAttachmentStore-class.html#__init__,Method qm.cmdline.CommandParser.__init__()=qm.cmdline.CommandParser-class.html#__init__,Method qm.common.PythonException.__init__()=qm.common.PythonException-class.html#__init__,Method qm.common.QMException.__init__()=qm.common.QMException-class.html#__init__,Method qm.common.RcConfiguration.__init__()=qm.common.RcConfiguration-class.html#__init__,Method qm.db.Connection.__init__()=qm.db.Connection-class.html#__init__,Method qm.diagnostic.DiagnosticSet.__init__()=qm.diagnostic.DiagnosticSet-class.html#__init__,Method qm.dist.distribution.Distribution.__init__()=qm.dist.distribution.Distribution-class.html#__init__,Method qm.executable.Filter.__init__()=qm.executable.Filter-class.html#__init__,Method qm.executable.TimeoutExecutable.__init__()=qm.executable.TimeoutExecutable-class.html#__init__,Method qm.executable.TimeoutExecutable.__init__()=qm.executable.TimeoutExecutable-class.html#__init__,Method qm.extension.Extension.Type.__init__()=qm.extension.Extension.Type-class.html#__init__,Method qm.extension.Extension.__init__()=qm.extension.Extension-class.html#__init__,Method qm.external.DocumentTemplate.DT_If.If.__init__()=qm.external.DocumentTemplate.DT_If.If-class.html#__init__,Method qm.external.DocumentTemplate.DT_If.Unless.__init__()=qm.external.DocumentTemplate.DT_If.Unless-class.html#__init__,Method qm.external.DocumentTemplate.DT_In.InClass.__init__()=qm.external.DocumentTemplate.DT_In.InClass-class.html#__init__,Method qm.external.DocumentTemplate.DT_InSV.sequence_variables.__init__()=qm.external.DocumentTemplate.DT_InSV.sequence_variables-class.html#__init__,Method qm.external.DocumentTemplate.DT_Let.Let.__init__()=qm.external.DocumentTemplate.DT_Let.Let-class.html#__init__,Method qm.external.DocumentTemplate.DT_Raise.Raise.__init__()=qm.external.DocumentTemplate.DT_Raise.Raise-class.html#__init__,Method qm.external.DocumentTemplate.DT_Return.DTReturn.__init__()=qm.external.DocumentTemplate.DT_Return.DTReturn-class.html#__init__,Method qm.external.DocumentTemplate.DT_Return.ReturnTag.__init__()=qm.external.DocumentTemplate.DT_Return.ReturnTag-class.html#__init__,Method qm.external.DocumentTemplate.DT_String.FileMixin.__init__()=qm.external.DocumentTemplate.DT_String.FileMixin-class.html#__init__,Method qm.external.DocumentTemplate.DT_String.String.__init__()=qm.external.DocumentTemplate.DT_String.String-class.html#__init__,Method qm.external.DocumentTemplate.DT_Try.Try.__init__()=qm.external.DocumentTemplate.DT_Try.Try-class.html#__init__,Method qm.external.DocumentTemplate.DT_Var.Call.__init__()=qm.external.DocumentTemplate.DT_Var.Call-class.html#__init__,Method qm.external.DocumentTemplate.DT_Var.Comment.__init__()=qm.external.DocumentTemplate.DT_Var.Comment-class.html#__init__,Method qm.external.DocumentTemplate.DT_Var.Var.__init__()=qm.external.DocumentTemplate.DT_Var.Var-class.html#__init__,Method qm.external.DocumentTemplate.DT_With.With.__init__()=qm.external.DocumentTemplate.DT_With.With-class.html#__init__,Method qm.external.DocumentTemplate.VSEval.Eval.__init__()=qm.external.DocumentTemplate.VSEval.Eval-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.DictInstance.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.DictInstance-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping-class.html#__init__,Method qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.__init__()=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#__init__,Method qm.fields.AttachmentField.__init__()=qm.fields.AttachmentField-class.html#__init__,Method qm.fields.BooleanField.__init__()=qm.fields.BooleanField-class.html#__init__,Method qm.fields.DictionaryField.__init__()=qm.fields.DictionaryField-class.html#__init__,Method qm.fields.EnumerationField.__init__()=qm.fields.EnumerationField-class.html#__init__,Method qm.fields.Field.__init__()=qm.fields.Field-class.html#__init__,Method qm.fields.IntegerField.__init__()=qm.fields.IntegerField-class.html#__init__,Method qm.fields.PythonField.__init__()=qm.fields.PythonField-class.html#__init__,Method qm.fields.SetField.__init__()=qm.fields.SetField-class.html#__init__,Method qm.fields.TextField.__init__()=qm.fields.TextField-class.html#__init__,Method qm.fields.TimeField.__init__()=qm.fields.TimeField-class.html#__init__,Method qm.fields.TupleField.__init__()=qm.fields.TupleField-class.html#__init__,Method qm.fields.UploadAttachmentPage.__init__()=qm.fields.UploadAttachmentPage-class.html#__init__,Method qm.host.Host.__init__()=qm.host.Host-class.html#__init__,Method qm.host.Host.__init__()=qm.host.Host-class.html#__init__,Method qm.label.Label.__init__()=qm.label.Label-class.html#__init__,Method qm.platform_unix.SignalException.__init__()=qm.platform_unix.SignalException-class.html#__init__,Method qm.platform_win32.SignalException.__init__()=qm.platform_win32.SignalException-class.html#__init__,Method qm.structured_text.HtmlFormatter.__init__()=qm.structured_text.HtmlFormatter-class.html#__init__,Method qm.structured_text.StructuredTextProcessor.__init__()=qm.structured_text.StructuredTextProcessor-class.html#__init__,Method qm.structured_text.TextFormatter.__init__()=qm.structured_text.TextFormatter-class.html#__init__,Method qm.temporary_directory.TemporaryDirectory.__init__()=qm.temporary_directory.TemporaryDirectory-class.html#__init__,Method qm.test.base.CouldNotLoadExtensionError.__init__()=qm.test.base.CouldNotLoadExtensionError-class.html#__init__,Method qm.test.classes.compilation_test_database.CompilationTestDatabase.__init__()=qm.test.classes.compilation_test_database.CompilationTestDatabase-class.html#__init__,Method qm.test.classes.compiler.Compiler.__init__()=qm.test.classes.compiler.Compiler-class.html#__init__,Method qm.test.classes.compiler.Diagnostic.__init__()=qm.test.classes.compiler.Diagnostic-class.html#__init__,Method qm.test.classes.compiler.SourcePosition.__init__()=qm.test.classes.compiler.SourcePosition-class.html#__init__,Method qm.test.classes.compiler_test.CompilationStep.__init__()=qm.test.classes.compiler_test.CompilationStep-class.html#__init__,Method qm.test.classes.dejagnu_stream.DejaGNUReader.__init__()=qm.test.classes.dejagnu_stream.DejaGNUReader-class.html#__init__,Method qm.test.classes.dejagnu_stream.DejaGNUStream.__init__()=qm.test.classes.dejagnu_stream.DejaGNUStream-class.html#__init__,Method qm.test.classes.dir_run_database.DirRunDatabase.__init__()=qm.test.classes.dir_run_database.DirRunDatabase-class.html#__init__,Method qm.test.classes.file.SubstitutionField.__init__()=qm.test.classes.file.SubstitutionField-class.html#__init__,Method qm.test.classes.mount_database.MountDatabase.MountedSuite.__init__()=qm.test.classes.mount_database.MountDatabase.MountedSuite-class.html#__init__,Method qm.test.classes.mount_database.MountDatabase.__init__()=qm.test.classes.mount_database.MountDatabase-class.html#__init__,Method qm.test.classes.pickle_result_stream.PickleResultReader.__init__()=qm.test.classes.pickle_result_stream.PickleResultReader-class.html#__init__,Method qm.test.classes.pickle_result_stream.PickleResultStream.__init__()=qm.test.classes.pickle_result_stream.PickleResultStream-class.html#__init__,Method qm.test.classes.previous_testrun.PreviousTestRun.__init__()=qm.test.classes.previous_testrun.PreviousTestRun-class.html#__init__,Method qm.test.classes.process_target.ProcessTarget.__init__()=qm.test.classes.process_target.ProcessTarget-class.html#__init__,Method qm.test.classes.rsh_target.RSHTarget.__init__()=qm.test.classes.rsh_target.RSHTarget-class.html#__init__,Method qm.test.classes.serial_target.SerialTarget.__init__()=qm.test.classes.serial_target.SerialTarget-class.html#__init__,Method qm.test.classes.sql_result_stream.SQLResultReader.__init__()=qm.test.classes.sql_result_stream.SQLResultReader-class.html#__init__,Method qm.test.classes.sql_result_stream.SQLResultStream.__init__()=qm.test.classes.sql_result_stream.SQLResultStream-class.html#__init__,Method qm.test.classes.sql_result_stream._Buffer.__init__()=qm.test.classes.sql_result_stream._Buffer-class.html#__init__,Method qm.test.classes.sql_result_stream._SQLConnected.__init__()=qm.test.classes.sql_result_stream._SQLConnected-class.html#__init__,Method qm.test.classes.tet_stream.TETStream.__init__()=qm.test.classes.tet_stream.TETStream-class.html#__init__,Method qm.test.classes.text_result_stream.TextResultStream.__init__()=qm.test.classes.text_result_stream.TextResultStream-class.html#__init__,Method qm.test.classes.thread_target.LocalThread.__init__()=qm.test.classes.thread_target.LocalThread-class.html#__init__,Method qm.test.classes.thread_target.ThreadTarget.__init__()=qm.test.classes.thread_target.ThreadTarget-class.html#__init__,Method qm.test.classes.xml_database.XMLDatabase.__init__()=qm.test.classes.xml_database.XMLDatabase-class.html#__init__,Method qm.test.classes.xml_expectation_database.XMLExpectationDatabase.__init__()=qm.test.classes.xml_expectation_database.XMLExpectationDatabase-class.html#__init__,Method qm.test.classes.xml_result_stream.XMLResultReader.__init__()=qm.test.classes.xml_result_stream.XMLResultReader-class.html#__init__,Method qm.test.classes.xml_result_stream.XMLResultStream.__init__()=qm.test.classes.xml_result_stream.XMLResultStream-class.html#__init__,Method qm.test.cmdline.QMTest.__init__()=qm.test.cmdline.QMTest-class.html#__init__,Method qm.test.command_thread.CommandThread.__init__()=qm.test.command_thread.CommandThread-class.html#__init__,Method qm.test.context.Context.__init__()=qm.test.context.Context-class.html#__init__,Method qm.test.context.ContextException.__init__()=qm.test.context.ContextException-class.html#__init__,Method qm.test.database.Database.__init__()=qm.test.database.Database-class.html#__init__,Method qm.test.database.ItemDescriptor.__init__()=qm.test.database.ItemDescriptor-class.html#__init__,Method qm.test.database.NoSuchItemError.__init__()=qm.test.database.NoSuchItemError-class.html#__init__,Method qm.test.database.NoSuchResourceError.__init__()=qm.test.database.NoSuchResourceError-class.html#__init__,Method qm.test.database.NoSuchSuiteError.__init__()=qm.test.database.NoSuchSuiteError-class.html#__init__,Method qm.test.database.NoSuchTestError.__init__()=qm.test.database.NoSuchTestError-class.html#__init__,Method qm.test.database.ResourceDescriptor.__init__()=qm.test.database.ResourceDescriptor-class.html#__init__,Method qm.test.database.TestDescriptor.__init__()=qm.test.database.TestDescriptor-class.html#__init__,Method qm.test.directory_suite.DirectorySuite.__init__()=qm.test.directory_suite.DirectorySuite-class.html#__init__,Method qm.test.execution_engine.ExecutionEngine.__TestStatus.__init__()=qm.test.execution_engine.ExecutionEngine.__TestStatus-class.html#__init__,Method qm.test.execution_engine.ExecutionEngine.__init__()=qm.test.execution_engine.ExecutionEngine-class.html#__init__,Method qm.test.execution_thread.ExecutionThread.__init__()=qm.test.execution_thread.ExecutionThread-class.html#__init__,Method qm.test.file_database.ExtensionDatabase.__init__()=qm.test.file_database.ExtensionDatabase-class.html#__init__,Method qm.test.file_result_reader.FileResultReader.__init__()=qm.test.file_result_reader.FileResultReader-class.html#__init__,Method qm.test.file_result_stream.FileResultStream.__init__()=qm.test.file_result_stream.FileResultStream-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.ImplicitSuite.__init__()=qm.test.parameter_database.ParameterDatabase.ImplicitSuite-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.ParameterSuite.__init__()=qm.test.parameter_database.ParameterDatabase.ParameterSuite-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.WrapperSuite.__init__()=qm.test.parameter_database.ParameterDatabase.WrapperSuite-class.html#__init__,Method qm.test.parameter_database.ParameterDatabase.__init__()=qm.test.parameter_database.ParameterDatabase-class.html#__init__,Method qm.test.reader_test_run.ReaderTestRun.__init__()=qm.test.reader_test_run.ReaderTestRun-class.html#__init__,Method qm.test.report.ReportGenerator.__init__()=qm.test.report.ReportGenerator-class.html#__init__,Method qm.test.result.Result.__init__()=qm.test.result.Result-class.html#__init__,Method qm.test.result_reader.ResultReader.__init__()=qm.test.result_reader.ResultReader-class.html#__init__,Method qm.test.result_stream.ResultStream.__init__()=qm.test.result_stream.ResultStream-class.html#__init__,Method qm.test.runnable.Runnable.__init__()=qm.test.runnable.Runnable-class.html#__init__,Method qm.test.suite.Suite.__init__()=qm.test.suite.Suite-class.html#__init__,Method qm.test.target.Target.__ResourceSetUpException.__init__()=qm.test.target.Target.__ResourceSetUpException-class.html#__init__,Method qm.test.target.Target.__init__()=qm.test.target.Target-class.html#__init__,Method qm.test.test.Test.OutcomeField.__init__()=qm.test.test.Test.OutcomeField-class.html#__init__,Method qm.test.test.Test.OutcomeField.__init__()=qm.test.test.Test.OutcomeField-class.html#__init__,Method qm.test.web.web.ContextPage.__init__()=qm.test.web.web.ContextPage-class.html#__init__,Method qm.test.web.web.DefaultDtmlPage.__init__()=qm.test.web.web.DefaultDtmlPage-class.html#__init__,Method qm.test.web.web.DirPage.__init__()=qm.test.web.web.DirPage-class.html#__init__,Method qm.test.web.web.DirReportPage.__init__()=qm.test.web.web.DirReportPage-class.html#__init__,Method qm.test.web.web.Item.__init__()=qm.test.web.web.Item-class.html#__init__,Method qm.test.web.web.LoadContextPage.__init__()=qm.test.web.web.LoadContextPage-class.html#__init__,Method qm.test.web.web.LoadExpectationsPage.__init__()=qm.test.web.web.LoadExpectationsPage-class.html#__init__,Method qm.test.web.web.LoadResultsPage.__init__()=qm.test.web.web.LoadResultsPage-class.html#__init__,Method qm.test.web.web.NewItemPage.__init__()=qm.test.web.web.NewItemPage-class.html#__init__,Method qm.test.web.web.NewSuitePage.__init__()=qm.test.web.web.NewSuitePage-class.html#__init__,Method qm.test.web.web.QMTestPage.__init__()=qm.test.web.web.QMTestPage-class.html#__init__,Method qm.test.web.web.QMTestReportPage.__init__()=qm.test.web.web.QMTestReportPage-class.html#__init__,Method qm.test.web.web.QMTestServer.__init__()=qm.test.web.web.QMTestServer-class.html#__init__,Method qm.test.web.web.ResultPage.__init__()=qm.test.web.web.ResultPage-class.html#__init__,Method qm.test.web.web.SetExpectationPage.__init__()=qm.test.web.web.SetExpectationPage-class.html#__init__,Method qm.test.web.web.ShowItemPage.__init__()=qm.test.web.web.ShowItemPage-class.html#__init__,Method qm.test.web.web.ShowItemReportPage.__init__()=qm.test.web.web.ShowItemReportPage-class.html#__init__,Method qm.test.web.web.ShowSuitePage.__init__()=qm.test.web.web.ShowSuitePage-class.html#__init__,Method qm.test.web.web.StorageResultsStream.__init__()=qm.test.web.web.StorageResultsStream-class.html#__init__,Method qm.test.web.web.TestResultsPage.__init__()=qm.test.web.web.TestResultsPage-class.html#__init__,Method qm.trace.Tracer.__init__()=qm.trace.Tracer-class.html#__init__,Method qm.user.Group.__init__()=qm.user.Group-class.html#__init__,Method qm.user.User.__init__()=qm.user.User-class.html#__init__,Method qm.user.XmlDatabase.__init__()=qm.user.XmlDatabase-class.html#__init__,Method qm.user.XmlDatabaseAuthenticator.__init__()=qm.user.XmlDatabaseAuthenticator-class.html#__init__,Method qm.web.CGIWebRequest.__init__()=qm.web.CGIWebRequest-class.html#__init__,Method qm.web.DtmlPage.__init__()=qm.web.DtmlPage-class.html#__init__,Method qm.web.HttpRedirect.__init__()=qm.web.HttpRedirect-class.html#__init__,Method qm.web.Session.__init__()=qm.web.Session-class.html#__init__,Method qm.web.WebRequest.__init__()=qm.web.WebRequest-class.html#__init__,Method qm.web.WebServer.__init__()=qm.web.WebServer-class.html#__init__"><a title="qm.attachment.Attachment.__init__
+qm.attachment.FileAttachmentStore.__init__
+qm.attachment.TemporaryAttachmentStore.__init__
+qm.cmdline.CommandParser.__init__
+qm.common.PythonException.__init__
+qm.common.QMException.__init__
+qm.common.RcConfiguration.__init__
+qm.db.Connection.__init__
+qm.diagnostic.DiagnosticSet.__init__
+qm.dist.distribution.Distribution.__init__
+qm.executable.Filter.__init__
+qm.executable.TimeoutExecutable.__init__
+qm.executable.TimeoutExecutable.__init__
+qm.extension.Extension.Type.__init__
+qm.extension.Extension.__init__
+qm.external.DocumentTemplate.DT_If.If.__init__
+qm.external.DocumentTemplate.DT_If.Unless.__init__
+qm.external.DocumentTemplate.DT_In.InClass.__init__
+qm.external.DocumentTemplate.DT_InSV.sequence_variables.__init__
+qm.external.DocumentTemplate.DT_Let.Let.__init__
+qm.external.DocumentTemplate.DT_Raise.Raise.__init__
+qm.external.DocumentTemplate.DT_Return.DTReturn.__init__
+qm.external.DocumentTemplate.DT_Return.ReturnTag.__init__
+qm.external.DocumentTemplate.DT_String.FileMixin.__init__
+qm.external.DocumentTemplate.DT_String.String.__init__
+qm.external.DocumentTemplate.DT_Try.Try.__init__
+qm.external.DocumentTemplate.DT_Var.Call.__init__
+qm.external.DocumentTemplate.DT_Var.Comment.__init__
+qm.external.DocumentTemplate.DT_Var.Var.__init__
+qm.external.DocumentTemplate.DT_With.With.__init__
+qm.external.DocumentTemplate.VSEval.Eval.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.DictInstance.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.__init__
+qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.__init__
+qm.fields.AttachmentField.__init__
+qm.fields.BooleanField.__init__
+qm.fields.DictionaryField.__init__
+qm.fields.EnumerationField.__init__
+qm.fields.Field.__init__
+qm.fields.IntegerField.__init__
+qm.fields.PythonField.__init__
+qm.fields.SetField.__init__
+qm.fields.TextField.__init__
+qm.fields.TimeField.__init__
+qm.fields.TupleField.__init__
+qm.fields.UploadAttachmentPage.__init__
+qm.host.Host.__init__
+qm.host.Host.__init__
+qm.label.Label.__init__
+qm.platform_unix.SignalException.__init__
+qm.platform_win32.SignalException.__init__
+qm.structured_text.HtmlFormatter.__init__
+qm.structured_text.StructuredTextProcessor.__init__
+qm.structured_text.TextFormatter.__init__
+qm.temporary_directory.TemporaryDirectory.__init__
+qm.test.base.CouldNotLoadExtensionError.__init__
+qm.test.classes.compilation_test_database.CompilationTestDatabase.__init__
+qm.test.classes.compiler.Compiler.__init__
+qm.test.classes.compiler.Diagnostic.__init__
+qm.test.classes.compiler.SourcePosition.__init__
+qm.test.classes.compiler_test.CompilationStep.__init__
+qm.test.classes.dejagnu_stream.DejaGNUReader.__init__
+qm.test.classes.dejagnu_stream.DejaGNUStream.__init__
+qm.test.classes.dir_run_database.DirRunDatabase.__init__
+qm.test.classes.file.SubstitutionField.__init__
+qm.test.classes.mount_database.MountDatabase.MountedSuite.__init__
+qm.test.classes.mount_database.MountDatabase.__init__
+qm.test.classes.pickle_result_stream.PickleResultReader.__init__
+qm.test.classes.pickle_result_stream.PickleResultStream.__init__
+qm.test.classes.previous_testrun.PreviousTestRun.__init__
+qm.test.classes.process_target.ProcessTarget.__init__
+qm.test.classes.rsh_target.RSHTarget.__init__
+qm.test.classes.serial_target.SerialTarget.__init__
+qm.test.classes.sql_result_stream.SQLResultReader.__init__
+qm.test.classes.sql_result_stream.SQLResultStream.__init__
+qm.test.classes.sql_result_stream._Buffer.__init__
+qm.test.classes.sql_result_stream._SQLConnected.__init__
+qm.test.classes.tet_stream.TETStream.__init__
+qm.test.classes.text_result_stream.TextResultStream.__init__
+qm.test.classes.thread_target.LocalThread.__init__
+qm.test.classes.thread_target.ThreadTarget.__init__
+qm.test.classes.xml_database.XMLDatabase.__init__
+qm.test.classes.xml_expectation_database.XMLExpectationDatabase.__init__
+qm.test.classes.xml_result_stream.XMLResultReader.__init__
+qm.test.classes.xml_result_stream.XMLResultStream.__init__
+qm.test.cmdline.QMTest.__init__
+qm.test.command_thread.CommandThread.__init__
+qm.test.context.Context.__init__
+qm.test.context.ContextException.__init__
+qm.test.database.Database.__init__
+qm.test.database.ItemDescriptor.__init__
+qm.test.database.NoSuchItemError.__init__
+qm.test.database.NoSuchResourceError.__init__
+qm.test.database.NoSuchSuiteError.__init__
+qm.test.database.NoSuchTestError.__init__
+qm.test.database.ResourceDescriptor.__init__
+qm.test.database.TestDescriptor.__init__
+qm.test.directory_suite.DirectorySuite.__init__
+qm.test.execution_engine.ExecutionEngine.__TestStatus.__init__
+qm.test.execution_engine.ExecutionEngine.__init__
+qm.test.execution_thread.ExecutionThread.__init__
+qm.test.file_database.ExtensionDatabase.__init__
+qm.test.file_result_reader.FileResultReader.__init__
+qm.test.file_result_stream.FileResultStream.__init__
+qm.test.parameter_database.ParameterDatabase.ImplicitSuite.__init__
+qm.test.parameter_database.ParameterDatabase.ParameterSuite.__init__
+qm.test.parameter_database.ParameterDatabase.WrapperSuite.__init__
+qm.test.parameter_database.ParameterDatabase.__init__
+qm.test.reader_test_run.ReaderTestRun.__init__
+qm.test.report.ReportGenerator.__init__
+qm.test.result.Result.__init__
+qm.test.result_reader.ResultReader.__init__
+qm.test.result_stream.ResultStream.__init__
+qm.test.runnable.Runnable.__init__
+qm.test.suite.Suite.__init__
+qm.test.target.Target.__ResourceSetUpException.__init__
+qm.test.target.Target.__init__
+qm.test.test.Test.OutcomeField.__init__
+qm.test.test.Test.OutcomeField.__init__
+qm.test.web.web.ContextPage.__init__
+qm.test.web.web.DefaultDtmlPage.__init__
+qm.test.web.web.DirPage.__init__
+qm.test.web.web.DirReportPage.__init__
+qm.test.web.web.Item.__init__
+qm.test.web.web.LoadContextPage.__init__
+qm.test.web.web.LoadExpectationsPage.__init__
+qm.test.web.web.LoadResultsPage.__init__
+qm.test.web.web.NewItemPage.__init__
+qm.test.web.web.NewSuitePage.__init__
+qm.test.web.web.QMTestPage.__init__
+qm.test.web.web.QMTestReportPage.__init__
+qm.test.web.web.QMTestServer.__init__
+qm.test.web.web.ResultPage.__init__
+qm.test.web.web.SetExpectationPage.__init__
+qm.test.web.web.ShowItemPage.__init__
+qm.test.web.web.ShowItemReportPage.__init__
+qm.test.web.web.ShowSuitePage.__init__
+qm.test.web.web.StorageResultsStream.__init__
+qm.test.web.web.TestResultsPage.__init__
+qm.trace.Tracer.__init__
+qm.user.Group.__init__
+qm.user.User.__init__
+qm.user.XmlDatabase.__init__
+qm.user.XmlDatabaseAuthenticator.__init__
+qm.web.CGIWebRequest.__init__
+qm.web.DtmlPage.__init__
+qm.web.HttpRedirect.__init__
+qm.web.Session.__init__
+qm.web.WebRequest.__init__
+qm.web.WebServer.__init__" class="py-name" href="#" onclick="return doclink('link-29', '__init__', 'link-29');">__init__</a></tt><tt class="py-op">(</tt><tt id="link-30" class="py-name"><a title="qm.extension.Extension.arguments
+qm.test.classes.command.ExecTest.arguments
+qm.test.classes.command.ExecTestBase.arguments
+qm.test.classes.command.ShellCommandTest.arguments
+qm.test.classes.command.ShellScriptTest.arguments
+qm.test.classes.dejagnu_stream.DejaGNUReader.arguments
+qm.test.classes.dejagnu_stream.DejaGNUStream.arguments
+qm.test.classes.dejagnu_test.DejaGNUTest.arguments
+qm.test.classes.explicit_suite.ExplicitSuite.arguments
+qm.test.classes.file.FileContentsTest.arguments
+qm.test.classes.pickle_result_stream.PickleResultStream.arguments
+qm.test.classes.process_target.ProcessTarget.arguments
+qm.test.classes.python.BaseExceptionTest.arguments
+qm.test.classes.python.ExceptionTest.arguments
+qm.test.classes.python.ExecTest.arguments
+qm.test.classes.python.StringExceptionTest.arguments
+qm.test.classes.rsh_target.RSHTarget.arguments
+qm.test.classes.sql_result_stream.SQLResultReader.arguments
+qm.test.classes.sql_result_stream._SQLConnected.arguments
+qm.test.classes.temporary.TempDirectoryResource.arguments
+qm.test.classes.text_result_stream.TextResultStream.arguments
+qm.test.classes.thread_target.ThreadTarget.arguments
+qm.test.database.Database.arguments
+qm.test.file_database.ExtensionDatabase.arguments
+qm.test.file_result_reader.FileResultReader.arguments
+qm.test.file_result_stream.FileResultStream.arguments
+qm.test.runnable.Runnable.arguments
+qm.test.suite.Suite.arguments
+qm.test.target.Target.arguments
+qm.test.test.Test.arguments" class="py-name" href="#" onclick="return doclink('link-30', 'arguments', 'link-14');">arguments</a></tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt id="link-31" class="py-name" targets="Variable qm.test.classes.compilation_test.ExecutableTest.args=qm.test.classes.compilation_test.ExecutableTest-class.html#args"><a title="qm.test.classes.compilation_test.ExecutableTest.args" class="py-name" href="#" onclick="return doclink('link-31', 'args', 'link-31');">args</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line"> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">        <tt class="py-comment"># Pick a default format.</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">:</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">=</tt> <tt class="py-string">"batch"</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">            <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-32" class="py-name" targets="Module qm.test.classes.file=qm.test.classes.file-module.html,Variable qm.test.file_result_reader.FileResultReader.file=qm.test.file_result_reader.FileResultReader-class.html#file,Variable qm.test.file_result_stream.FileResultStream.file=qm.test.file_result_stream.FileResultStream-class.html#file"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-32', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">isatty</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">                    <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">=</tt> <tt class="py-string">"brief"</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">                <tt class="py-keyword">pass</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">             </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__first_test</tt> <tt class="py-op">=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">        <tt class="py-comment"># Keep track of tests and resources that had unexpected outcomes.</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_test_results</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_resource_results</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">        <tt class="py-comment"># And how many tests were run.</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__num_tests</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line">        <tt class="py-comment"># And how many tests there are with each outcome.</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__outcome_counts</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">o</tt> <tt class="py-keyword">in</tt> <tt id="link-33" class="py-name" targets="Class qm.test.result.Result=qm.test.result.Result-class.html"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-33', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-34" class="py-name" targets="Variable qm.test.result.Result.outcomes=qm.test.result.Result-class.html#outcomes,Variable qm.test.web.web.DefaultDtmlPage.outcomes=qm.test.web.web.DefaultDtmlPage-class.html#outcomes"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-34', 'outcomes', 'link-34');">outcomes</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__outcome_counts</tt><tt class="py-op">[</tt><tt class="py-name">o</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">        <tt class="py-comment"># And how many unexpected tests there are with each outcome.</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_outcome_counts</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">o</tt> <tt class="py-keyword">in</tt> <tt id="link-35" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-35', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-36" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-36', 'outcomes', 'link-34');">outcomes</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_outcome_counts</tt><tt class="py-op">[</tt><tt class="py-name">o</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+</div><a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line"> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line"> </tt>
+<a name="TextResultStream.WriteResult"></a><div id="TextResultStream.WriteResult-def"><a name="L155"></a><tt class="py-lineno">155</tt> <a class="py-toggle" href="#" id="TextResultStream.WriteResult-toggle" onclick="return toggle('TextResultStream.WriteResult');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#WriteResult">WriteResult</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">result</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream.WriteResult-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream.WriteResult-expanded"><a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">        <tt class="py-docstring">"""Output a test or resource result.</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line"><tt class="py-docstring">        'result' -- A 'Result'."""</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line"> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">        <tt class="py-comment"># Record the results as they are received.</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-37" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-37', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-38" class="py-name" targets="Method qm.test.result.Result.GetKind()=qm.test.result.Result-class.html#GetKind"><a title="qm.test.result.Result.GetKind" class="py-name" href="#" onclick="return doclink('link-38', 'GetKind', 'link-38');">GetKind</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt id="link-39" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-39', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-40" class="py-name" targets="Variable qm.test.database.Database.TEST=qm.test.database.Database-class.html#TEST,Variable qm.test.result.Result.TEST=qm.test.result.Result-class.html#TEST"><a title="qm.test.database.Database.TEST
+qm.test.result.Result.TEST" class="py-name" href="#" onclick="return doclink('link-40', 'TEST', 'link-40');">TEST</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">            <tt class="py-comment"># Remember how many tests we have processed.</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__num_tests</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line">            <tt class="py-comment"># Increment the outcome count.</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">            <tt class="py-name">outcome</tt> <tt class="py-op">=</tt> <tt id="link-41" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-41', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-42" class="py-name" targets="Method qm.test.result.Result.GetOutcome()=qm.test.result.Result-class.html#GetOutcome"><a title="qm.test.result.Result.GetOutcome" class="py-name" href="#" onclick="return doclink('link-42', 'GetOutcome', 'link-42');">GetOutcome</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__outcome_counts</tt><tt class="py-op">[</tt><tt class="py-name">outcome</tt><tt class="py-op">]</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">            <tt class="py-comment"># Remember tests with unexpected results so that we can</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">            <tt class="py-comment"># display them at the end of the run.</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">            <tt class="py-name">test_id</tt> <tt class="py-op">=</tt> <tt id="link-43" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-43', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-44" class="py-name" targets="Method qm.test.database.ItemDescriptor.GetId()=qm.test.database.ItemDescriptor-class.html#GetId,Method qm.test.result.Result.GetId()=qm.test.result.Result-class.html#GetId,Method qm.test.runnable.Runnable.GetId()=qm.test.runnable.Runnable-class.html#GetId,Method qm.test.suite.Suite.GetId()=qm.test.suite.Suite-class.html#GetId,Method qm.user.Group.GetId()=qm.user.Group-class.html#GetId,Method qm.user.User.GetId()=qm.user.User-class.html#GetId,Method qm.web.Session.GetId()=qm.web.Session-class.html#GetId"><a title="qm.test.database.ItemDescriptor.GetId
+qm.test.result.Result.GetId
+qm.test.runnable.Runnable.GetId
+qm.test.suite.Suite.GetId
+qm.user.Group.GetId
+qm.user.User.GetId
+qm.web.Session.GetId" class="py-name" href="#" onclick="return doclink('link-44', 'GetId', 'link-44');">GetId</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">            <tt class="py-name">expected_outcome</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-45" class="py-name" targets="Method qm.test.result_stream.ResultStream._GetExpectedOutcome()=qm.test.result_stream.ResultStream-class.html#_GetExpectedOutcome"><a title="qm.test.result_stream.ResultStream._GetExpectedOutcome" class="py-name" href="#" onclick="return doclink('link-45', '_GetExpectedOutcome', 'link-45');">_GetExpectedOutcome</a></tt><tt class="py-op">(</tt><tt id="link-46" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-46', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-47" class="py-name"><a title="qm.test.database.ItemDescriptor.GetId
+qm.test.result.Result.GetId
+qm.test.runnable.Runnable.GetId
+qm.test.suite.Suite.GetId
+qm.user.Group.GetId
+qm.user.User.GetId
+qm.web.Session.GetId" class="py-name" href="#" onclick="return doclink('link-47', 'GetId', 'link-44');">GetId</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">!=</tt> <tt class="py-string">"stats"</tt> <tt class="py-keyword">and</tt> <tt class="py-name">outcome</tt> <tt class="py-op">!=</tt> <tt class="py-name">expected_outcome</tt><tt class="py-op">:</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_outcome_counts</tt><tt class="py-op">[</tt><tt class="py-name">outcome</tt><tt class="py-op">]</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_test_results</tt><tt class="py-op">.</tt><tt id="link-48" class="py-name" targets="Method qm.user.Group.append()=qm.user.Group-class.html#append"><a title="qm.user.Group.append" class="py-name" href="#" onclick="return doclink('link-48', 'append', 'link-48');">append</a></tt><tt class="py-op">(</tt><tt id="link-49" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-49', 'result', 'link-9');">result</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">!=</tt> <tt class="py-string">"stats"</tt> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">                <tt class="py-keyword">and</tt> <tt id="link-50" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-50', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-51" class="py-name"><a title="qm.test.result.Result.GetOutcome" class="py-name" href="#" onclick="return doclink('link-51', 'GetOutcome', 'link-42');">GetOutcome</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt id="link-52" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-52', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-53" class="py-name" targets="Variable qm.test.classes.dejagnu_test.DejaGNUTest.PASS=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#PASS,Variable qm.test.classes.tet_stream.TETStream.PASS=qm.test.classes.tet_stream.TETStream-class.html#PASS,Variable qm.test.result.Result.PASS=qm.test.result.Result-class.html#PASS"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.PASS
+qm.test.classes.tet_stream.TETStream.PASS
+qm.test.result.Result.PASS" class="py-name" href="#" onclick="return doclink('link-53', 'PASS', 'link-53');">PASS</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_resource_results</tt><tt class="py-op">.</tt><tt id="link-54" class="py-name"><a title="qm.user.Group.append" class="py-name" href="#" onclick="return doclink('link-54', 'append', 'link-48');">append</a></tt><tt class="py-op">(</tt><tt id="link-55" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-55', 'result', 'link-9');">result</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line">             </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line">        <tt class="py-comment"># In some modes, no results are displayed as the tests are run.</tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">==</tt> <tt class="py-string">"batch"</tt> <tt class="py-keyword">or</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">==</tt> <tt class="py-string">"stats"</tt><tt class="py-op">:</tt> </tt>
+<a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> </tt>
+<a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line">         </tt>
+<a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line">        <tt class="py-comment"># Display a heading before the first result.</tt> </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__first_test</tt><tt class="py-op">:</tt> </tt>
+<a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-56" class="py-name" targets="Method qm.test.classes.text_result_stream.TextResultStream._DisplayHeading()=qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayHeading"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayHeading" class="py-name" href="#" onclick="return doclink('link-56', '_DisplayHeading', 'link-56');">_DisplayHeading</a></tt><tt class="py-op">(</tt><tt class="py-string">"TEST RESULTS"</tt><tt class="py-op">)</tt> </tt>
+<a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__first_test</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line">         </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">        <tt class="py-comment"># Display the result.</tt> </tt>
+<a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-57" class="py-name" targets="Method qm.test.classes.text_result_stream.TextResultStream._DisplayResult()=qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayResult"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayResult" class="py-name" href="#" onclick="return doclink('link-57', '_DisplayResult', 'link-57');">_DisplayResult</a></tt><tt class="py-op">(</tt><tt id="link-58" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-58', 'result', 'link-9');">result</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">)</tt> </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line"> </tt>
+<a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line">        <tt class="py-comment"># Display annotations associated with the test.</tt> </tt>
+<a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">==</tt> <tt class="py-string">"full"</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line">            <tt class="py-keyword">or</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">==</tt> <tt class="py-string">"brief"</tt> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line">                <tt class="py-keyword">and</tt> <tt id="link-59" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-59', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-60" class="py-name"><a title="qm.test.result.Result.GetOutcome" class="py-name" href="#" onclick="return doclink('link-60', 'GetOutcome', 'link-42');">GetOutcome</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt id="link-61" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-61', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-62" class="py-name"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.PASS
+qm.test.classes.tet_stream.TETStream.PASS
+qm.test.result.Result.PASS" class="py-name" href="#" onclick="return doclink('link-62', 'PASS', 'link-53');">PASS</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-63" class="py-name" targets="Method qm.test.classes.text_result_stream.TextResultStream._DisplayAnnotations()=qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayAnnotations"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayAnnotations" class="py-name" href="#" onclick="return doclink('link-63', '_DisplayAnnotations', 'link-63');">_DisplayAnnotations</a></tt><tt class="py-op">(</tt><tt id="link-64" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-64', 'result', 'link-9');">result</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line"> </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line"> </tt>
+<a name="TextResultStream.Summarize"></a><div id="TextResultStream.Summarize-def"><a name="L198"></a><tt class="py-lineno">198</tt> <a class="py-toggle" href="#" id="TextResultStream.Summarize-toggle" onclick="return toggle('TextResultStream.Summarize');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#Summarize">Summarize</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream.Summarize-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream.Summarize-expanded"><a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line">        <tt class="py-docstring">"""Output summary information about the results.</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line"><tt class="py-docstring">        When this method is called, the test run is complete.  Summary</tt> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line"><tt class="py-docstring">        information should be displayed for the user, if appropriate.</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line"><tt class="py-docstring">        Any finalization, such as the closing of open files, should</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line"><tt class="py-docstring">        also be performed at this point."""</tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line"> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">==</tt> <tt class="py-string">"batch"</tt><tt class="py-op">:</tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-65" class="py-name" targets="Method qm.test.classes.text_result_stream.TextResultStream._DisplayStatistics()=qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayStatistics"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayStatistics" class="py-name" href="#" onclick="return doclink('link-65', '_DisplayStatistics', 'link-65');">_DisplayStatistics</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line"> </tt>
+<a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line">        <tt class="py-comment"># Show results for tests with unexpected outcomes.</tt> </tt>
+<a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-keyword">in</tt> <tt class="py-op">(</tt><tt class="py-string">"full"</tt><tt class="py-op">,</tt> <tt class="py-string">"brief"</tt><tt class="py-op">,</tt> <tt class="py-string">"batch"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line">            <tt class="py-name">compare_ids</tt> <tt class="py-op">=</tt> <tt class="py-keyword">lambda</tt> <tt class="py-name">r1</tt><tt class="py-op">,</tt> <tt class="py-name">r2</tt><tt class="py-op">:</tt> <tt class="py-name">cmp</tt><tt class="py-op">(</tt><tt class="py-name">r1</tt><tt class="py-op">.</tt><tt id="link-66" class="py-name"><a title="qm.test.database.ItemDescriptor.GetId
+qm.test.result.Result.GetId
+qm.test.runnable.Runnable.GetId
+qm.test.suite.Suite.GetId
+qm.user.Group.GetId
+qm.user.User.GetId
+qm.web.Session.GetId" class="py-name" href="#" onclick="return doclink('link-66', 'GetId', 'link-44');">GetId</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">r2</tt><tt class="py-op">.</tt><tt id="link-67" class="py-name"><a title="qm.test.database.ItemDescriptor.GetId
+qm.test.result.Result.GetId
+qm.test.runnable.Runnable.GetId
+qm.test.suite.Suite.GetId
+qm.user.Group.GetId
+qm.user.User.GetId
+qm.web.Session.GetId" class="py-name" href="#" onclick="return doclink('link-67', 'GetId', 'link-44');">GetId</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line"> </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line">            <tt class="py-comment"># Sort test results by ID.</tt> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_test_results</tt><tt class="py-op">.</tt><tt id="link-68" class="py-name" targets="Variable qm.external.DocumentTemplate.DT_In.InClass.sort=qm.external.DocumentTemplate.DT_In.InClass-class.html#sort"><a title="qm.external.DocumentTemplate.DT_In.InClass.sort" class="py-name" href="#" onclick="return doclink('link-68', 'sort', 'link-68');">sort</a></tt><tt class="py-op">(</tt><tt class="py-name">compare_ids</tt><tt class="py-op">)</tt> </tt>
+<a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line">            <tt class="py-comment"># Print individual test results.</tt> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-69" class="py-name" targets="Variable qm.test.result_stream.ResultStream.expected_outcomes=qm.test.result_stream.ResultStream-class.html#expected_outcomes"><a title="qm.test.result_stream.ResultStream.expected_outcomes" class="py-name" href="#" onclick="return doclink('link-69', 'expected_outcomes', 'link-69');">expected_outcomes</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-70" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayHeading" class="py-name" href="#" onclick="return doclink('link-70', '_DisplayHeading', 'link-56');">_DisplayHeading</a></tt><tt class="py-op">(</tt><tt class="py-string">"TESTS WITH UNEXPECTED OUTCOMES"</tt><tt class="py-op">)</tt> </tt>
+<a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-71" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayHeading" class="py-name" href="#" onclick="return doclink('link-71', '_DisplayHeading', 'link-56');">_DisplayHeading</a></tt><tt class="py-op">(</tt><tt class="py-string">"TESTS THAT DID NOT PASS"</tt><tt class="py-op">)</tt> </tt>
+<a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-72" class="py-name" targets="Method qm.test.classes.text_result_stream.TextResultStream._SummarizeResults()=qm.test.classes.text_result_stream.TextResultStream-class.html#_SummarizeResults"><a title="qm.test.classes.text_result_stream.TextResultStream._SummarizeResults" class="py-name" href="#" onclick="return doclink('link-72', '_SummarizeResults', 'link-72');">_SummarizeResults</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_test_results</tt><tt class="py-op">)</tt> </tt>
+<a name="L221"></a><tt class="py-lineno">221</tt>  <tt class="py-line"> </tt>
+<a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_resource_results</tt><tt class="py-op">:</tt> </tt>
+<a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line">                <tt class="py-comment"># Sort resource results by ID.</tt> </tt>
+<a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_resource_results</tt><tt class="py-op">.</tt><tt id="link-73" class="py-name"><a title="qm.external.DocumentTemplate.DT_In.InClass.sort" class="py-name" href="#" onclick="return doclink('link-73', 'sort', 'link-68');">sort</a></tt><tt class="py-op">(</tt><tt class="py-name">compare_ids</tt><tt class="py-op">)</tt> </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line">                <tt class="py-comment"># Print individual resource results.</tt> </tt>
+<a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-74" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayHeading" class="py-name" href="#" onclick="return doclink('link-74', '_DisplayHeading', 'link-56');">_DisplayHeading</a></tt><tt class="py-op">(</tt><tt class="py-string">"RESOURCES THAT DID NOT PASS"</tt><tt class="py-op">)</tt> </tt>
+<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-75" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._SummarizeResults" class="py-name" href="#" onclick="return doclink('link-75', '_SummarizeResults', 'link-72');">_SummarizeResults</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_resource_results</tt><tt class="py-op">)</tt> </tt>
+<a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line"> </tt>
+<a name="L229"></a><tt class="py-lineno">229</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">!=</tt> <tt class="py-string">"batch"</tt><tt class="py-op">:</tt> </tt>
+<a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-76" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayStatistics" class="py-name" href="#" onclick="return doclink('link-76', '_DisplayStatistics', 'link-65');">_DisplayStatistics</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line">         </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line">        <tt class="py-comment"># Invoke the base class method.</tt> </tt>
+<a name="L233"></a><tt class="py-lineno">233</tt>  <tt class="py-line">        <tt class="py-name">super</tt><tt class="py-op">(</tt><tt id="link-77" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream" class="py-name" href="#" onclick="return doclink('link-77', 'TextResultStream', 'link-28');">TextResultStream</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-78" class="py-name" targets="Method qm.test.classes.dejagnu_stream.DejaGNUStream.Summarize()=qm.test.classes.dejagnu_stream.DejaGNUStream-class.html#Summarize,Method qm.test.classes.sql_result_stream.SQLResultStream.Summarize()=qm.test.classes.sql_result_stream.SQLResultStream-class.html#Summarize,Method qm.test.classes.tet_stream.TETStream.Summarize()=qm.test.classes.tet_stream.TETStream-class.html#Summarize,Method qm.test.classes.text_result_stream.TextResultStream.Summarize()=qm.test.classes.text_result_stream.TextResultStream-class.html#Summarize,Method qm.test.classes.xml_result_stream.XMLResultStream.Summarize()=qm.test.classes.xml_result_stream.XMLResultStream-class.html#Summarize,Method qm.test.result_stream.ResultStream.Summarize()=qm.test.result_stream.ResultStream-class.html#Summarize,Method qm.test.web.web.StorageResultsStream.Summarize()=qm.test.web.web.StorageResultsStream-class.html#Summarize"><a title="qm.test.classes.dejagnu_stream.DejaGNUStream.Summarize
+qm.test.classes.sql_result_stream.SQLResultStream.Summarize
+qm.test.classes.tet_stream.TETStream.Summarize
+qm.test.classes.text_result_stream.TextResultStream.Summarize
+qm.test.classes.xml_result_stream.XMLResultStream.Summarize
+qm.test.result_stream.ResultStream.Summarize
+qm.test.web.web.StorageResultsStream.Summarize" class="py-name" href="#" onclick="return doclink('link-78', 'Summarize', 'link-78');">Summarize</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line"> </tt>
+<a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line"> </tt>
+<a name="TextResultStream._DisplayStatistics"></a><div id="TextResultStream._DisplayStatistics-def"><a name="L236"></a><tt class="py-lineno">236</tt> <a class="py-toggle" href="#" id="TextResultStream._DisplayStatistics-toggle" onclick="return toggle('TextResultStream._DisplayStatistics');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayStatistics">_DisplayStatistics</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream._DisplayStatistics-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream._DisplayStatistics-expanded"><a name="L237"></a><tt class="py-lineno">237</tt>  <tt class="py-line">        <tt class="py-docstring">"""Write out statistical information about the results.</tt> </tt>
+<a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L239"></a><tt class="py-lineno">239</tt>  <tt class="py-line"><tt class="py-docstring">        Write out statistical information about the results."""</tt> </tt>
+<a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line"> </tt>
+<a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line">        <tt class="py-comment"># Summarize the test statistics.</tt> </tt>
+<a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">statistics_format</tt><tt class="py-op">:</tt> </tt>
+<a name="L243"></a><tt class="py-lineno">243</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-79" class="py-name" targets="Method qm.test.classes.text_result_stream.TextResultStream._FormatStatistics()=qm.test.classes.text_result_stream.TextResultStream-class.html#_FormatStatistics"><a title="qm.test.classes.text_result_stream.TextResultStream._FormatStatistics" class="py-name" href="#" onclick="return doclink('link-79', '_FormatStatistics', 'link-79');">_FormatStatistics</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">statistics_format</tt><tt class="py-op">)</tt> </tt>
+<a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line">        <tt class="py-keyword">elif</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-80" class="py-name"><a title="qm.test.result_stream.ResultStream.expected_outcomes" class="py-name" href="#" onclick="return doclink('link-80', 'expected_outcomes', 'link-69');">expected_outcomes</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-81" class="py-name" targets="Method qm.test.classes.text_result_stream.TextResultStream._SummarizeRelativeTestStats()=qm.test.classes.text_result_stream.TextResultStream-class.html#_SummarizeRelativeTestStats"><a title="qm.test.classes.text_result_stream.TextResultStream._SummarizeRelativeTestStats" class="py-name" href="#" onclick="return doclink('link-81', '_SummarizeRelativeTestStats', 'link-81');">_SummarizeRelativeTestStats</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L247"></a><tt class="py-lineno">247</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-82" class="py-name" targets="Method qm.test.classes.text_result_stream.TextResultStream._SummarizeTestStats()=qm.test.classes.text_result_stream.TextResultStream-class.html#_SummarizeTestStats"><a title="qm.test.classes.text_result_stream.TextResultStream._SummarizeTestStats" class="py-name" href="#" onclick="return doclink('link-82', '_SummarizeTestStats', 'link-82');">_SummarizeTestStats</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line"> </tt>
+<a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line"> </tt>
+<a name="TextResultStream._SummarizeTestStats"></a><div id="TextResultStream._SummarizeTestStats-def"><a name="L250"></a><tt class="py-lineno">250</tt> <a class="py-toggle" href="#" id="TextResultStream._SummarizeTestStats-toggle" onclick="return toggle('TextResultStream._SummarizeTestStats');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#_SummarizeTestStats">_SummarizeTestStats</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream._SummarizeTestStats-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream._SummarizeTestStats-expanded"><a name="L251"></a><tt class="py-lineno">251</tt>  <tt class="py-line">        <tt class="py-docstring">"""Generate statistics about the overall results."""</tt> </tt>
+<a name="L252"></a><tt class="py-lineno">252</tt>  <tt class="py-line"> </tt>
+<a name="L253"></a><tt class="py-lineno">253</tt>  <tt class="py-line">        <tt class="py-comment"># Print a header.</tt> </tt>
+<a name="L254"></a><tt class="py-lineno">254</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-83" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-83', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">"\n"</tt><tt class="py-op">)</tt> </tt>
+<a name="L255"></a><tt class="py-lineno">255</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-84" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayHeading" class="py-name" href="#" onclick="return doclink('link-84', '_DisplayHeading', 'link-56');">_DisplayHeading</a></tt><tt class="py-op">(</tt><tt class="py-string">"STATISTICS"</tt><tt class="py-op">)</tt> </tt>
+<a name="L256"></a><tt class="py-lineno">256</tt>  <tt class="py-line"> </tt>
+<a name="L257"></a><tt class="py-lineno">257</tt>  <tt class="py-line">        <tt class="py-comment"># Build the format string.  If there are no tests we do not</tt> </tt>
+<a name="L258"></a><tt class="py-lineno">258</tt>  <tt class="py-line">        <tt class="py-comment"># provide any output.</tt> </tt>
+<a name="L259"></a><tt class="py-lineno">259</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__num_tests</tt> <tt class="py-op">!=</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L260"></a><tt class="py-lineno">260</tt>  <tt class="py-line">            <tt class="py-comment"># Indicate the total number of tests.</tt> </tt>
+<a name="L261"></a><tt class="py-lineno">261</tt>  <tt class="py-line">            <tt class="py-name">format</tt> <tt class="py-op">=</tt> <tt class="py-string">"  %(TOTAL)6d        tests total\n"</tt> </tt>
+<a name="L262"></a><tt class="py-lineno">262</tt>  <tt class="py-line">            <tt class="py-comment"># Include a line for each outcome.</tt> </tt>
+<a name="L263"></a><tt class="py-lineno">263</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">o</tt> <tt class="py-keyword">in</tt> <tt id="link-85" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-85', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-86" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-86', 'outcomes', 'link-34');">outcomes</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L264"></a><tt class="py-lineno">264</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__outcome_counts</tt><tt class="py-op">[</tt><tt class="py-name">o</tt><tt class="py-op">]</tt> <tt class="py-op">!=</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L265"></a><tt class="py-lineno">265</tt>  <tt class="py-line">                    <tt class="py-name">format</tt> <tt class="py-op">+=</tt> <tt class="py-op">(</tt><tt class="py-string">"  %%(%s)6d (%%(%s)3.0f%%%%) tests %s\n"</tt> </tt>
+<a name="L266"></a><tt class="py-lineno">266</tt>  <tt class="py-line">                               <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">o</tt><tt class="py-op">,</tt> <tt class="py-name">o</tt> <tt class="py-op">+</tt> <tt class="py-string">"_PERCENT"</tt><tt class="py-op">,</tt> <tt class="py-name">o</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L267"></a><tt class="py-lineno">267</tt>  <tt class="py-line">            <tt class="py-name">format</tt> <tt class="py-op">+=</tt> <tt class="py-string">"\n"</tt> </tt>
+<a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L269"></a><tt class="py-lineno">269</tt>  <tt class="py-line">            <tt class="py-name">format</tt> <tt class="py-op">=</tt> <tt class="py-string">""</tt> </tt>
+<a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line"> </tt>
+<a name="L271"></a><tt class="py-lineno">271</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-87" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._FormatStatistics" class="py-name" href="#" onclick="return doclink('link-87', '_FormatStatistics', 'link-79');">_FormatStatistics</a></tt><tt class="py-op">(</tt><tt class="py-name">format</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L272"></a><tt class="py-lineno">272</tt>  <tt class="py-line"> </tt>
+<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">         </tt>
+<a name="TextResultStream._SummarizeRelativeTestStats"></a><div id="TextResultStream._SummarizeRelativeTestStats-def"><a name="L274"></a><tt class="py-lineno">274</tt> <a class="py-toggle" href="#" id="TextResultStream._SummarizeRelativeTestStats-toggle" onclick="return toggle('TextResultStream._SummarizeRelativeTestStats');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#_SummarizeRelativeTestStats">_SummarizeRelativeTestStats</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream._SummarizeRelativeTestStats-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream._SummarizeRelativeTestStats-expanded"><a name="L275"></a><tt class="py-lineno">275</tt>  <tt class="py-line">        <tt class="py-docstring">"""Generate statistics showing results relative to expectations."""</tt> </tt>
+<a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line"> </tt>
+<a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line">        <tt class="py-comment"># Print a header.</tt> </tt>
+<a name="L278"></a><tt class="py-lineno">278</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-88" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-88', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">"\n"</tt><tt class="py-op">)</tt> </tt>
+<a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-89" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayHeading" class="py-name" href="#" onclick="return doclink('link-89', '_DisplayHeading', 'link-56');">_DisplayHeading</a></tt><tt class="py-op">(</tt><tt class="py-string">"STATISTICS"</tt><tt class="py-op">)</tt> </tt>
+<a name="L280"></a><tt class="py-lineno">280</tt>  <tt class="py-line"> </tt>
+<a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line">        <tt class="py-comment"># Build the format string.  If there are no tests we do not</tt> </tt>
+<a name="L282"></a><tt class="py-lineno">282</tt>  <tt class="py-line">        <tt class="py-comment"># provide any output.</tt> </tt>
+<a name="L283"></a><tt class="py-lineno">283</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__num_tests</tt> <tt class="py-op">!=</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L284"></a><tt class="py-lineno">284</tt>  <tt class="py-line">            <tt class="py-comment"># Indicate the total number of tests.</tt> </tt>
+<a name="L285"></a><tt class="py-lineno">285</tt>  <tt class="py-line">            <tt class="py-name">format</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-string">"  %(EXPECTED)6d (%(EXPECTED_PERCENT)3.0f%%) "</tt> </tt>
+<a name="L286"></a><tt class="py-lineno">286</tt>  <tt class="py-line">                      <tt class="py-string">"tests as expected\n"</tt><tt class="py-op">)</tt> </tt>
+<a name="L287"></a><tt class="py-lineno">287</tt>  <tt class="py-line">            <tt class="py-comment"># Include a line for each outcome.</tt> </tt>
+<a name="L288"></a><tt class="py-lineno">288</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">o</tt> <tt class="py-keyword">in</tt> <tt id="link-90" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-90', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-91" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-91', 'outcomes', 'link-34');">outcomes</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L289"></a><tt class="py-lineno">289</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_outcome_counts</tt><tt class="py-op">[</tt><tt class="py-name">o</tt><tt class="py-op">]</tt> <tt class="py-op">!=</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L290"></a><tt class="py-lineno">290</tt>  <tt class="py-line">                    <tt class="py-name">format</tt> <tt class="py-op">+=</tt> <tt class="py-op">(</tt><tt class="py-string">"  %%(%s)6d (%%(%s)3.0f%%%%) tests "</tt> </tt>
+<a name="L291"></a><tt class="py-lineno">291</tt>  <tt class="py-line">                               <tt class="py-string">"unexpected %s\n"</tt> </tt>
+<a name="L292"></a><tt class="py-lineno">292</tt>  <tt class="py-line">                               <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">o</tt> <tt class="py-op">+</tt> <tt class="py-string">"_UNEXPECTED"</tt><tt class="py-op">,</tt> </tt>
+<a name="L293"></a><tt class="py-lineno">293</tt>  <tt class="py-line">                                  <tt class="py-name">o</tt> <tt class="py-op">+</tt> <tt class="py-string">"_UNEXPECTED_PERCENT"</tt><tt class="py-op">,</tt> </tt>
+<a name="L294"></a><tt class="py-lineno">294</tt>  <tt class="py-line">                                  <tt class="py-name">o</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L295"></a><tt class="py-lineno">295</tt>  <tt class="py-line">            <tt class="py-name">format</tt> <tt class="py-op">+=</tt> <tt class="py-string">"\n"</tt> </tt>
+<a name="L296"></a><tt class="py-lineno">296</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L297"></a><tt class="py-lineno">297</tt>  <tt class="py-line">            <tt class="py-name">format</tt> <tt class="py-op">=</tt> <tt class="py-string">""</tt> </tt>
+<a name="L298"></a><tt class="py-lineno">298</tt>  <tt class="py-line"> </tt>
+<a name="L299"></a><tt class="py-lineno">299</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-92" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._FormatStatistics" class="py-name" href="#" onclick="return doclink('link-92', '_FormatStatistics', 'link-79');">_FormatStatistics</a></tt><tt class="py-op">(</tt><tt class="py-name">format</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L300"></a><tt class="py-lineno">300</tt>  <tt class="py-line"> </tt>
+<a name="L301"></a><tt class="py-lineno">301</tt>  <tt class="py-line"> </tt>
+<a name="TextResultStream._FormatStatistics"></a><div id="TextResultStream._FormatStatistics-def"><a name="L302"></a><tt class="py-lineno">302</tt> <a class="py-toggle" href="#" id="TextResultStream._FormatStatistics-toggle" onclick="return toggle('TextResultStream._FormatStatistics');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#_FormatStatistics">_FormatStatistics</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">format</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream._FormatStatistics-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream._FormatStatistics-expanded"><a name="L303"></a><tt class="py-lineno">303</tt>  <tt class="py-line">        <tt class="py-docstring">"""Output statistical information.</tt> </tt>
+<a name="L304"></a><tt class="py-lineno">304</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L305"></a><tt class="py-lineno">305</tt>  <tt class="py-line"><tt class="py-docstring">        'format' -- A format string with (optional) fill-ins</tt> </tt>
+<a name="L306"></a><tt class="py-lineno">306</tt>  <tt class="py-line"><tt class="py-docstring">        corresponding to statistical information.</tt> </tt>
+<a name="L307"></a><tt class="py-lineno">307</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L308"></a><tt class="py-lineno">308</tt>  <tt class="py-line"><tt class="py-docstring">        The formatted string is written to the result file."""</tt> </tt>
+<a name="L309"></a><tt class="py-lineno">309</tt>  <tt class="py-line"> </tt>
+<a name="L310"></a><tt class="py-lineno">310</tt>  <tt class="py-line">        <tt class="py-comment"># Build the dictionary of format fill-ins.</tt> </tt>
+<a name="L311"></a><tt class="py-lineno">311</tt>  <tt class="py-line">        <tt class="py-name">num_tests</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__num_tests</tt> </tt>
+<a name="L312"></a><tt class="py-lineno">312</tt>  <tt class="py-line">        <tt class="py-name">unexpected</tt> <tt class="py-op">=</tt> <tt id="link-93" class="py-name" targets="Method qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len()=qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict-class.html#len"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-93', 'len', 'link-93');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_test_results</tt><tt class="py-op">)</tt> </tt>
+<a name="L313"></a><tt class="py-lineno">313</tt>  <tt class="py-line">        <tt class="py-name">expected</tt> <tt class="py-op">=</tt> <tt class="py-name">num_tests</tt> <tt class="py-op">-</tt> <tt class="py-name">unexpected</tt> </tt>
+<a name="L314"></a><tt class="py-lineno">314</tt>  <tt class="py-line">        <tt class="py-name">values</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt> <tt class="py-string">"TOTAL"</tt> <tt class="py-op">:</tt> <tt class="py-name">num_tests</tt><tt class="py-op">,</tt> </tt>
+<a name="L315"></a><tt class="py-lineno">315</tt>  <tt class="py-line">                   <tt class="py-string">"EXPECTED"</tt> <tt class="py-op">:</tt> <tt class="py-name">expected</tt><tt class="py-op">,</tt> </tt>
+<a name="L316"></a><tt class="py-lineno">316</tt>  <tt class="py-line">                   <tt class="py-string">"UNEXPECTED"</tt> <tt class="py-op">:</tt> <tt class="py-name">unexpected</tt> <tt class="py-op">}</tt> </tt>
+<a name="L317"></a><tt class="py-lineno">317</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">num_tests</tt><tt class="py-op">:</tt> </tt>
+<a name="L318"></a><tt class="py-lineno">318</tt>  <tt class="py-line">            <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-string">"EXPECTED_PERCENT"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-number">100.</tt> <tt class="py-op">*</tt> <tt class="py-name">expected</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">num_tests</tt> </tt>
+<a name="L319"></a><tt class="py-lineno">319</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L320"></a><tt class="py-lineno">320</tt>  <tt class="py-line">            <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-string">"EXPECTED_PERCENT"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-number">0.0</tt> </tt>
+<a name="L321"></a><tt class="py-lineno">321</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">o</tt> <tt class="py-keyword">in</tt> <tt id="link-94" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-94', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-95" class="py-name"><a title="qm.test.result.Result.outcomes
+qm.test.web.web.DefaultDtmlPage.outcomes" class="py-name" href="#" onclick="return doclink('link-95', 'outcomes', 'link-34');">outcomes</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L322"></a><tt class="py-lineno">322</tt>  <tt class="py-line">            <tt class="py-name">count</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__outcome_counts</tt><tt class="py-op">[</tt><tt class="py-name">o</tt><tt class="py-op">]</tt> </tt>
+<a name="L323"></a><tt class="py-lineno">323</tt>  <tt class="py-line">            <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">o</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">count</tt> </tt>
+<a name="L324"></a><tt class="py-lineno">324</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">num_tests</tt><tt class="py-op">:</tt> </tt>
+<a name="L325"></a><tt class="py-lineno">325</tt>  <tt class="py-line">                <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">o</tt> <tt class="py-op">+</tt> <tt class="py-string">"_PERCENT"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-number">100.</tt> <tt class="py-op">*</tt> <tt class="py-name">count</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">num_tests</tt> </tt>
+<a name="L326"></a><tt class="py-lineno">326</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L327"></a><tt class="py-lineno">327</tt>  <tt class="py-line">                <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">o</tt> <tt class="py-op">+</tt> <tt class="py-string">"_PERCENT"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-number">0.0</tt> </tt>
+<a name="L328"></a><tt class="py-lineno">328</tt>  <tt class="py-line">            <tt class="py-name">count</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">__unexpected_outcome_counts</tt><tt class="py-op">[</tt><tt class="py-name">o</tt><tt class="py-op">]</tt> </tt>
+<a name="L329"></a><tt class="py-lineno">329</tt>  <tt class="py-line">            <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">o</tt> <tt class="py-op">+</tt> <tt class="py-string">"_UNEXPECTED"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">count</tt> </tt>
+<a name="L330"></a><tt class="py-lineno">330</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">num_tests</tt><tt class="py-op">:</tt> </tt>
+<a name="L331"></a><tt class="py-lineno">331</tt>  <tt class="py-line">                <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">o</tt> <tt class="py-op">+</tt> <tt class="py-string">"_UNEXPECTED_PERCENT"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-number">100.</tt> <tt class="py-op">*</tt> <tt class="py-name">count</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-name">num_tests</tt> </tt>
+<a name="L332"></a><tt class="py-lineno">332</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L333"></a><tt class="py-lineno">333</tt>  <tt class="py-line">                <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">o</tt> <tt class="py-op">+</tt> <tt class="py-string">"_UNEXPECTED_PERCENT"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-number">0.0</tt> </tt>
+<a name="L334"></a><tt class="py-lineno">334</tt>  <tt class="py-line"> </tt>
+<a name="L335"></a><tt class="py-lineno">335</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-96" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-96', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-name">format</tt> <tt class="py-op">%</tt> <tt class="py-name">values</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L336"></a><tt class="py-lineno">336</tt>  <tt class="py-line"> </tt>
+<a name="L337"></a><tt class="py-lineno">337</tt>  <tt class="py-line">         </tt>
+<a name="TextResultStream._SummarizeResults"></a><div id="TextResultStream._SummarizeResults-def"><a name="L338"></a><tt class="py-lineno">338</tt> <a class="py-toggle" href="#" id="TextResultStream._SummarizeResults-toggle" onclick="return toggle('TextResultStream._SummarizeResults');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#_SummarizeResults">_SummarizeResults</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">results</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream._SummarizeResults-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream._SummarizeResults-expanded"><a name="L339"></a><tt class="py-lineno">339</tt>  <tt class="py-line">        <tt class="py-docstring">"""Summarize each of the results.</tt> </tt>
+<a name="L340"></a><tt class="py-lineno">340</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L341"></a><tt class="py-lineno">341</tt>  <tt class="py-line"><tt class="py-docstring">        'results' -- The sequence of 'Result' objects to summarize."""</tt> </tt>
+<a name="L342"></a><tt class="py-lineno">342</tt>  <tt class="py-line"> </tt>
+<a name="L343"></a><tt class="py-lineno">343</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-97" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-97', 'len', 'link-93');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">results</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L344"></a><tt class="py-lineno">344</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-98" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-98', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">"  None.\n\n"</tt><tt class="py-op">)</tt> </tt>
+<a name="L345"></a><tt class="py-lineno">345</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> </tt>
+<a name="L346"></a><tt class="py-lineno">346</tt>  <tt class="py-line"> </tt>
+<a name="L347"></a><tt class="py-lineno">347</tt>  <tt class="py-line">        <tt class="py-comment"># Generate them.</tt> </tt>
+<a name="L348"></a><tt class="py-lineno">348</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt id="link-99" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-99', 'result', 'link-9');">result</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">results</tt><tt class="py-op">:</tt> </tt>
+<a name="L349"></a><tt class="py-lineno">349</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-100" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayResult" class="py-name" href="#" onclick="return doclink('link-100', '_DisplayResult', 'link-57');">_DisplayResult</a></tt><tt class="py-op">(</tt><tt id="link-101" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-101', 'result', 'link-9');">result</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">)</tt> </tt>
+<a name="L350"></a><tt class="py-lineno">350</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">==</tt> <tt class="py-string">"batch"</tt><tt class="py-op">:</tt> </tt>
+<a name="L351"></a><tt class="py-lineno">351</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-102" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._DisplayAnnotations" class="py-name" href="#" onclick="return doclink('link-102', '_DisplayAnnotations', 'link-63');">_DisplayAnnotations</a></tt><tt class="py-op">(</tt><tt id="link-103" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-103', 'result', 'link-9');">result</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L352"></a><tt class="py-lineno">352</tt>  <tt class="py-line"> </tt>
+<a name="L353"></a><tt class="py-lineno">353</tt>  <tt class="py-line"> </tt>
+<a name="TextResultStream._DisplayResult"></a><div id="TextResultStream._DisplayResult-def"><a name="L354"></a><tt class="py-lineno">354</tt> <a class="py-toggle" href="#" id="TextResultStream._DisplayResult-toggle" onclick="return toggle('TextResultStream._DisplayResult');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayResult">_DisplayResult</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">result</tt><tt class="py-op">,</tt> <tt class="py-param">format</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream._DisplayResult-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream._DisplayResult-expanded"><a name="L355"></a><tt class="py-lineno">355</tt>  <tt class="py-line">        <tt class="py-docstring">"""Display 'result'.</tt> </tt>
+<a name="L356"></a><tt class="py-lineno">356</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L357"></a><tt class="py-lineno">357</tt>  <tt class="py-line"><tt class="py-docstring">        'result' -- The 'Result' of a test or resource execution.</tt> </tt>
+<a name="L358"></a><tt class="py-lineno">358</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L359"></a><tt class="py-lineno">359</tt>  <tt class="py-line"><tt class="py-docstring">        'format' -- The format to use when displaying results."""</tt> </tt>
+<a name="L360"></a><tt class="py-lineno">360</tt>  <tt class="py-line"> </tt>
+<a name="L361"></a><tt class="py-lineno">361</tt>  <tt class="py-line">        <tt class="py-name">id_</tt> <tt class="py-op">=</tt> <tt id="link-104" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-104', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-105" class="py-name"><a title="qm.test.database.ItemDescriptor.GetId
+qm.test.result.Result.GetId
+qm.test.runnable.Runnable.GetId
+qm.test.suite.Suite.GetId
+qm.user.Group.GetId
+qm.user.User.GetId
+qm.web.Session.GetId" class="py-name" href="#" onclick="return doclink('link-105', 'GetId', 'link-44');">GetId</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L362"></a><tt class="py-lineno">362</tt>  <tt class="py-line">        <tt id="link-106" class="py-name" targets="Variable qm.extension.Extension.kind=qm.extension.Extension-class.html#kind,Variable qm.host.Host.kind=qm.host.Host-class.html#kind,Variable qm.test.database.Database.kind=qm.test.database.Database-class.html#kind,Variable qm.test.expectation_database.ExpectationDatabase.kind=qm.test.expectation_database.ExpectationDatabase-class.html#kind,Variable qm.test.resource.Resource.kind=qm.test.resource.Resource-class.html#kind,Variable qm.test.result_reader.ResultReader.kind=qm.test.result_reader.ResultReader-class.html#kind,Variable qm.test.result_stream.ResultStream.kind=qm.test.result_stream.ResultStream-class.html#kind,Variable qm.test.suite.Suite.kind=qm.test.suite.Suite-class.html#kind,Variable qm.test.target.Target.kind=qm.test.target.Target-class.html#kind,Variable qm.test.test.Test.kind=qm.test.test.Test-class.html#kind"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-106', 'kind', 'link-106');">kind</a></tt> <tt class="py-op">=</tt> <tt id="link-107" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-107', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-108" class="py-name"><a title="qm.test.result.Result.GetKind" class="py-name" href="#" onclick="return doclink('link-108', 'GetKind', 'link-38');">GetKind</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L363"></a><tt class="py-lineno">363</tt>  <tt class="py-line">        <tt class="py-name">outcome</tt> <tt class="py-op">=</tt> <tt id="link-109" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-109', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-110" class="py-name"><a title="qm.test.result.Result.GetOutcome" class="py-name" href="#" onclick="return doclink('link-110', 'GetOutcome', 'link-42');">GetOutcome</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L364"></a><tt class="py-lineno">364</tt>  <tt class="py-line"> </tt>
+<a name="L365"></a><tt class="py-lineno">365</tt>  <tt class="py-line">        <tt class="py-comment"># Print the ID and outcome.</tt> </tt>
+<a name="L366"></a><tt class="py-lineno">366</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-111" class="py-name"><a title="qm.test.result_stream.ResultStream.expected_outcomes" class="py-name" href="#" onclick="return doclink('link-111', 'expected_outcomes', 'link-69');">expected_outcomes</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L367"></a><tt class="py-lineno">367</tt>  <tt class="py-line">            <tt class="py-comment"># If expected outcomes were specified, print the expected</tt> </tt>
+<a name="L368"></a><tt class="py-lineno">368</tt>  <tt class="py-line">            <tt class="py-comment"># outcome too.</tt> </tt>
+<a name="L369"></a><tt class="py-lineno">369</tt>  <tt class="py-line">            <tt class="py-name">expected_outcome</tt> <tt class="py-op">=</tt> \ </tt>
+<a name="L370"></a><tt class="py-lineno">370</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-112" class="py-name"><a title="qm.test.result_stream.ResultStream.expected_outcomes" class="py-name" href="#" onclick="return doclink('link-112', 'expected_outcomes', 'link-69');">expected_outcomes</a></tt><tt class="py-op">.</tt><tt id="link-113" class="py-name" targets="Method qm.test.context.Context.get()=qm.test.context.Context-class.html#get,Method qm.test.result.Result.get()=qm.test.result.Result-class.html#get,Method qm.user.DefaultDatabase.get()=qm.user.DefaultDatabase-class.html#get,Method qm.user.XmlDatabase.get()=qm.user.XmlDatabase-class.html#get,Method qm.web.WebRequest.get()=qm.web.WebRequest-class.html#get"><a title="qm.test.context.Context.get
+qm.test.result.Result.get
+qm.user.DefaultDatabase.get
+qm.user.XmlDatabase.get
+qm.web.WebRequest.get" class="py-name" href="#" onclick="return doclink('link-113', 'get', 'link-113');">get</a></tt><tt class="py-op">(</tt><tt class="py-name">id_</tt><tt class="py-op">,</tt> <tt id="link-114" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-114', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-115" class="py-name"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.PASS
+qm.test.classes.tet_stream.TETStream.PASS
+qm.test.result.Result.PASS" class="py-name" href="#" onclick="return doclink('link-115', 'PASS', 'link-53');">PASS</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L371"></a><tt class="py-lineno">371</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-name">outcome</tt> <tt class="py-op">==</tt> <tt id="link-116" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-116', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-117" class="py-name"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.PASS
+qm.test.classes.tet_stream.TETStream.PASS
+qm.test.result.Result.PASS" class="py-name" href="#" onclick="return doclink('link-117', 'PASS', 'link-53');">PASS</a></tt> </tt>
+<a name="L372"></a><tt class="py-lineno">372</tt>  <tt class="py-line">                <tt class="py-keyword">and</tt> <tt class="py-name">expected_outcome</tt> <tt class="py-op">==</tt> <tt id="link-118" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-118', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-119" class="py-name" targets="Variable qm.test.classes.dejagnu_test.DejaGNUTest.FAIL=qm.test.classes.dejagnu_test.DejaGNUTest-class.html#FAIL,Variable qm.test.classes.tet_stream.TETStream.FAIL=qm.test.classes.tet_stream.TETStream-class.html#FAIL,Variable qm.test.result.Result.FAIL=qm.test.result.Result-class.html#FAIL"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.FAIL
+qm.test.classes.tet_stream.TETStream.FAIL
+qm.test.result.Result.FAIL" class="py-name" href="#" onclick="return doclink('link-119', 'FAIL', 'link-119');">FAIL</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L373"></a><tt class="py-lineno">373</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-120" class="py-name" targets="Method qm.test.classes.text_result_stream.TextResultStream._WriteOutcome()=qm.test.classes.text_result_stream.TextResultStream-class.html#_WriteOutcome"><a title="qm.test.classes.text_result_stream.TextResultStream._WriteOutcome" class="py-name" href="#" onclick="return doclink('link-120', '_WriteOutcome', 'link-120');">_WriteOutcome</a></tt><tt class="py-op">(</tt><tt class="py-name">id_</tt><tt class="py-op">,</tt> <tt id="link-121" class="py-name"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-121', 'kind', 'link-106');">kind</a></tt><tt class="py-op">,</tt> <tt class="py-string">"XPASS"</tt><tt class="py-op">)</tt> </tt>
+<a name="L374"></a><tt class="py-lineno">374</tt>  <tt class="py-line">            <tt class="py-keyword">elif</tt> <tt class="py-op">(</tt><tt class="py-name">outcome</tt> <tt class="py-op">==</tt> <tt id="link-122" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-122', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-123" class="py-name"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.FAIL
+qm.test.classes.tet_stream.TETStream.FAIL
+qm.test.result.Result.FAIL" class="py-name" href="#" onclick="return doclink('link-123', 'FAIL', 'link-119');">FAIL</a></tt> </tt>
+<a name="L375"></a><tt class="py-lineno">375</tt>  <tt class="py-line">                  <tt class="py-keyword">and</tt> <tt class="py-name">expected_outcome</tt> <tt class="py-op">==</tt> <tt id="link-124" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-124', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-125" class="py-name"><a title="qm.test.classes.dejagnu_test.DejaGNUTest.FAIL
+qm.test.classes.tet_stream.TETStream.FAIL
+qm.test.result.Result.FAIL" class="py-name" href="#" onclick="return doclink('link-125', 'FAIL', 'link-119');">FAIL</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L376"></a><tt class="py-lineno">376</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-126" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._WriteOutcome" class="py-name" href="#" onclick="return doclink('link-126', '_WriteOutcome', 'link-120');">_WriteOutcome</a></tt><tt class="py-op">(</tt><tt class="py-name">id_</tt><tt class="py-op">,</tt> <tt id="link-127" class="py-name"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-127', 'kind', 'link-106');">kind</a></tt><tt class="py-op">,</tt> <tt class="py-string">"XFAIL"</tt><tt class="py-op">)</tt> </tt>
+<a name="L377"></a><tt class="py-lineno">377</tt>  <tt class="py-line">            <tt class="py-keyword">elif</tt> <tt class="py-name">outcome</tt> <tt class="py-op">!=</tt> <tt class="py-name">expected_outcome</tt><tt class="py-op">:</tt> </tt>
+<a name="L378"></a><tt class="py-lineno">378</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-128" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._WriteOutcome" class="py-name" href="#" onclick="return doclink('link-128', '_WriteOutcome', 'link-120');">_WriteOutcome</a></tt><tt class="py-op">(</tt><tt class="py-name">id_</tt><tt class="py-op">,</tt> <tt id="link-129" class="py-name"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-129', 'kind', 'link-106');">kind</a></tt><tt class="py-op">,</tt> <tt class="py-name">outcome</tt><tt class="py-op">,</tt> <tt class="py-name">expected_outcome</tt><tt class="py-op">)</tt> </tt>
+<a name="L379"></a><tt class="py-lineno">379</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L380"></a><tt class="py-lineno">380</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-130" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._WriteOutcome" class="py-name" href="#" onclick="return doclink('link-130', '_WriteOutcome', 'link-120');">_WriteOutcome</a></tt><tt class="py-op">(</tt><tt class="py-name">id_</tt><tt class="py-op">,</tt> <tt id="link-131" class="py-name"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-131', 'kind', 'link-106');">kind</a></tt><tt class="py-op">,</tt> <tt class="py-name">outcome</tt><tt class="py-op">)</tt> </tt>
+<a name="L381"></a><tt class="py-lineno">381</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L382"></a><tt class="py-lineno">382</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-132" class="py-name"><a title="qm.test.classes.text_result_stream.TextResultStream._WriteOutcome" class="py-name" href="#" onclick="return doclink('link-132', '_WriteOutcome', 'link-120');">_WriteOutcome</a></tt><tt class="py-op">(</tt><tt class="py-name">id_</tt><tt class="py-op">,</tt> <tt id="link-133" class="py-name"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-133', 'kind', 'link-106');">kind</a></tt><tt class="py-op">,</tt> <tt class="py-name">outcome</tt><tt class="py-op">)</tt> </tt>
+<a name="L383"></a><tt class="py-lineno">383</tt>  <tt class="py-line"> </tt>
+<a name="L384"></a><tt class="py-lineno">384</tt>  <tt class="py-line">        <tt class="py-comment"># Print the cause of the failure.</tt> </tt>
+<a name="L385"></a><tt class="py-lineno">385</tt>  <tt class="py-line">        <tt class="py-name">cause</tt> <tt class="py-op">=</tt> <tt id="link-134" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-134', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-135" class="py-name" targets="Method qm.test.result.Result.GetCause()=qm.test.result.Result-class.html#GetCause"><a title="qm.test.result.Result.GetCause" class="py-name" href="#" onclick="return doclink('link-135', 'GetCause', 'link-135');">GetCause</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L386"></a><tt class="py-lineno">386</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">cause</tt><tt class="py-op">:</tt> </tt>
+<a name="L387"></a><tt class="py-lineno">387</tt>  <tt class="py-line">            <tt class="py-name">cause</tt> <tt class="py-op">=</tt> <tt id="link-136" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-136', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-137" class="py-name"><a title="qm.common" class="py-name" href="#" onclick="return doclink('link-137', 'common', 'link-1');">common</a></tt><tt class="py-op">.</tt><tt id="link-138" class="py-name" targets="Function qm.common.html_to_text()=qm.common-module.html#html_to_text"><a title="qm.common.html_to_text" class="py-name" href="#" onclick="return doclink('link-138', 'html_to_text', 'link-138');">html_to_text</a></tt><tt class="py-op">(</tt><tt class="py-name">cause</tt><tt class="py-op">)</tt> </tt>
+<a name="L388"></a><tt class="py-lineno">388</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">l</tt> <tt class="py-keyword">in</tt> <tt class="py-name">cause</tt><tt class="py-op">.</tt><tt class="py-name">splitlines</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L389"></a><tt class="py-lineno">389</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-139" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-139', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">"    "</tt> <tt class="py-op">+</tt> <tt class="py-name">l</tt> <tt class="py-op">+</tt> <tt class="py-string">"\n"</tt><tt class="py-op">)</tt> </tt>
+<a name="L390"></a><tt class="py-lineno">390</tt>  <tt class="py-line">             </tt>
+<a name="L391"></a><tt class="py-lineno">391</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-140" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-140', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">'\n'</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L392"></a><tt class="py-lineno">392</tt>  <tt class="py-line"> </tt>
+<a name="L393"></a><tt class="py-lineno">393</tt>  <tt class="py-line"> </tt>
+<a name="TextResultStream._DisplayAnnotations"></a><div id="TextResultStream._DisplayAnnotations-def"><a name="L394"></a><tt class="py-lineno">394</tt> <a class="py-toggle" href="#" id="TextResultStream._DisplayAnnotations-toggle" onclick="return toggle('TextResultStream._DisplayAnnotations');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayAnnotations">_DisplayAnnotations</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">result</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream._DisplayAnnotations-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream._DisplayAnnotations-expanded"><a name="L395"></a><tt class="py-lineno">395</tt>  <tt class="py-line">        <tt class="py-docstring">"""Display the annotations associated with 'result'.</tt> </tt>
+<a name="L396"></a><tt class="py-lineno">396</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L397"></a><tt class="py-lineno">397</tt>  <tt class="py-line"><tt class="py-docstring">        'result' -- The 'Result' to dispay."""</tt> </tt>
+<a name="L398"></a><tt class="py-lineno">398</tt>  <tt class="py-line"> </tt>
+<a name="L399"></a><tt class="py-lineno">399</tt>  <tt class="py-line">        <tt id="link-141" class="py-name" targets="Method qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.keys()=qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict-class.html#keys,Method qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.keys()=qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping-class.html#keys,Method qm.test.result.Result.keys()=qm.test.result.Result-class.html#keys,Method qm.user.DefaultDatabase.keys()=qm.user.DefaultDatabase-class.html#keys,Method qm.user.XmlDatabase.keys()=qm.user.XmlDatabase-class.html#keys,Method qm.web.CGIWebRequest.keys()=qm.web.CGIWebRequest-class.html#keys,Method qm.web.WebRequest.keys()=qm.web.WebRequest-class.html#keys"><a title="qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.keys
+qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.keys
+qm.test.result.Result.keys
+qm.user.DefaultDatabase.keys
+qm.user.XmlDatabase.keys
+qm.web.CGIWebRequest.keys
+qm.web.WebRequest.keys" class="py-name" href="#" onclick="return doclink('link-141', 'keys', 'link-141');">keys</a></tt> <tt class="py-op">=</tt> <tt id="link-142" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-142', 'result', 'link-9');">result</a></tt><tt class="py-op">.</tt><tt id="link-143" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.keys
+qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.keys
+qm.test.result.Result.keys
+qm.user.DefaultDatabase.keys
+qm.user.XmlDatabase.keys
+qm.web.CGIWebRequest.keys
+qm.web.WebRequest.keys" class="py-name" href="#" onclick="return doclink('link-143', 'keys', 'link-141');">keys</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L400"></a><tt class="py-lineno">400</tt>  <tt class="py-line">        <tt id="link-144" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.keys
+qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.keys
+qm.test.result.Result.keys
+qm.user.DefaultDatabase.keys
+qm.user.XmlDatabase.keys
+qm.web.CGIWebRequest.keys
+qm.web.WebRequest.keys" class="py-name" href="#" onclick="return doclink('link-144', 'keys', 'link-141');">keys</a></tt><tt class="py-op">.</tt><tt id="link-145" class="py-name"><a title="qm.external.DocumentTemplate.DT_In.InClass.sort" class="py-name" href="#" onclick="return doclink('link-145', 'sort', 'link-68');">sort</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L401"></a><tt class="py-lineno">401</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt id="link-146" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-146', 'name', 'link-18');">name</a></tt> <tt class="py-keyword">in</tt> <tt id="link-147" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.InstanceDict.keys
+qm.external.DocumentTemplate.pDocumentTemplate.MultiMapping.keys
+qm.test.result.Result.keys
+qm.user.DefaultDatabase.keys
+qm.user.XmlDatabase.keys
+qm.web.CGIWebRequest.keys
+qm.web.WebRequest.keys" class="py-name" href="#" onclick="return doclink('link-147', 'keys', 'link-141');">keys</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L402"></a><tt class="py-lineno">402</tt>  <tt class="py-line">            <tt class="py-comment"># The CAUSE property has already been displayed."</tt> </tt>
+<a name="L403"></a><tt class="py-lineno">403</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-148" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-148', 'name', 'link-18');">name</a></tt> <tt class="py-op">==</tt> <tt id="link-149" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-149', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-150" class="py-name" targets="Variable qm.test.result.Result.CAUSE=qm.test.result.Result-class.html#CAUSE"><a title="qm.test.result.Result.CAUSE" class="py-name" href="#" onclick="return doclink('link-150', 'CAUSE', 'link-150');">CAUSE</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L404"></a><tt class="py-lineno">404</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L405"></a><tt class="py-lineno">405</tt>  <tt class="py-line">            <tt class="py-comment"># Add an item to the list</tt> </tt>
+<a name="L406"></a><tt class="py-lineno">406</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-151" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-151', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">"    %s:\n"</tt> <tt class="py-op">%</tt> <tt id="link-152" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-152', 'name', 'link-18');">name</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L407"></a><tt class="py-lineno">407</tt>  <tt class="py-line"> </tt>
+<a name="L408"></a><tt class="py-lineno">408</tt>  <tt class="py-line">            <tt class="py-comment"># Convert the HTML to text.</tt> </tt>
+<a name="L409"></a><tt class="py-lineno">409</tt>  <tt class="py-line">            <tt class="py-name">text</tt> <tt class="py-op">=</tt> <tt id="link-153" class="py-name"><a title="qm" class="py-name" href="#" onclick="return doclink('link-153', 'qm', 'link-0');">qm</a></tt><tt class="py-op">.</tt><tt id="link-154" class="py-name"><a title="qm.common" class="py-name" href="#" onclick="return doclink('link-154', 'common', 'link-1');">common</a></tt><tt class="py-op">.</tt><tt id="link-155" class="py-name"><a title="qm.common.html_to_text" class="py-name" href="#" onclick="return doclink('link-155', 'html_to_text', 'link-138');">html_to_text</a></tt><tt class="py-op">(</tt><tt id="link-156" class="py-name"><a title="qm.test.result" class="py-name" href="#" onclick="return doclink('link-156', 'result', 'link-9');">result</a></tt><tt class="py-op">[</tt><tt id="link-157" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-157', 'name', 'link-18');">name</a></tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L410"></a><tt class="py-lineno">410</tt>  <tt class="py-line"> </tt>
+<a name="L411"></a><tt class="py-lineno">411</tt>  <tt class="py-line">            <tt class="py-comment"># Write out the text.</tt> </tt>
+<a name="L412"></a><tt class="py-lineno">412</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">l</tt> <tt class="py-keyword">in</tt> <tt class="py-name">text</tt><tt class="py-op">.</tt><tt class="py-name">splitlines</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L413"></a><tt class="py-lineno">413</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-158" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-158', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">"      "</tt> <tt class="py-op">+</tt> <tt class="py-name">l</tt> <tt class="py-op">+</tt> <tt class="py-string">"\n"</tt><tt class="py-op">)</tt> </tt>
+<a name="L414"></a><tt class="py-lineno">414</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-159" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-159', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">"\n"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L415"></a><tt class="py-lineno">415</tt>  <tt class="py-line">         </tt>
+<a name="L416"></a><tt class="py-lineno">416</tt>  <tt class="py-line"> </tt>
+<a name="TextResultStream._WriteOutcome"></a><div id="TextResultStream._WriteOutcome-def"><a name="L417"></a><tt class="py-lineno">417</tt> <a class="py-toggle" href="#" id="TextResultStream._WriteOutcome-toggle" onclick="return toggle('TextResultStream._WriteOutcome');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#_WriteOutcome">_WriteOutcome</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">name</tt><tt class="py-op">,</tt> <tt class="py-param">kind</tt><tt class="py-op">,</tt> <tt class="py-param">outcome</tt><tt class="py-op">,</tt> <tt class="py-param">expected_outcome</tt><tt class="py-op">=</tt><tt id="link-160" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.None" class="py-name" href="#" onclick="return doclink('link-160', 'None', 'link-27');">None</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream._WriteOutcome-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream._WriteOutcome-expanded"><a name="L418"></a><tt class="py-lineno">418</tt>  <tt class="py-line">        <tt class="py-docstring">"""Write a line indicating the outcome of a test or resource.</tt> </tt>
+<a name="L419"></a><tt class="py-lineno">419</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L420"></a><tt class="py-lineno">420</tt>  <tt class="py-line"><tt class="py-docstring">        'name' -- The name of the test or resource.</tt> </tt>
+<a name="L421"></a><tt class="py-lineno">421</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L422"></a><tt class="py-lineno">422</tt>  <tt class="py-line"><tt class="py-docstring">        'kind' -- The kind of result being displayed.</tt> </tt>
+<a name="L423"></a><tt class="py-lineno">423</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L424"></a><tt class="py-lineno">424</tt>  <tt class="py-line"><tt class="py-docstring">        'outcome' -- A string giving the outcome.</tt> </tt>
+<a name="L425"></a><tt class="py-lineno">425</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L426"></a><tt class="py-lineno">426</tt>  <tt class="py-line"><tt class="py-docstring">        'expected_outcome' -- If not 'None', the expected outcome."""</tt> </tt>
+<a name="L427"></a><tt class="py-lineno">427</tt>  <tt class="py-line"> </tt>
+<a name="L428"></a><tt class="py-lineno">428</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt id="link-161" class="py-name"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-161', 'kind', 'link-106');">kind</a></tt> <tt class="py-op">==</tt> <tt id="link-162" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-162', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-163" class="py-name" targets="Variable qm.test.result.Result.RESOURCE_SETUP=qm.test.result.Result-class.html#RESOURCE_SETUP"><a title="qm.test.result.Result.RESOURCE_SETUP" class="py-name" href="#" onclick="return doclink('link-163', 'RESOURCE_SETUP', 'link-163');">RESOURCE_SETUP</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L429"></a><tt class="py-lineno">429</tt>  <tt class="py-line">            <tt id="link-164" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-164', 'name', 'link-18');">name</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"Setup "</tt> <tt class="py-op">+</tt> <tt id="link-165" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-165', 'name', 'link-18');">name</a></tt> </tt>
+<a name="L430"></a><tt class="py-lineno">430</tt>  <tt class="py-line">        <tt class="py-keyword">elif</tt> <tt id="link-166" class="py-name"><a title="qm.extension.Extension.kind
+qm.host.Host.kind
+qm.test.database.Database.kind
+qm.test.expectation_database.ExpectationDatabase.kind
+qm.test.resource.Resource.kind
+qm.test.result_reader.ResultReader.kind
+qm.test.result_stream.ResultStream.kind
+qm.test.suite.Suite.kind
+qm.test.target.Target.kind
+qm.test.test.Test.kind" class="py-name" href="#" onclick="return doclink('link-166', 'kind', 'link-106');">kind</a></tt> <tt class="py-op">==</tt> <tt id="link-167" class="py-name"><a title="qm.test.result.Result" class="py-name" href="#" onclick="return doclink('link-167', 'Result', 'link-33');">Result</a></tt><tt class="py-op">.</tt><tt id="link-168" class="py-name" targets="Variable qm.test.result.Result.RESOURCE_CLEANUP=qm.test.result.Result-class.html#RESOURCE_CLEANUP"><a title="qm.test.result.Result.RESOURCE_CLEANUP" class="py-name" href="#" onclick="return doclink('link-168', 'RESOURCE_CLEANUP', 'link-168');">RESOURCE_CLEANUP</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L431"></a><tt class="py-lineno">431</tt>  <tt class="py-line">            <tt id="link-169" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-169', 'name', 'link-18');">name</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"Cleanup "</tt> <tt class="py-op">+</tt> <tt id="link-170" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-170', 'name', 'link-18');">name</a></tt> </tt>
+<a name="L432"></a><tt class="py-lineno">432</tt>  <tt class="py-line">         </tt>
+<a name="L433"></a><tt class="py-lineno">433</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">expected_outcome</tt><tt class="py-op">:</tt> </tt>
+<a name="L434"></a><tt class="py-lineno">434</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-171" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-171', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">"  %-46s: %-8s, expected %-8s\n"</tt> </tt>
+<a name="L435"></a><tt class="py-lineno">435</tt>  <tt class="py-line">                            <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt id="link-172" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-172', 'name', 'link-18');">name</a></tt><tt class="py-op">,</tt> <tt class="py-name">outcome</tt><tt class="py-op">,</tt> <tt class="py-name">expected_outcome</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L436"></a><tt class="py-lineno">436</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L437"></a><tt class="py-lineno">437</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-173" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-173', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">"  %-46s: %-8s\n"</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt id="link-174" class="py-name"><a title="qm.external.DocumentTemplate.DT_If.Else.name
+qm.external.DocumentTemplate.DT_If.If.name
+qm.external.DocumentTemplate.DT_If.Unless.name
+qm.external.DocumentTemplate.DT_In.InFactory.name
+qm.external.DocumentTemplate.DT_Let.Let.name
+qm.external.DocumentTemplate.DT_Raise.Raise.name
+qm.external.DocumentTemplate.DT_Return.ReturnTag.name
+qm.external.DocumentTemplate.DT_String.String.name
+qm.external.DocumentTemplate.DT_Try.Try.name
+qm.external.DocumentTemplate.DT_Util.name
+qm.external.DocumentTemplate.DT_Var.Call.name
+qm.external.DocumentTemplate.DT_Var.Comment.name
+qm.external.DocumentTemplate.DT_Var.Var.name
+qm.external.DocumentTemplate.DT_With.With.name
+qm.external.DocumentTemplate.pDocumentTemplate.name" class="py-name" href="#" onclick="return doclink('link-174', 'name', 'link-18');">name</a></tt><tt class="py-op">,</tt> <tt class="py-name">outcome</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L438"></a><tt class="py-lineno">438</tt>  <tt class="py-line"> </tt>
+<a name="L439"></a><tt class="py-lineno">439</tt>  <tt class="py-line">             </tt>
+<a name="TextResultStream._DisplayHeading"></a><div id="TextResultStream._DisplayHeading-def"><a name="L440"></a><tt class="py-lineno">440</tt> <a class="py-toggle" href="#" id="TextResultStream._DisplayHeading-toggle" onclick="return toggle('TextResultStream._DisplayHeading');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="qm.test.classes.text_result_stream.TextResultStream-class.html#_DisplayHeading">_DisplayHeading</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">heading</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="TextResultStream._DisplayHeading-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="TextResultStream._DisplayHeading-expanded"><a name="L441"></a><tt class="py-lineno">441</tt>  <tt class="py-line">        <tt class="py-docstring">"""Display 'heading'.</tt> </tt>
+<a name="L442"></a><tt class="py-lineno">442</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L443"></a><tt class="py-lineno">443</tt>  <tt class="py-line"><tt class="py-docstring">        'heading' -- The string to use as a heading for the next</tt> </tt>
+<a name="L444"></a><tt class="py-lineno">444</tt>  <tt class="py-line"><tt class="py-docstring">        section of the report."""</tt> </tt>
+<a name="L445"></a><tt class="py-lineno">445</tt>  <tt class="py-line"> </tt>
+<a name="L446"></a><tt class="py-lineno">446</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-175" class="py-name"><a title="qm.test.classes.file
+qm.test.file_result_reader.FileResultReader.file
+qm.test.file_result_stream.FileResultStream.file" class="py-name" href="#" onclick="return doclink('link-175', 'file', 'link-32');">file</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-string">"--- %s %s\n\n"</tt> <tt class="py-op">%</tt> </tt>
+<a name="L447"></a><tt class="py-lineno">447</tt>  <tt class="py-line">                        <tt class="py-op">(</tt><tt id="link-176" class="py-name" targets="Variable qm.test.web.web.LoadContextPage.heading=qm.test.web.web.LoadContextPage-class.html#heading,Variable qm.test.web.web.LoadExpectationsPage.heading=qm.test.web.web.LoadExpectationsPage-class.html#heading,Variable qm.test.web.web.LoadResultsPage.heading=qm.test.web.web.LoadResultsPage-class.html#heading"><a title="qm.test.web.web.LoadContextPage.heading
+qm.test.web.web.LoadExpectationsPage.heading
+qm.test.web.web.LoadResultsPage.heading" class="py-name" href="#" onclick="return doclink('link-176', 'heading', 'link-176');">heading</a></tt><tt class="py-op">,</tt> <tt class="py-string">"-"</tt> <tt class="py-op">*</tt> <tt class="py-op">(</tt><tt class="py-number">73</tt> <tt class="py-op">-</tt> <tt id="link-177" class="py-name"><a title="qm.external.DocumentTemplate.pDocumentTemplate.TemplateDict.len" class="py-name" href="#" onclick="return doclink('link-177', 'len', 'link-93');">len</a></tt><tt class="py-op">(</tt><tt id="link-178" class="py-name"><a title="qm.test.web.web.LoadContextPage.heading
+qm.test.web.web.LoadExpectationsPage.heading
+qm.test.web.web.LoadResultsPage.heading" class="py-name" href="#" onclick="return doclink('link-178', 'heading', 'link-176');">heading</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L448"></a><tt class="py-lineno">448</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:43 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,1060 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>qm.test.file_database.ExtensionDatabase</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="qm-module.html">Package&nbsp;qm</a> ::
+        <a href="qm.test-module.html">Package&nbsp;test</a> ::
+        <a href="qm.test.file_database-module.html">Module&nbsp;file_database</a> ::
+        Class&nbsp;ExtensionDatabase
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="qm.test.file_database.ExtensionDatabase-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class ExtensionDatabase</h1><p class="nomargin-top"><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+         object --+            
+                  |            
+<a href="qm.extension.Extension-class.html">extension.Extension</a> --+        
+                      |        
+      <a href="qm.test.database.Database-class.html">database.Database</a> --+    
+                          |    
+               <a href="qm.test.file_database.FileDatabase-class.html">FileDatabase</a> --+
+                              |
+                             <strong class="uidshort">ExtensionDatabase</strong>
+</pre>
+
+<hr />
+<p>An 'ExtensionDatabase' is a 'FileDatabase' where each kind of entity 
+  (test, suite, resource) has a particular extension.  For example, if 
+  tests have the extension '.qmt', then all files ending with '.qmt' are 
+  considered tests.  If an extension for a particular kind of entity is not
+  specified or is the empty string, then all files will be considered to be
+  that kind of entity.</p>
+  <p>'ExtensionDatabase' is an abstract class.</p>
+
+<!-- ==================== NESTED CLASSES ==================== -->
+<a name="section-NestedClasses"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Nested Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-NestedClasses"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension.Type-class.html">Type</a></code>,
+      <code><a href="qm.extension.Extension.Type-class.html">__metaclass__</a></code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">arguments</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">**args</span>)</span><br />
+      Construct a 'Database'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#GetTestExtension" class="summary-sig-name">GetTestExtension</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the extension that indicates a file is a test.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetTestExtension">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#GetSuiteExtension" class="summary-sig-name">GetSuiteExtension</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the extension that indicates a file is a suite.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetSuiteExtension">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#GetResourceExtension" class="summary-sig-name">GetResourceExtension</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Return the extension that indicates a file is a resource.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetResourceExtension">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#GetTestPath" class="summary-sig-name">GetTestPath</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">test_id</span>)</span><br />
+      Return the file containing 'test_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetTestPath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#_IsTestFile" class="summary-sig-name" onclick="show_private();">_IsTestFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>)</span><br />
+      Returns true if 'path' is a test file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._IsTestFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#GetSuitePath" class="summary-sig-name">GetSuitePath</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">suite_id</span>)</span><br />
+      Return the file containing 'suite_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetSuitePath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#_IsSuiteFile" class="summary-sig-name" onclick="show_private();">_IsSuiteFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>)</span><br />
+      Returns true if 'path' is a test suite file or directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._IsSuiteFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#GetResourcePath" class="summary-sig-name">GetResourcePath</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">resource_id</span>)</span><br />
+      Return the file containing 'resource_id'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetResourcePath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#_IsResourceFile" class="summary-sig-name" onclick="show_private();">_IsResourceFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>)</span><br />
+      Returns true if 'path' is a resource file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._IsResourceFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#_GetPathFromLabel" class="summary-sig-name" onclick="show_private();">_GetPathFromLabel</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">label</span>)</span><br />
+      Returns the file system path corresponding to 'label'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._GetPathFromLabel">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#_GetLabelFromBasename" class="summary-sig-name" onclick="show_private();">_GetLabelFromBasename</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">basename</span>)</span><br />
+      Returns the label associated with a file named 'basename'.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._GetLabelFromBasename">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="qm.test.file_database.ExtensionDatabase-class.html#_GetRelativeLabelPath" class="summary-sig-name" onclick="show_private();">_GetRelativeLabelPath</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">label</span>)</span><br />
+      Returns a representation of 'label' as a filename.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._GetRelativeLabelPath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.file_database.FileDatabase-class.html">FileDatabase</a></code></b>:
+      <code><a href="qm.test.file_database.FileDatabase-class.html#GetIds">GetIds</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#GetResource">GetResource</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#GetRoot">GetRoot</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#GetSubdirectories">GetSubdirectories</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#GetSuite">GetSuite</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#GetTest">GetTest</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#RemoveExtension">RemoveExtension</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.file_database.FileDatabase-class.html">FileDatabase</a></code></b> (private):
+      <code><a href="qm.test.file_database.FileDatabase-class.html#_AreLabelsPaths" onclick="show_private();">_AreLabelsPaths</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#_GetLabels" onclick="show_private();">_GetLabels</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#_GetPath" onclick="show_private();">_GetPath</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#_GetResourceFromPath" onclick="show_private();">_GetResourceFromPath</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#_GetSuiteFromPath" onclick="show_private();">_GetSuiteFromPath</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#_GetTestFromPath" onclick="show_private();">_GetTestFromPath</a></code>,
+      <code><a href="qm.test.file_database.FileDatabase-class.html#_IsFile" onclick="show_private();">_IsFile</a></code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.database.Database-class.html">database.Database</a></code></b>:
+      <code><a href="qm.test.database.Database-class.html#ExpandIds">ExpandIds</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetAttachmentStore">GetAttachmentStore</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetClassPaths">GetClassPaths</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetConfigurationDirectory">GetConfigurationDirectory</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetExtension">GetExtension</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetExtensions">GetExtensions</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetItem">GetItem</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetLabelComponents">GetLabelComponents</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetPath">GetPath</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetResourceClassNames">GetResourceClassNames</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetResourceIds">GetResourceIds</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetSuiteIds">GetSuiteIds</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetTestClassNames">GetTestClassNames</a></code>,
+      <code><a href="qm.test.database.Database-class.html#GetTestIds">GetTestIds</a></code>,
+      <code><a href="qm.test.database.Database-class.html#HasResource">HasResource</a></code>,
+      <code><a href="qm.test.database.Database-class.html#HasSuite">HasSuite</a></code>,
+      <code><a href="qm.test.database.Database-class.html#HasTest">HasTest</a></code>,
+      <code><a href="qm.test.database.Database-class.html#IsModifiable">IsModifiable</a></code>,
+      <code><a href="qm.test.database.Database-class.html#IsValidLabel">IsValidLabel</a></code>,
+      <code><a href="qm.test.database.Database-class.html#JoinLabels">JoinLabels</a></code>,
+      <code><a href="qm.test.database.Database-class.html#SplitLabel">SplitLabel</a></code>,
+      <code><a href="qm.test.database.Database-class.html#SplitLabelLeft">SplitLabelLeft</a></code>,
+      <code><a href="qm.test.database.Database-class.html#WriteExtension">WriteExtension</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b>:
+      <code><a href="qm.extension.Extension-class.html#GetClassName">GetClassName</a></code>,
+      <code><a href="qm.extension.Extension-class.html#GetExplicitArguments">GetExplicitArguments</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomDocument">MakeDomDocument</a></code>,
+      <code><a href="qm.extension.Extension-class.html#MakeDomElement">MakeDomElement</a></code>,
+      <code><a href="qm.extension.Extension-class.html#Write">Write</a></code>,
+      <code><a href="qm.extension.Extension-class.html#__getattr__">__getattr__</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.file_database.ExtensionDatabase-class.html#arguments" class="summary-name">arguments</a> = <code title="[&lt;&lt;class 'qm.fields.TextField'&gt; test_extension&gt;,
+ &lt;&lt;class 'qm.fields.TextField'&gt; suite_extension&gt;,
+ &lt;&lt;class 'qm.fields.TextField'&gt; resource_extension&gt;]"><code class="variable-group">[</code>&lt;&lt;class 'qm.fields.TextField'&gt; test_extension&gt;<code class="variable-op">, </code>&lt;<code class="variable-ellipsis">...</code></code><br />
+      A list of the arguments to the extension class.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.file_database.ExtensionDatabase-class.html#_argument_dictionary" class="summary-name" onclick="show_private();">_argument_dictionary</a> = <code title="{'label_class': &lt;&lt;class 'qm.fields.TextField'&gt; label_class&gt;,
+ 'modifiable': &lt;&lt;class 'qm.fields.BooleanField'&gt; modifiable&gt;,
+ 'resource_extension': &lt;&lt;class 'qm.fields.TextField'&gt; resource_extensi\
+on&gt;,
+ 'suite_extension': &lt;&lt;class 'qm.fields.TextField'&gt; suite_extension&gt;,
+ 'test_extension': &lt;&lt;class 'qm.fields.TextField'&gt; test_extension&gt;}"><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">label_class</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;&lt;class 'qm.fields.Text<code class="variable-ellipsis">...</code></code><br />
+      A map from argument names to 'Field' instances.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="qm.test.file_database.ExtensionDatabase-class.html#_argument_list" class="summary-name" onclick="show_private();">_argument_list</a> = <code title="[&lt;&lt;class 'qm.fields.TextField'&gt; resource_extension&gt;,
+ &lt;&lt;class 'qm.fields.BooleanField'&gt; modifiable&gt;,
+ &lt;&lt;class 'qm.fields.TextField'&gt; test_extension&gt;,
+ &lt;&lt;class 'qm.fields.TextField'&gt; label_class&gt;,
+ &lt;&lt;class 'qm.fields.TextField'&gt; suite_extension&gt;]"><code class="variable-group">[</code>&lt;&lt;class 'qm.fields.TextField'&gt; resource_exte<code class="variable-ellipsis">...</code></code><br />
+      A list of all the 'Field's in this class.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="resource_extension"></a><span class="summary-name">resource_extension</span> = <code title="'.qma'"><code class="variable-quote">'</code><code class="variable-string">.qma</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="suite_extension"></a><span class="summary-name">suite_extension</span> = <code title="'.qms'"><code class="variable-quote">'</code><code class="variable-string">.qms</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="test_extension"></a><span class="summary-name">test_extension</span> = <code title="'.qmt'"><code class="variable-quote">'</code><code class="variable-string">.qmt</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.database.Database-class.html">database.Database</a></code></b>:
+      <code><a href="qm.test.database.Database-class.html#ITEM_KINDS">ITEM_KINDS</a></code>,
+      <code><a href="qm.test.database.Database-class.html#RESOURCE">RESOURCE</a></code>,
+      <code><a href="qm.test.database.Database-class.html#SUITE">SUITE</a></code>,
+      <code><a href="qm.test.database.Database-class.html#TEST">TEST</a></code>,
+      <code><a href="qm.test.database.Database-class.html#kind">kind</a></code>,
+      <code><a href="qm.test.database.Database-class.html#label_class">label_class</a></code>,
+      <code><a href="qm.test.database.Database-class.html#modifiable">modifiable</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.test.database.Database-class.html">database.Database</a></code></b> (private):
+      <code><a href="qm.test.database.Database-class.html#_is_generic_database" onclick="show_private();">_is_generic_database</a></code>,
+      <code><a href="qm.test.database.Database-class.html#_item_exceptions" onclick="show_private();">_item_exceptions</a></code>
+      </p></div>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="qm.extension.Extension-class.html">extension.Extension</a></code></b> (private):
+      <code><a href="qm.extension.Extension-class.html#_allow_arg_names_matching_class_vars" onclick="show_private();">_allow_arg_names_matching_class_vars</a></code>
+      </p></div>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">arguments</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">**args</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Construct a 'Database'.</p>
+  <p>'path' -- A string containing the absolute path to the directory 
+  containing the database.</p>
+  <p>'arguments' -- A dictionary mapping attribute names to values. The use
+  of this parameter is deprecated. Use keyword arguments instead.</p>
+  <p>Derived classes must call this method from their own '__init__' 
+  methods.  Every derived class must have an '__init__' method that takes 
+  the path to the directory containing the database as its only argument.  
+  The path provided to the derived class '__init__' function will always be
+  an absolute path.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetTestExtension"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetTestExtension</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetTestExtension">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the extension that indicates a file is a test.</p>
+  <p>returns -- The extension (including the leading period) that indicates
+  that a file is a test.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetSuiteExtension"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetSuiteExtension</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetSuiteExtension">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the extension that indicates a file is a suite.</p>
+  <p>returns -- The extension (including the leading period) that indicates
+  that a file is a suite.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetResourceExtension"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetResourceExtension</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetResourceExtension">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the extension that indicates a file is a resource.</p>
+  <p>returns -- The extension (including the leading period) that indicates
+  that a file is a resource.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetTestPath"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetTestPath</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">test_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetTestPath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the file containing 'test_id'.</p>
+  <p>'test_id' -- The name of a test.</p>
+  <p>returns -- The absolute file name of the file that contains, or would 
+  contain, 'test_id'.  This method works even if no test named 'test_id' 
+  exists.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.file_database.FileDatabase-class.html#GetTestPath">FileDatabase.GetTestPath</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_IsTestFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_IsTestFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._IsTestFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns true if 'path' is a test file.</p>
+  <p>'path' -- The absolute name of a file.  All relevant components in the
+  path name have already been checked to ensure that they are valid 
+  labels.</p>
+  <p>returns -- True iff the file corresponds to a test.</p>
+  <p>Derived classes must override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.file_database.FileDatabase-class.html#_IsTestFile" onclick="show_private();">FileDatabase._IsTestFile</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetSuitePath"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetSuitePath</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">suite_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetSuitePath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the file containing 'suite_id'.</p>
+  <p>'suite_id' -- The name of a suite.</p>
+  <p>returns -- The absolute file name of the file (or directory) that 
+  contains, or would contain, 'suite_id'.  This method works even if no 
+  suite named 'suite_id' exists.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.file_database.FileDatabase-class.html#GetSuitePath">FileDatabase.GetSuitePath</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_IsSuiteFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_IsSuiteFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._IsSuiteFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns true if 'path' is a test suite file or directory.</p>
+  <p>'path' -- The absolute name of a file.  All relevant components in the
+  path name have already been checked to ensure that they are valid 
+  labels.</p>
+  <p>returns -- True iff the file corresponds to a test.</p>
+  <p>Derived classes may override this method, but only to restrict the set
+  of suites.  In particular, a derived class method may return false where 
+  this method would return true, but never vice versa.</p>
+  <p>Derived classes must override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.file_database.FileDatabase-class.html#_IsSuiteFile" onclick="show_private();">FileDatabase._IsSuiteFile</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="GetResourcePath"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">GetResourcePath</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">resource_id</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase.GetResourcePath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return the file containing 'resource_id'.</p>
+  <p>'resource_id' -- The name of a resource.</p>
+  <p>returns -- The absolute file name of the file that contains, or would 
+  contain, 'resource_id'.  This method works even if no Resource named 
+  'resource_id' exists.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.file_database.FileDatabase-class.html#GetResourcePath">FileDatabase.GetResourcePath</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_IsResourceFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_IsResourceFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._IsResourceFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns true if 'path' is a resource file.</p>
+  <p>'path' -- The absolute name of a file.  All relevant components in the
+  path name have already been checked to ensure that they are valid 
+  labels.</p>
+  <p>returns -- True iff the file corresponds to a resource.</p>
+  <p>Derived classes must override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.file_database.FileDatabase-class.html#_IsResourceFile" onclick="show_private();">FileDatabase._IsResourceFile</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_GetPathFromLabel"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_GetPathFromLabel</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">label</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._GetPathFromLabel">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the file system path corresponding to 'label'.</p>
+  <p>'label' -- The id for a test, test suite, or similar entity.</p>
+  <p>returns -- The absolute path for the corresponding entry in the file 
+  system, but without any required extension.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.file_database.FileDatabase-class.html#_GetPathFromLabel" onclick="show_private();">FileDatabase._GetPathFromLabel</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_GetLabelFromBasename"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_GetLabelFromBasename</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">basename</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._GetLabelFromBasename">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the label associated with a file named 'basename'.</p>
+  <p>'basename' -- The basename of a file, including the extension.</p>
+  <p>returns -- The corresponding label.</p>
+  <p>Derived classes may override this method.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.file_database.FileDatabase-class.html#_GetLabelFromBasename" onclick="show_private();">FileDatabase._GetLabelFromBasename</a>
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_GetRelativeLabelPath"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_GetRelativeLabelPath</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">label</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="qm.test.file_database-pysrc.html#ExtensionDatabase._GetRelativeLabelPath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns a representation of 'label' as a filename.</p>
+  <p>returns -- A filename corresponding to 'label'.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="qm.test.file_database.FileDatabase-class.html#_GetRelativeLabelPath" onclick="show_private();">FileDatabase._GetRelativeLabelPath</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== CLASS VARIABLE DETAILS ==================== -->
+<a name="section-ClassVariableDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variable Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariableDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="arguments"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">arguments</h3>
+  <p>A list of the arguments to the extension class.</p>
+  <p>Each element of this list should be an instance of 'Field'.  The 
+  'Field' instance describes the argument.</p>
+  <p>Derived classes may redefine this class variable.  However, derived 
+  classes should not explicitly include the arguments from base classes; 
+  QMTest will automatically combine all the arguments found throughout the 
+  class hierarchy.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code>&lt;&lt;class 'qm.fields.TextField'&gt; test_extension&gt;<code class="variable-op">,</code>
+ &lt;&lt;class 'qm.fields.TextField'&gt; suite_extension&gt;<code class="variable-op">,</code>
+ &lt;&lt;class 'qm.fields.TextField'&gt; resource_extension&gt;<code class="variable-group">]</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_argument_dictionary"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">_argument_dictionary</h3>
+  <p>A map from argument names to 'Field' instances.</p>
+  <p>A map from the names of arguments for this class to the corresponding 
+  'Field'.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">label_class</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;&lt;class 'qm.fields.TextField'&gt; label_class&gt;<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">modifiable</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;&lt;class 'qm.fields.BooleanField'&gt; modifiable&gt;<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">resource_extension</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;&lt;class 'qm.fields.TextField'&gt; resource_extensi<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+on&gt;<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">suite_extension</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;&lt;class 'qm.fields.TextField'&gt; suite_extension&gt;<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">test_extension</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;&lt;class 'qm.fields.TextField'&gt; test_extension&gt;<code class="variable-group">}</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_argument_list"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">_argument_list</h3>
+  <p>A list of all the 'Field's in this class.</p>
+  <p>This list combines the complete list of 'arguments'.  'Field's appear 
+  in the order reached by a pre-order breadth-first traversal of the 
+  hierarchy, starting from the most derived class.</p>
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code>&lt;&lt;class 'qm.fields.TextField'&gt; resource_extension&gt;<code class="variable-op">,</code>
+ &lt;&lt;class 'qm.fields.BooleanField'&gt; modifiable&gt;<code class="variable-op">,</code>
+ &lt;&lt;class 'qm.fields.TextField'&gt; test_extension&gt;<code class="variable-op">,</code>
+ &lt;&lt;class 'qm.fields.TextField'&gt; label_class&gt;<code class="variable-op">,</code>
+ &lt;&lt;class 'qm.fields.TextField'&gt; suite_extension&gt;<code class="variable-group">]</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="qm-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Dec 23 12:30:41 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
