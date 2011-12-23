@@ -1,91 +1,79 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset='utf-8'>
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <title>qmtest/qmtest @ GitHub</title>
+    
+    <link type="text/css" rel="stylesheet" href="style.css"/>
+  </head>
 
-  <title>qmtest/qmtest @ GitHub</title>
-
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #710d07;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #ffffff;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #8ef2f8; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #8ef2f8; }
-    h3 { text-align: center; color: #8ef2f8; }
-    a { color: #8ef2f8; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
-</head>
-
-<body>
-  <a href="https://github.com/qmtest/qmtest"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-
-  <div id="container">
-
-    <div class="download">
-      <a href="https://github.com/qmtest/qmtest/zipball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png"></a>
-      <a href="https://github.com/qmtest/qmtest/tarball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
+  <body>
+    <div class="header">
+      <a href="https://github.com/qmtest/qmtest"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+      <h1><a style="color:white;" href="https://github.com/qmtest/qmtest">QMTest</a></h1>
     </div>
-
-    <h1><a href="https://github.com/qmtest/qmtest">qmtest</a>
-      <span class="small">by <a href="https://github.com/qmtest">qmtest</a></span></h1>
-
-    <div class="description">
-      QMTest is an automated software test execution tool.
+    <div class="navigation">
+      <ul>
+	<li class="download">Download
+	  <ul>
+	    <li><a href="https://github.com/qmtest/qmtest/zipball/master">zip file</a></li>
+            <!--<img style="border:0; width=90;" src="https://github.com/images/modules/download/zip.png" alt="zip"/>-->
+	    <li><a href="https://github.com/qmtest/qmtest/tarball/master">tarball</a></li>
+            <!--<img style="border:0 width:90;" src="https://github.com/images/modules/download/tar.png" alt="tarball"/>-->
+	  </ul>
+	</li>
+	<li>Documentation
+	  <ul>
+	    <li><a href="docs/html/tutorial/index.html">Tutorial</a></li>
+	    <li><a href="docs/html/manual/index.html">Manual</a></li>
+	  </ul>
+	</li>
+	<li><a href="https://github.com/qmtest/qmtest/issues">Issues</a></li>
+<!--	<li><a href="https://github.com/qmtest/qmtest/issues">Contact</a></li>-->
+	<li><a href="https://github.com/qmtest/qmtest/wiki">Wiki</a></li>
+      </ul>
     </div>
+    <div class="content">
+      <h2>Overview</h2>
+      <p>QMTest is a cost-effective general purpose testing solution that can be used to implement a robust, easy-to-use testing process. QMTest runs on Windows and on most UNIX-like operating systems including GNU/Linux.</p>
 
-    
+      <p>Code that has not been tested adequately generally does not work. Yet, many applications are deployed without adequate testing, often with catastrophic results. Even defects that are detected before deployment are often detected late in the release cycle, resulting in costly delays.</p>
 
-    
+      <p>QMTest's extensible architecture allows it to handle a wide range of application domains: everything from compilers to graphical user interfaces to web-based applications. QMTest can easily compare test results to known-good baselines, making analyzing test results far simpler. And, because QMTest runs on virtually all operating systems, you can use it with your entire product line.</p>
 
-    
+      <h2>Features and Benefits</h2>
+      
+      <p>Graphical user interface for easy test creation and execution Parallel test execution for maximum use of available testing hardware Extensible plug-in system permits use in wide variety of application domains Automatically compares test results to find regressions Runs on all popular operating systems</p>
 
-    
+      <h2>Supported Environments</h2>
+
+      <p>GNU/Linux, Windows, Solaris, HP-UX, etc.</p>
+
       <h2>License</h2>
-      <p>GPL 2</p>
-    
 
-    
+      <p>QMTest is available under the GNU General Public License.</p>
+
+
+<!--
       <h2>Authors</h2>
-      <p>Stefan Seefeld<br/>Ricardo Anguiano</p>
-    
-
-    
+      <p>Stefan Seefeld<br/>Ricardo Anguiano</p>
       <h2>Contact</h2>
-      <p> (stefan.seefeld@gmail.com)<br/>      </p>
-    
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="https://github.com/qmtest/qmtest/zipball/master">zip</a> or
-      <a href="https://github.com/qmtest/qmtest/tarball/master">tar formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+      <p>stefan at codesourcery dot com<br/>ricardo at codesourcery dot com</p>
+      <h2>Download</h2>
+      <p>
+	You can download this project in either
+	<a href="https://github.com/qmtest/qmtest/zipball/master">zip</a> or
+	<a href="https://github.com/qmtest/qmtest/tarball/master">tar formats.
+      </p>
+      <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
       by running:
-      <pre>$ git clone git://github.com/qmtest/qmtest</pre>
-    </p>
-
+	<pre>$ git clone git://github.com/qmtest/qmtest</pre>
+      </p><-->
+    </div>
     <div class="footer">
       get the source code on GitHub : <a href="https://github.com/qmtest/qmtest">qmtest/qmtest</a>
     </div>
-
-  </div>
-
-</body>
-</html>
+      </body>
+    </html>
